@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Solar and Battery Management System Using Arduino Nano</title>
+
+  <style>
+    a {
+      text-decoration: none;
+      color: blue;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    img {
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Solar and Battery Management System Using Arduino Nano</h1>
+
+  <h2>Project Objective</h2>
+  <p>
+    This project aims to develop a solar and battery power management system using an Arduino Nano. The system prioritizes solar energy during daytime (in SUB mode) to power an inverter and charge a battery, while intelligently switching to utility power (WAPDA) when necessary. The primary objective is to ensure continuous power availability while protecting the battery from overcharge (high charge quantity), over-feeding (high charging rate), over-discharge (high discharge quantity), and overload (high discharge rate) conditions.
+  </p>
+
+  <h2>System Overview</h2>
+  <ul>
+    <li><strong>Primary Power Source:</strong> 4 x 300W (V<sub>oc</sub> = 24V, I<sub>sc</sub> = 15A) PV solar array via a PWM charge controller.</li>
+    <li><strong>Backup Power Source:</strong> 220V 50Hz Utility grid (WAPDA).</li>
+    <li><strong>Storage:</strong> 12V 200Ah lead-acid tubular battery, which stays at ≈12.9V when fully charged, with no load and no charging.</li>
+    <li><strong>Load:</strong> 600W inverter powering AC appliances.</li>
+  </ul>
+
+  <h2>Operational Logic</h2>
+  <ol>
+    <li>During daytime, power is drawn from solar to run the inverter (if sunlight is sufficient and/or according to solar on/off time settings) and charge the battery.</li>
+    <li>If the AC load exceeds solar supply and the battery begins to discharge, switch to grid even during daytime.</li>
+    <li>At night or on cloudy days:
+      <ul>
+        <li>If grid is available, use it instead of draining the battery.</li>
+        <li>If grid is unavailable, use the battery to run the inverter as long as the battery state remains within safe operating limits.</li>
+      </ul>
+    </li>
+    <li>If USB mode is selected (instead of SUB), grid is always given priority. This can be useful in winters when not much power is needed during daytime. So inverter runs only during power outages.</li>
+  </ol>
+
+  <h2>Battery Protection Rules</h2>
+  <ul>
+    <li>
+      <b>Over-discharge protection</b>
+      <div>Inverter is turned off if battery voltage drops below <code>BV<sub>low</sub></code>, even if there is no grid. A 2 minutes window is given if voltages remain above <code>BV<sub>crit</sub></code>.</div>
+      <div>Discharging current is also limited to <code>BI<sub>high</sub></code>. A 10 seconds window is given if discharge rate is below <code>BI<sub>crit</sub></code> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</div>
+    </li>
+    <li>
+      <b>Overcharge protection</b>
+      <div>Start beeping if battery is overcharged i.e. charged above <code>BV<sub>full</sub></code> or at a rate higher than <code>BI<sub>high</sub></code>. We cannot control the PWM controller with Arduino. But we can cry.</div>
+    </li>
+  </ul>
+
+  <h2>Alarms</h2>
+  <p>Raise alarm (start beeping) if any of the following is true:</p>
+  <ul>
+    <li>Battery is above <code>BV<sub>full</sub></code></li>
+    <li>Battery is below <code>BV<sub>low</sub></code></li>
+    <li>Battery is being charged at a rate higher than <code>BI<sub>high</sub></code></li>
+    <li>Battery is being discharged at a rate higher than <code>BI<sub>high</sub></code></li>
+    <li>During daytime:
+      <ul>
+        <li>Battery is being discharged (at any rate; we should be using solar)</li>
+        <li>Inverter turned off (and switched to grid; we should be using solar)
+          <ul>
+            <li>Light sensor can be used to sense clouds, to avoid false warnings.</li>
+            <li>Exact reason of turning off the inverter is shown on screen. See warnings below.</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <p>Before raising alarms, give a 5 seconds window for temporary spikes / dips in battery voltage / current.</p>
+
+  <h2>On-Screen Warnings</h2>
+  <p>Inverter turned off (and switched to grid) due to:</p>
+  <ul>
+    <li><strong>E 1</strong>: Battery low – voltage below <code>BV<sub>low</sub></code></li>
+    <li><strong>E 2</strong>: Battery overloaded – high current (> <code>BI<sub>high</sub></code>) drained</li>
+    <li><strong>E 3</strong>: Load higher than the solar power (during daytime) – due to morning / evening, clouds etc.</li>
+  </ul>
+
+  <h2>Display + Settings</h2>
+  <ul>
+    <li>Use push buttons to jump to the next screen and to change the configurable values.</li>
+    <li>First 2 screens are informatory. On these screens, setting buttons turn off the display. Then press any button to turn it back on.</li>
+    <li>On SAVE screen (last), setting buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
+      <ul>
+        <li><code>BV<sub>low</sub></code> higher than <code>BV<sub>full</sub></code></li>
+        <li><code>BV<sub>crit</sub></code> higher than <code>BV<sub>low</sub></code></li>
+        <li><code>BI<sub>high</sub></code> higher than <code>BI<sub>crit</sub></code></li>
+        <li><code>BI<sub>low</sub></code> higher than <code>BI<sub>high</sub></code></li>
+        <li><code>BI<sub>crit-high</sub></code> window higher than <code>BI<sub>high-low</sub></code> window</li>
+        <li><code>BI<sub>high-low</sub></code> window higher than <code>BI<sub>below-low</sub></code> window</li>
+      </ul>
+    </li>
+    <li>Display jumps back to the first screen after 30 seconds of inactivity on settings screens.</li>
+  </ul>
+  <p>Screens:</p>
+  <ol>
+    <li>Battery voltage (left, Volts) and current (right, Ampere)</li>
+    <li>Battery voltage (left, Volts) and power being drawn from or fed to the battery (product of voltage and current) (right, Watt)</li>
+    <li>Battery full charge voltage <code>BV<sub>full</sub></code> (Volts, range: 12.0-16.0, default: 14.4)</li>
+    <li>Battery discharged voltage low threshold <code>BV<sub>low</sub></code> (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
+    <li>Battery discharged voltage critical threshold <code>BV<sub>crit</sub></code> (Volts, range: 9.0-12.0, default: 11.0)</li>
+    <li>Battery discharge current critical threshold <code>BI<sub>crit</sub></code> (Ampere, range: 20-60, default: 50)</li>
+    <li>Battery discharge current high threshold <code>BI<sub>high</sub></code> (Ampere, range: 10-30, default: 20 (@ C10))</li>
+    <li>Battery discharge current low threshold <code>BI<sub>low</sub></code> (Ampere, range: 1-15, default: 5)</li>
+    <li>Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
+    <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <code>BV<sub>low</sub></code> (Minutes, range: 1-10, default: 5)</li>
+    <li>Delay before switching AC load back to inverter (daytime) after inverter was turned off for any reason (e.g. due to clouds, or battery overload or low voltage condition), now solar is available (Minutes, range: 1-10, default: 5)</li>
+    <li>Window before switching AC load to grid if battery voltages are between <code>BV<sub>low</sub></code> and <code>BV<sub>crit</sub></code> (Minutes, range: 1-10, default: 2)</li>
+    <li>Window before switching AC load to grid if battery discharge current is between <code>BI<sub>crit</sub></code> and <code>BI<sub>high</sub></code> (Seconds, range: 5-60, default: 10)</li>
+    <li>Window before switching AC load to grid (daytime) if battery discharge current is between <code>BI<sub>high</sub></code> and <code>BI<sub>low</sub></code> (Minutes, range: 1-10, default: 2)</li>
+    <li>Window before switching AC load to grid (daytime) if battery discharge current is below <code>BI<sub>low</sub></code> (Minutes, range: 1-15, default: 5)</li>
+    <li>Clock time (24h format)</li>
+    <li>Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
+    <li>Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
+    <li>Display brightness (Level, range: 1-10, default: 1)</li>
+    <li>Buzzer intensity (Level, range: 1-10, default: 1)</li>
+    <li>Save</li>
+  </ol>
+
+  <h2>Hardware Components</h2>
+  <ul>
+    <li><strong>Arduino Nano</strong> <sup><a href="#1">[1]</a></sup> – main controller for sensor reading and decision-making.</li>
+    <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a></sup> – used to measure battery current (charging and discharging).
+      <ul>
+        <li>Default I2C Address: 0x40</li>
+        <li>Recommended configuration is to sense high-side current i.e. shunt is connected to the positive terminal of battery, and negative terminal is shared with circuit GND.</li>
+        <li>Max bus voltage (across Vin- and GND): 0V – 26V (makes sense only in case of high-side sensing)</li>
+        <li>Max measurable current:
+          <ul>
+            <li>With on-board R100 (0.1 Ω) SMD shunt: 3.2 A</li>
+            <li>With 100A 75mV (= 0.00075 Ω) shunt: 436A (= 0.32767V / 0.00075Ω, theoretically)</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><strong>0–25V DC Voltage Sensor Module</strong> <sup><a href="#5">[5]</a></sup> – monitors battery voltage level.
+      <ul>
+        <li>Alternatively use bus voltage from INA219 sensor if sensing high-side. Bus voltage + shunt voltage gives the battery voltage.</li>
+      </ul>
+    </li>
+    <li><strong>ZMPT101B AC Single Phase Voltage Sensor Module</strong> <sup><a href="#6">[6]</a></sup> – measures grid voltage. Alternatively, simply detect the presence of AC power using:
+      <ul>
+        <li>220V AC to 5V DC Converter</li>
+        <li>AC 220V Optocoupler Isolation Module</li>
+        <li><b>H11AA1 Optocoupler</b> <sup><a href="#15">[15]</a></sup>
+          <ul>
+            <li>Input LEDs forward voltage drop: 1.2-1.5V, forward current: 10mA (max 60mA).</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><strong>DS3231 Precision RTC Module</strong> <sup><a href="#7">[7]</a></sup> – remembers time so that to schedule solar on / off time in the morning and evening respectively.
+      <ul>
+        <li>I2C Address: 0x68</li>
+      </ul>
+    </li>
+    <li><strong>BH1750 Light Sensor Module (optional)</strong> <sup><a href="#8">[8]</a></sup> – measures solar irradiance to determine if sunlight is sufficient for AC load.</li>
+    <li><strong>Relay Module</strong> <sup><a href="#9">[9]</a></sup> (in NO mode) – used to switch AC load between grid and inverter output.</li>
+    <li><strong>5V Relay</strong> <sup><a href="#10">[10]</a></sup> (in NC mode) – used to turn off inverter when not needed (to save battery) or during battery protection events. This relay is installed inside the inverter in series with the main power button.
+      <ul>
+        <li>Max current: 60mA</li>
+      </ul>
+    </li>
+    <li><strong>8-Digit Display MAX7219 Module</strong> <sup><a href="#11">[11]</a></sup> – show battery (dis)charge current / voltage / power, and configurable values.</li>
+    <li><strong>5-12V Active Buzzer</strong> <sup><a href="#12">[12]</a></sup> – for alarms.
+      <ul>
+        <li>Max current: 40mA (at 12V)</li>
+      </ul>
+    </li>
+    <li>3 x <strong>Push Buttons</strong> (momentary) <sup><a href="#13">[13]</a></sup>:
+      <ul>
+        <li>Left: Decrease a configurable value (setting).</li>
+        <li>Center: Switch between screens and turn off the display.</li>
+        <li>Right: Increase a configurable value (setting).</li>
+      </ul>
+    </li>
+    <li><strong>LM2596 Buck Converter</strong> <sup><a href="#14">[14]</a></sup> – converts 12V to 5V for Arduino circuit.</li>
+  </ul>
+
+  <h3>Minor Parts</h3>
+
+  <b>For H11AA1 Optocoupler:</b>
+  <ul>
+    <li>2 x <strong>22 kΩ 2W resistor</strong> (with live and neutral) – 220V (RMS, 311V peak) AC input current limiting.
+      <ul>
+        <li>Forward current: ~7mA ((311V - 1.2V) / 44kΩ)</li>
+        <li>Power rating: ~1W (7mA x 7mA x 22kΩ / 1000)</li>
+      </ul>
+    </li>
+    <li><strong>100 nF ceramic capacitor</strong> – stabilizes H11AA1 Optocoupler output (due to zero-crossing). Or use software debouncing logic.</li>
+  </ul>
+
+  <b>For Buzzer:</b>
+  <ul>
+    <li><strong>2N3904 transistor</strong> – controls voltage supply (5-12V) to the buzzer to adjust the intensity.
+      <ul>
+        <li>Collector-emitter voltage: 40V</li>
+        <li>Max collector current: 200mA</li>
+        <li>Max base current: 20mA (200mA / 10)</li>
+        <li>Max base-emitter voltage drop: 0.95V (fully saturated)</li>
+        <li>Transition frequency: 300MHz | Rise/fall time: 35ns (switching speed matters for PWM)</li>
+      </ul>
+    </li>
+    <li><strong>470 Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
+      <ul>
+        <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
+      </ul>
+    </li>
+    <li><strong>1N4007 diode</strong> – for flyback protection with the buzzer.</li>
+  </ul>
+
+  <b>For Relay (inverter)</b>
+  <ul>
+    <li><strong>2N3904 transistor</strong> – drives the relay.</li>
+    <li><strong>470 Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
+      <ul>
+        <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
+      </ul>
+    </li>
+    <li><strong>1N4007 diode</strong> – for flyback protection at the relay coil.</li>
+    <li><strong>100µF 16V capacitor</strong> – for stabilizing voltage at the relay coil.</li>
+    <li>2 x <strong>1N5822 Schottky diode</strong> – for diode ORing. Power sources isolation is required because inverter relay is triggered from 2 sources in parallel: Arduino and a power adapter. Latter is used to bypass the protection system.</li>
+  </ul>
+
+  <b>Others:</b>
+  <ul>
+    <li><strong>3 Pin T-Block Connector</strong> – AC mains connections:
+      <ol>
+        <li>220V live</li>
+        <li>220V neutral</li>
+        <li>Output of Relay Module to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
+      </ol>
+    </li>
+    <li>4 x <strong>2 Pin T-Block Connector</strong> for:
+      <ol>
+        <li>12V supply (battery)</li>
+        <li>Relay (inverter)</li>
+        <li>FL-2C Shunt Resistor</li>
+        <li>BH1750 Light Sensor</li>
+      </ol>
+    </li>
+    <li><strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.</li>
+    <li><strong>DC Power Jack</strong> (male + female) – to make a detachable connection to Relay (inverter).</li>
+    <li><strong>Veroboard Dotted</strong> (145mm x 65mm) – circuit designing.</li>
+    <li><strong>2.54mm Pitch Female Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
+    <li><strong>Plastic Enclosure Box</strong> (160mm x 96mm x 50mm) – enclose the circuit.</li>
+    <li>4 x <strong>Plastic PCB Circuit Board Spacer</strong> – between veroboard and the box bottom.</li>
+    <li><strong>2-Core Cable</strong> – for 12V power supply, Relay (inverter) and FL-2C Shunt Resistor connections.</li>
+    <li><strong>3-Core Cable</strong> – for AC connections.</li>
+    <li><strong>4-Core Shielded Cable</strong> (for voice data) – for BH1750 Light Sensor connections.</li>
+  </ul>
+
+  <h2>Connections</h2>
+
+  <h3>1. INA219 Current Sensor &amp; FL-2C Shunt</h3>
+  <ul>
+    <li><strong>Shunt Resistor:</strong> Place between the battery positive terminal and the load.</li>
+    <li><strong>INA219 Connections:</strong>
+      <ul>
+        <li><code>Vin+</code> → Shunt's battery-side terminal (charging would give negative current value)</li>
+        <li><code>Vin–</code> → Shunt's load-side terminal (also connected to +ve terminals of inverter and solar charge controller)</li>
+        <li><code>GND</code> → Arduino Nano GND</li>
+        <li><code>VCC</code> → Arduino Nano 5V</li>
+        <li><code>SDA</code> → Arduino Nano A4 (SDA)</li>
+        <li><code>SCL</code> → Arduino Nano A5 (SCL)</li>
+      </ul>
+    </li>
+    <li><strong>Should remove the on-board SMD shunt?</strong> If 0.00075 Ω shunt is placed in parallel with the onboard 0.1 Ω SMD resistor, it becomes 0.0007444 Ω. At 50A:
+      <ul>
+        <li>Voltage drop: 37.2 mV</li>
+        <li>Current and power dissipation are within limits (so no need to remove the on-board SMD shunt):
+          <ul>
+            <li>External shunt: 49.6 A (1.85 W dissipation)</li>
+            <li>Internal shunt: 372 mA (13.8 mW dissipation)</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>2. 0&ndash;25V DC Voltage Sensor</h3>
+  <ul>
+    <li><strong>Input:</strong>
+      <ul>
+        <li><code>VCC</code> → Battery 12V+</li>
+        <li><code>GND</code> → Battery 12V-</li>
+      </ul>
+    </li>
+    <li><strong>Output:</strong>
+      <ul>
+        <li><code>S</code> (Signal) → Arduino Nano A0 (analog input)</li>
+        <li><code>+</code> → Arduino Nano 5V</li>
+        <li><code>–</code> → Arduino Nano GND</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>3. AC Detection</h3>
+  <p>Use any of the both methods.
+
+  </p>
+  <h4>3 (a). ZMPT101B AC Voltage Sensor</h4>
+  <ul>
+    <li><code>VCC</code> → Arduino Nano 5V</li>
+    <li><code>OUT</code> → Arduino Nano A1</li>
+    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><strong>AC Side:</strong>
+      <ul>
+        <li><code>L</code> → Live (220V)</li>
+        <li><code>N</code> → Neutral (220V)</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h4>3 (b). H11AA1 Optocoupler</h4>
+  <ul>
+    <li><strong>AC Side:</strong>
+      <ul>
+        <li>Live (220V) → 22 k&Omega; resistor → H11AA1 Pin 1</li>
+        <li>Neutral (220V) → 22 k&Omega; resistor → H11AA1 Pin 2</li>
+      </ul>
+    </li>
+    <li><strong>DC Side:</strong>
+      <ul>
+        <li>H11AA1 Pin 4 (collector) → Arduino Nano D2 (digital input with internal pull-up)</li>
+        <li>H11AA1 Pin 5 (emitter) → Arduino Nano GND</li>
+        <li>Leave the H11AA1 Pin 6 (base) unused since the internal NPN transistor is driven by the internal LEDs.</li>
+        <li>Add 100 nF capacitor between D2 and GND.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>4. DS3231 RTC Module</h3>
+  <ul>
+    <li><code>VCC</code> → Arduino Nano 5V</li>
+    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>SDA</code> → Arduino Nano A4 (shared with INA219)</li>
+    <li><code>SCL</code> → Arduino Nano A5 (shared with INA219)</li>
+  </ul>
+
+  <h3>5. 5V Relay Module (AC Changeover)</h3>
+  <ul>
+    <li><code>VCC</code> → Arduino Nano 5V</li>
+    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>IN</code> → Arduino Nano D4 (control signal)</li>
+    <li><strong>AC Load:</strong>
+      <ul>
+        <li>Relay <code>COM</code> → 220V Live</li>
+        <li>Relay <code>NO</code> → Changeover coil (Live side)</li>
+        <li>Changeover coil Neutral → 220V Neutral</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>6. 5V Relay (Inverter)</h3>
+  <ul>
+    <li><strong>Power ORing:</strong>
+      <ul>
+        <li>Diode 1: Arduino 5V → Anode of 1N5822 → Cathode to relay coil+</li>
+        <li>Diode 2: External 5V+ adapter → Anode of 1N5822 → Cathode to relay coil+</li>
+      </ul>
+    </li>
+    <li><strong>Transistor Driver:</strong>
+      <ul>
+        <li>Arduino D5 → 1 k&Omega; resistor → 2N3904 Base</li>
+        <li>2N3904 Emitter → GND</li>
+        <li>2N3904 Collector → Relay coil-</li>
+      </ul>
+    </li>
+    <li><strong>Protection:</strong>
+      <ul>
+        <li>1N4007 flyback diode across relay coil (reverse polarity: cathode to 5V, anode to GND terminal).</li>
+        <li>100 &micro;F capacitor across relay coil+ and coil-.</li>
+      </ul>
+    </li>
+    <li>Relay <code>COM</code> and <code>NC</code> → Inverter on/off switch</li>
+    <li>External 5V- adapter → Relay coil-</li>
+  </ul>
+
+  <h3>7. MAX7219 8-Digit Display</h3>
+  <ul>
+    <li><code>VCC</code> → Arduino Nano 5V</li>
+    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>DIN</code> → Arduino Nano D12 (MISO)</li>
+    <li><code>CS</code> → Arduino Nano D11 (MOSI)</li>
+    <li><code>CLK</code> → Arduino Nano D10 (SS)</li>
+  </ul>
+
+  <h3>8. 5&ndash;12V Active Buzzer</h3>
+  <ul>
+    <li><strong>Driver Circuit:</strong>
+      <ul>
+        <li>Arduino Nano D6 (PWM frequency: ~976 Hz) → 1 k&Omega; resistor → 2N3904 Base</li>
+        <li>2N3904 Emitter → GND</li>
+        <li>2N3904 Collector → Buzzer negative terminal</li>
+        <li>Buzzer positive terminal → 12V+ battery</li>
+      </ul>
+    </li>
+    <li><strong>Protection:</strong>
+      <ul>
+        <li>1N4007 diode across buzzer (reverse polarity: cathode to 12V+, anode to GND terminal).</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>9. Push Buttons (x3)</h3>
+  <ul>
+    <li><strong>Each Button:</strong>
+      <ul>
+        <li>One terminal → GND</li>
+        <li>Other terminal → Arduino Nano D7, D8, D9 (digital inputs with internal pull-up enabled).</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>10. LM2596 Buck Converter</h3>
+  <ul>
+    <li><strong>Input:</strong>
+      <ul>
+        <li><code>IN+</code> → Shunt's load-side terminal (other side is connected to battery 12V+)</li>
+        <li><code>IN-</code> → Battery 12V-</li>
+      </ul>
+    </li>
+    <li><strong>Output:</strong>
+      <ul>
+        <li><code>OUT+</code> → Arduino Nano 5V pin (and all 5V modules)</li>
+        <li><code>OUT-</code> → Arduino Nano GND (common ground).</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>11. Power Supply Summary</h3>
+  <ul>
+    <li><strong>12V Battery:</strong>
+      <ul>
+        <li>Powers LM2596 (converted to 5V for Arduino/modules).</li>
+        <li>Directly feeds voltage sensor and buzzer (12V).</li>
+        <li>Also connected to inverter and solar charge controller (+ve side through shunt resistor).</li>
+      </ul>
+    </li>
+    <li><strong>220V AC:</strong>
+      <ul>
+        <li>Feeds ZMPT101B AC voltage sensor (or H11AA1 optocoupler) and relay module (for changeover coil).</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2 style="page-break-before: always;">Schematics</h2>
+  <h3>Arduino Circuit:</h3>
+  <a href="circuit.svg"><img src="circuit.svg" width="1000" /></a>
+
+  <h3 style="page-break-before: always;">Solar and AC (Grid + Inverter) Circuit:</h3>
+  <a href="changeover.svg"><img src="changeover.svg" width="700" /></a>
+
+  <h2>Flowchart:</h2>
+  <a href="flowchart.svg"><img src="flowchart.svg" width="600" /></a>
+
+  <h2 style="page-break-before: always;">Links</h2>
+  <ol>
+    <li id="1"><a href="https://digilog.pk/products/arduino-nano-v3-with-usb-cable-in-pakistan">https://digilog.pk/products/arduino-nano-v3-with-usb-cable-in-pakistan</a></li>
+    <li id="2"><a href="https://digilog.pk/products/ina219-bi-direction-dc-current-power-supply-sensor-module-gy-219-module-in-pakistan">https://digilog.pk/products/ina219-bi-direction-dc-current-power-supply-sensor-module-gy-219-module-in-pakistan</a></li>
+    <li id="3"><a href="https://wolles-elektronikkiste.de/en/ina219-current-and-power-sensor">https://wolles-elektronikkiste.de/en/ina219-current-and-power-sensor</a></li>
+    <li id="4"><a href="https://www.aliexpress.com/item/1005007796473791.html">https://www.aliexpress.com/item/1005007796473791.html</a></li>
+    <li id="5"><a href="https://digilog.pk/products/dc-0-to-25v-voltage-sensor-module-for-arduino-in-pakistan">https://digilog.pk/products/dc-0-to-25v-voltage-sensor-module-for-arduino-in-pakistan</a></li>
+    <li id="6"><a href="https://digilog.pk/products/zmpt-single-phase-ac-voltage-sensor-module-in-pakistan">https://digilog.pk/products/zmpt-single-phase-ac-voltage-sensor-module-in-pakistan</a></li>
+    <li id="7"><a href="https://digilog.pk/products/ds3231-rtc-module">https://digilog.pk/products/ds3231-rtc-module</a></li>
+    <li id="8"><a href="https://instock.pk/ambient-light-intensity-lux-sensor-bh-1750.html">https://instock.pk/ambient-light-intensity-lux-sensor-bh-1750.html</a></li>
+    <li id="9"><a href="https://digilog.pk/products/1-channel-5v-arduino-relay-module-in-pakistan">https://digilog.pk/products/1-channel-5v-arduino-relay-module-in-pakistan</a></li>
+    <li id="10"><a href="https://digilog.pk/products/spdt-6v-or-5v-relay">https://digilog.pk/products/spdt-6v-or-5v-relay</a></li>
+    <li id="11"><a href="https://digilog.pk/products/max7219-8-digit-7-segment-module-assembled-in-pakistan">https://digilog.pk/products/max7219-8-digit-7-segment-module-assembled-in-pakistan</a></li>
+    <li id="12"><a href="https://digilog.pk/products/buzzer-alarm-active-piezo-electronic-wires-dc-3-12v">https://digilog.pk/products/buzzer-alarm-active-piezo-electronic-wires-dc-3-12v</a></li>
+    <li id="13"><a href="https://digilog.pk/products/12x12x9mm-tactile-push-button-switch">https://digilog.pk/products/12x12x9mm-tactile-push-button-switch</a></li>
+    <li id="14"><a href="https://digilog.pk/products/411a-lm2596-buck-converter-step-down-module-power-supply">https://digilog.pk/products/411a-lm2596-buck-converter-step-down-module-power-supply</a></li>
+    <li id="15"><a href="https://digilog.pk/products/h11aa1-optocoupler-dip-6-pin-ic">https://digilog.pk/products/h11aa1-optocoupler-dip-6-pin-ic</a></li>
+  </ol>
+
+</body>
+
+</html>
