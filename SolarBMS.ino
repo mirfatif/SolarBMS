@@ -325,7 +325,7 @@ public:
     volts = volts / INA219_SAMPLE_COUNT;
     current = current / INA219_SAMPLE_COUNT;
 
-    volts -= INA219_BUS_VOLTAGE_OFFSET;
+    volts -= INA219_BUS_VOLTAGE_OFFSET * (volts > 14 ? 2 : 1);
 
     // We are getting negative current when charging the battery. Inverse it.
     current *= -1;
