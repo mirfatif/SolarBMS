@@ -445,10 +445,10 @@ void handleInverterGridSwitching() {
 
   hasGrid = acVoltageSensor.getRmsVoltage() > GRID_VOLTAGE_THRESHOLD;
   hasSolar = prefs.prioritizeSolarOverGrid
-             && hoursNow >= prefs.solarOnTimeHours
-             && hoursNow <= prefs.solarOffTimeHours
-             && minutesNow >= prefs.solarOnTimeMinutes
-             && minutesNow < prefs.solarOffTimeMinutes;
+             && (hoursNow > prefs.solarOnTimeHours
+                 || (hoursNow == prefs.solarOnTimeHours && minutesNow >= prefs.solarOnTimeMinutes))
+             && (hoursNow < prefs.solarOffTimeHours
+                 || (hoursNow == prefs.solarOffTimeHours && minutesNow <= prefs.solarOffTimeMinutes));
 
   if (battery.isVoltageLowOrCriticallyLow || battery.isDischargingCritically || battery.isDischargingVeryCritically) {
     ts.battery.voltageLowOrCurrentHigh = millis();
