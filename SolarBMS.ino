@@ -255,8 +255,8 @@ public:
 class BatteryEvents {
 public:
   unsigned long voltageLowOrCurrentHigh;
-  OngoingEventTs voltageOk, voltageLow, dischargeCurrentCritical, dischargeCurrentHighOrAbove, dischargeCurrentLowOrAbove;
-  OngoingEventTs voltageHigh, chargeCurrentHigh;
+  OngoingEventTs dischargeCurrentCritical, dischargeCurrentHighOrAbove, dischargeCurrentLow, dischargeCurrentLowOrAbove;
+  OngoingEventTs voltageOk, voltageLow, voltageHigh, chargeCurrentHigh;
 };
 
 class Timestamps {
@@ -462,6 +462,7 @@ void handleInverterGridSwitching() {
                                                     || battery.isDischargingCritically
                                                     || battery.isDischargingVeryCritically,
                                                   prefs.windowToGridDaytimeOnCurrentHigh * 60L);
+  ts.battery.dischargeCurrentLow.updateTs(battery.isDischargingLow, 10);
   ts.battery.dischargeCurrentLowOrAbove.updateTs(battery.isDischargingLow
                                                    || battery.isDischargingHigh
                                                    || battery.isDischargingCritically
@@ -540,14 +541,16 @@ void handleInverterGridSwitching() {
              && ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
     buzzerOn = true;
     Serial.println("Buzzing due to battery high discharging rate...");
-  } else if (battery.isVoltageHigh && ts.battery.voltageHigh.isOlderThan(5)) {
+  } else if (battery.isVoltageHigh && ts.battery.voltageHigh.isOlderThan(30)) {
     buzzerOn = true;
     Serial.println("Buzzing due to battery high voltage...");
   } else if (battery.isChargingHigh && ts.battery.chargeCurrentHigh.isOlderThan(5)) {
     buzzerOn = true;
     Serial.println("Buzzing due to battery high charging rate...");
   } else if (hasSolar) {
-    if (battery.isDischarging && ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)) {
+    if (battery.isDischarging
+        && (ts.battery.dischargeCurrentLow.isOlderThan(30)
+            || (!battery.isDischargingLow && ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)))) {
       buzzerOn = true;
       Serial.println("Buzzing due to battery discharging during daytime...");
     } else if (onGrid()) {
