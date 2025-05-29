@@ -407,7 +407,7 @@ bool onGrid() {
 void switchToInverter() {
   if (onInverter()) {
     // Let the inverter start before switching off grid.
-    if (digitalRead(PIN_AC_RELAY) != HIGH && (!hasGrid || isTsOlderThan(ts.switchedToInverter, 2))) {
+    if (digitalRead(PIN_AC_RELAY) != HIGH && (!hasGrid || isTsOlderThan(ts.switchedToInverter, 5))) {
       digitalWrite(PIN_AC_RELAY, HIGH);
     }
     return;
