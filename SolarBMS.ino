@@ -43,6 +43,7 @@ bool rtcFlags;
 enum Screen {
   SCR_VOLT_CURR = 1,
   SCR_VOLT_PWR,
+  SCR_VOLT_TEMP,
   SCR_BTRY_FULL_VOLT,
   SCR_BTRY_LOW_VOLT,
   SCR_BTRY_CRIT_VOLT,
@@ -105,25 +106,25 @@ bool batteryLowCurrentDrawWindowPassed, batteryHighCurrentDrawWindowPassed, batt
 
 class Prefs {
 public:
-  uint8_t batteryFullChargeVolts = 144;          // 3. 14.4V (120-160, step: 1)
-  uint8_t batteryDischargedVoltsLow = 120;       // 4. 12.0V (100-130, step: 1)
-  uint8_t batteryDischargedVoltsCrit = 110;      // 5. 11.0V (90-120, step: 1)
-  uint8_t batteryDischargeCurrentCrit = 50;      // 6. Ampere (20-60, step: 5)
-  uint8_t batteryDischargeCurrentHigh = 20;      // 7. Ampere (10-30, step: 5)
-  uint8_t batteryDischargeCurrentLow = 5;        // 8. Ampere (1-15, step: 1)
-  bool prioritizeSolarOverGrid = true;           // 9. Selection (SUB / USB mode)
-  uint8_t delayToInverterAfterBatteryKill = 5;   // 10. Minutes (1-10, step: 1) | Now battery above low level
-  uint8_t delayDaytimeToInverter = 5;            // 11. Minutes (1-10, step: 1) | Probably were clouds, but still daytime
-  uint8_t windowToGridOnVoltageLow = 2;          // 12. Minutes (1-10, step: 1) | Battery voltage b/w low and critical
-  uint8_t windowToGridOnCurrentCrit = 10;        // 13. Seconds (5-60, step: 5) | Battery current b/w high and critical
-  uint8_t windowToGridDaytimeOnCurrentHigh = 2;  // 14. Minutes (1-10, step: 1) | Battery current b/w low and high
-  uint8_t windowToGridDaytimeOnCurrentLow = 5;   // 15. Minutes (1-15, step: 1) | Battery current below low
-  uint8_t solarOnTimeHours = 7;                  // 17. Hour of the day (5-10, step: 15-minute)
-  uint8_t solarOnTimeMinutes = 0;                // 17. Minute of the hour (0-45, step: 15-minute)
-  uint8_t solarOffTimeHours = 17;                // 18. Hour of the day (14-19, step: 15-minute)
-  uint8_t solarOffTimeMinutes = 0;               // 18. Minute of the hour (0-45, step: 15-minute)
-  uint8_t ledBrightLevel = 1;                    // 19. Level (1-10, step: 1)
-  uint8_t buzzerLevel = 1;                       // 20. Level (1-10, step: 1)
+  uint8_t batteryFullChargeVolts = 144;          // 4. 14.4V (120-160, step: 1)
+  uint8_t batteryDischargedVoltsLow = 120;       // 5. 12.0V (100-130, step: 1)
+  uint8_t batteryDischargedVoltsCrit = 110;      // 6. 11.0V (90-120, step: 1)
+  uint8_t batteryDischargeCurrentCrit = 50;      // 7. Ampere (20-60, step: 5)
+  uint8_t batteryDischargeCurrentHigh = 20;      // 8. Ampere (10-30, step: 5)
+  uint8_t batteryDischargeCurrentLow = 5;        // 9. Ampere (1-15, step: 1)
+  bool prioritizeSolarOverGrid = true;           // 10. Selection (SUB / USB mode)
+  uint8_t delayToInverterAfterBatteryKill = 5;   // 11. Minutes (1-10, step: 1) | Now battery above low level
+  uint8_t delayDaytimeToInverter = 5;            // 12. Minutes (1-10, step: 1) | Probably were clouds, but still daytime
+  uint8_t windowToGridOnVoltageLow = 2;          // 13. Minutes (1-10, step: 1) | Battery voltage b/w low and critical
+  uint8_t windowToGridOnCurrentCrit = 10;        // 14. Seconds (5-60, step: 5) | Battery current b/w high and critical
+  uint8_t windowToGridDaytimeOnCurrentHigh = 2;  // 15. Minutes (1-10, step: 1) | Battery current b/w low and high
+  uint8_t windowToGridDaytimeOnCurrentLow = 5;   // 16. Minutes (1-15, step: 1) | Battery current below low
+  uint8_t solarOnTimeHours = 7;                  // 18. Hour of the day (5-10, step: 1)
+  uint8_t solarOnTimeMinutes = 0;                // 18. Minute of the hour (0-45, step: 15)
+  uint8_t solarOffTimeHours = 17;                // 19. Hour of the day (14-19, step: 1)
+  uint8_t solarOffTimeMinutes = 0;               // 19. Minute of the hour (0-45, step: 15)
+  uint8_t ledBrightLevel = 1;                    // 20. Level (1-10, step: 1)
+  uint8_t buzzerLevel = 1;                       // 21. Level (1-10, step: 1)
 
   void load() {
     if (EEPROM.read(0) != PREFS_INIT_MARKER)
@@ -688,7 +689,7 @@ void handle2HzTimer() {
   }
 
   if (ledOn) {
-    if (inverterHaltReason != INV_NO_REASON && (showingWarning <= 2) && screenNum <= SCR_VOLT_PWR) {
+    if (inverterHaltReason != INV_NO_REASON && (showingWarning <= 2) && screenNum <= SCR_VOLT_TEMP) {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
@@ -789,6 +790,7 @@ void handleButtonsPressed() {
   switch (screenNum) {
     case SCR_VOLT_CURR:
     case SCR_VOLT_PWR:
+    case SCR_VOLT_TEMP:
       if (ledOn) {
         led.MAX7219_ShutdownStart();
         ledOn = false;
@@ -875,7 +877,7 @@ void handleButtonsPressed() {
 ////////////////////////////////////////////////////////////////////
 
 void updateDisplayMsg() {
-  if (screenNum > SCR_VOLT_PWR && isTsOlderThan(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
+  if (screenNum > SCR_VOLT_TEMP && isTsOlderThan(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println("No activity. Jumping to first screen...");
     screenNum = SCR_VOLT_CURR;
     discardChangedPrefs();
@@ -902,6 +904,10 @@ void updateDisplayMsg() {
       } else {
         dtostrf(round(power) == 0 ? 0 : power, 0, 0, rightStr);
       }
+      break;
+    case SCR_VOLT_TEMP:
+      dtostrf(battery.volts, 0, 2, leftStr);          // Battery volts
+      dtostrf(rtc.getTemperature(), 0, 1, rightStr);  // Temperature
       break;
     case SCR_BTRY_FULL_VOLT:
       dtostrf(0.1f * chPrefs.batteryFullChargeVolts, 0, 1, rightStr);
