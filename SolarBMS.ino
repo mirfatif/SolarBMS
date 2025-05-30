@@ -40,9 +40,34 @@ bool rtcFlags;
 
 ////////////////////////////////////////////////////////////////////
 
+enum Screen {
+  SCR_VOLT_CURR = 1,
+  SCR_VOLT_PWR,
+  SCR_BTRY_FULL_VOLT,
+  SCR_BTRY_LOW_VOLT,
+  SCR_BTRY_CRIT_VOLT,
+  SCR_BTRY_CRIT_CURR,
+  SCR_BTRY_HIGH_CURR,
+  SCR_BTRY_LOW_CURR,
+  SCR_SOLAR_GRID_MODE,
+  SCR_DLY_TO_INV_AFT_BTRY_KILL,
+  SCR_DLY_DAYTIME_TO_INV,
+  SCR_WIND_TO_GRID_ON_VOLT_LOW,
+  SCR_WIND_TO_GRID_ON_CURR_CRIT,
+  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,
+  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,
+  SCR_CLOCK,
+  SCR_SOLAR_ON_TIME,
+  SCR_SOLAR_OFF_TIME,
+  SCR_LED_BRIGHTNESS,
+  SCR_BUZZER_LEVEL,
+  SCR_SAVE
+};
+
 MAX7219 led;  // Uses pins 10 (CLK), 11 (CS), 12 (DIN)
 bool ledOn = true;
-uint8_t showingWarning = 1, screenNum = 1;  // 1-20
+uint8_t showingWarning = 1;
+Screen screenNum = SCR_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -651,7 +676,7 @@ void updateDisplay(bool showLeft = true, bool showRight = true) {
 }
 
 void handle2HzTimer() {
-  if (screenNum == 20 && chPrefs.buzzerLevel != prefs.buzzerLevel && !beeping) {
+  if (screenNum == SCR_BUZZER_LEVEL && chPrefs.buzzerLevel != prefs.buzzerLevel && !beeping) {
     beep(chPrefs.buzzerLevel);
     beeping = true;
   } else if (buzzerReason != 0 && !beeping) {
@@ -663,14 +688,14 @@ void handle2HzTimer() {
   }
 
   if (ledOn) {
-    if (inverterHaltReason != INV_NO_REASON && (showingWarning <= 2) && screenNum <= 2) {
+    if (inverterHaltReason != INV_NO_REASON && (showingWarning <= 2) && screenNum <= SCR_VOLT_PWR) {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
-    } else if (screenNum <= 2 && blinkLeft && showingWarning == 1) {
+    } else if (screenNum <= SCR_VOLT_PWR && blinkLeft && showingWarning == 1) {
       updateDisplay(false, true);
       showingWarning = 3;
-    } else if (screenNum <= 2 && blinkRight && showingWarning == 4) {
+    } else if (screenNum <= SCR_VOLT_PWR && blinkRight && showingWarning == 4) {
       updateDisplay(true, false);
       showingWarning = 2;
     } else {
@@ -744,71 +769,71 @@ void handleButtonsPressed() {
   }
 
   if (menuButtonPressed) {
-    if (screenNum == 21) {
-      screenNum = 1;
+    if (screenNum == SCR_SAVE) {
+      screenNum = SCR_VOLT_CURR;
       discardChangedPrefs();
     } else {
-      screenNum++;
+      screenNum = (Screen)((uint8_t)screenNum + 1);
     }
     // Skip prefs related to SUB mode
     if (!chPrefs.prioritizeSolarOverGrid) {
-      if (screenNum == 11) {
-        screenNum++;
-      } else if (screenNum >= 14 && screenNum <= 18) {
-        screenNum = 19;
+      if (screenNum == SCR_DLY_DAYTIME_TO_INV) {
+        screenNum = SCR_WIND_TO_GRID_ON_VOLT_LOW;
+      } else if (screenNum >= SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH && screenNum <= SCR_SOLAR_OFF_TIME) {
+        screenNum = SCR_LED_BRIGHTNESS;
       }
     }
     return;
   }
 
   switch (screenNum) {
-    case 1:
-    case 2:
+    case SCR_VOLT_CURR:
+    case SCR_VOLT_PWR:
       if (ledOn) {
         led.MAX7219_ShutdownStart();
         ledOn = false;
       }
       break;
-    case 3:
+    case SCR_BTRY_FULL_VOLT:
       handleMinMaxPrefButtonPress(chPrefs.batteryFullChargeVolts, 120, 160);
       break;
-    case 4:
+    case SCR_BTRY_LOW_VOLT:
       handleMinMaxPrefButtonPress(chPrefs.batteryDischargedVoltsLow, 100, 130);
       break;
-    case 5:
+    case SCR_BTRY_CRIT_VOLT:
       handleMinMaxPrefButtonPress(chPrefs.batteryDischargedVoltsCrit, 90, 120);
       break;
-    case 6:
+    case SCR_BTRY_CRIT_CURR:
       handleMinMaxPrefButtonPress(chPrefs.batteryDischargeCurrentCrit, 20, 60, 5);
       break;
-    case 7:
+    case SCR_BTRY_HIGH_CURR:
       handleMinMaxPrefButtonPress(chPrefs.batteryDischargeCurrentHigh, 10, 30, 5);
       break;
-    case 8:
+    case SCR_BTRY_LOW_CURR:
       handleMinMaxPrefButtonPress(chPrefs.batteryDischargeCurrentLow, 1, 15);
       break;
-    case 9:
+    case SCR_SOLAR_GRID_MODE:
       chPrefs.prioritizeSolarOverGrid = !chPrefs.prioritizeSolarOverGrid;
       break;
-    case 10:
+    case SCR_DLY_TO_INV_AFT_BTRY_KILL:
       handleMinMaxPrefButtonPress(chPrefs.delayToInverterAfterBatteryKill, 1, 10);
       break;
-    case 11:
+    case SCR_DLY_DAYTIME_TO_INV:
       handleMinMaxPrefButtonPress(chPrefs.delayDaytimeToInverter, 1, 10);
       break;
-    case 12:
+    case SCR_WIND_TO_GRID_ON_VOLT_LOW:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridOnVoltageLow, 1, 10);
       break;
-    case 13:
+    case SCR_WIND_TO_GRID_ON_CURR_CRIT:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridOnCurrentCrit, 5, 60, 5);
       break;
-    case 14:
+    case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridDaytimeOnCurrentHigh, 1, 10);
       break;
-    case 15:
+    case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridDaytimeOnCurrentLow, 1, 15);
       break;
-    case 16:
+    case SCR_CLOCK:
       if (!clk.updated) {
         clk.updated = true;
         clk.hours = rtc.getHour(rtcFlags, rtcFlags);
@@ -820,20 +845,20 @@ void handleButtonsPressed() {
         handleTimePrefButtonPress(clk.hours, clk.minutes, 0, 23);
       }
       break;
-    case 17:
+    case SCR_SOLAR_ON_TIME:
       handleTimePrefButtonPress(chPrefs.solarOnTimeHours, chPrefs.solarOnTimeMinutes, 5, 10);
       break;
-    case 18:
+    case SCR_SOLAR_OFF_TIME:
       handleTimePrefButtonPress(chPrefs.solarOffTimeHours, chPrefs.solarOffTimeMinutes, 14, 19);
       break;
-    case 19:
+    case SCR_LED_BRIGHTNESS:
       handleMinMaxPrefButtonPress(chPrefs.ledBrightLevel, 1, 10);
       setBrightness(chPrefs.ledBrightLevel);
       break;
-    case 20:
+    case SCR_BUZZER_LEVEL:
       handleMinMaxPrefButtonPress(chPrefs.buzzerLevel, 1, 10);
       break;
-    case 21:
+    case SCR_SAVE:
       if (chPrefs.batteryDischargedVoltsLow < chPrefs.batteryFullChargeVolts
           && chPrefs.batteryDischargedVoltsCrit < chPrefs.batteryDischargedVoltsLow
           && chPrefs.batteryDischargeCurrentHigh < chPrefs.batteryDischargeCurrentCrit
@@ -841,7 +866,7 @@ void handleButtonsPressed() {
           && (chPrefs.windowToGridOnCurrentCrit != 60 || chPrefs.windowToGridDaytimeOnCurrentHigh != 1)
           && chPrefs.windowToGridDaytimeOnCurrentLow > chPrefs.windowToGridDaytimeOnCurrentHigh) {
         saveChangedPrefs();
-        screenNum = 1;
+        screenNum = SCR_VOLT_CURR;
       }
       break;
   }
@@ -850,9 +875,9 @@ void handleButtonsPressed() {
 ////////////////////////////////////////////////////////////////////
 
 void updateDisplayMsg() {
-  if (screenNum > 2 && isTsOlderThan(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
+  if (screenNum > SCR_VOLT_PWR && isTsOlderThan(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println("No activity. Jumping to first screen...");
-    screenNum = 1;
+    screenNum = SCR_VOLT_CURR;
     discardChangedPrefs();
   }
 
@@ -865,11 +890,11 @@ void updateDisplayMsg() {
   leftStr[strlen(leftStr)] = '.';
 
   switch (screenNum) {
-    case 1:
+    case SCR_VOLT_CURR:
       dtostrf(battery.volts, 0, 2, leftStr);                                            // Battery volts
       dtostrf(round(battery.current * 10) == 0 ? 0 : battery.current, 0, 1, rightStr);  // Current
       break;
-    case 2:
+    case SCR_VOLT_PWR:
       power = battery.volts * battery.current;
       dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
       if (abs(power) < 100) {
@@ -878,65 +903,65 @@ void updateDisplayMsg() {
         dtostrf(round(power) == 0 ? 0 : power, 0, 0, rightStr);
       }
       break;
-    case 3:
+    case SCR_BTRY_FULL_VOLT:
       dtostrf(0.1f * chPrefs.batteryFullChargeVolts, 0, 1, rightStr);
       break;
-    case 4:
+    case SCR_BTRY_LOW_VOLT:
       dtostrf(0.1f * chPrefs.batteryDischargedVoltsLow, 0, 1, rightStr);
       break;
-    case 5:
+    case SCR_BTRY_CRIT_VOLT:
       dtostrf(0.1f * chPrefs.batteryDischargedVoltsCrit, 0, 1, rightStr);
       break;
-    case 6:
+    case SCR_BTRY_CRIT_CURR:
       itoa(chPrefs.batteryDischargeCurrentCrit, rightStr, 10);
       break;
-    case 7:
+    case SCR_BTRY_HIGH_CURR:
       itoa(chPrefs.batteryDischargeCurrentHigh, rightStr, 10);
       break;
-    case 8:
+    case SCR_BTRY_LOW_CURR:
       itoa(chPrefs.batteryDischargeCurrentLow, rightStr, 10);
       break;
-    case 9:
+    case SCR_SOLAR_GRID_MODE:
       strcpy(rightStr, chPrefs.prioritizeSolarOverGrid ? "5U8" : "U58");
       break;
-    case 10:
+    case SCR_DLY_TO_INV_AFT_BTRY_KILL:
       itoa(chPrefs.delayToInverterAfterBatteryKill, rightStr, 10);
       break;
-    case 11:
+    case SCR_DLY_DAYTIME_TO_INV:
       itoa(chPrefs.delayDaytimeToInverter, rightStr, 10);
       break;
-    case 12:
+    case SCR_WIND_TO_GRID_ON_VOLT_LOW:
       itoa(chPrefs.windowToGridOnVoltageLow, rightStr, 10);
       break;
-    case 13:
+    case SCR_WIND_TO_GRID_ON_CURR_CRIT:
       itoa(chPrefs.windowToGridOnCurrentCrit, rightStr, 10);
       break;
-    case 14:
+    case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH:
       itoa(chPrefs.windowToGridDaytimeOnCurrentHigh, rightStr, 10);
       break;
-    case 15:
+    case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       itoa(chPrefs.windowToGridDaytimeOnCurrentLow, rightStr, 10);
       break;
-    case 16:
+    case SCR_CLOCK:
       if (clk.updated) {
         dtostrf(clk.minutes * 0.01f + clk.hours, 0, 2, rightStr);
       } else {
         dtostrf(rtc.getMinute() * 0.01f + rtc.getHour(rtcFlags, rtcFlags), 0, 2, rightStr);
       }
       break;
-    case 17:
+    case SCR_SOLAR_ON_TIME:
       dtostrf(chPrefs.solarOnTimeMinutes * 0.01f + chPrefs.solarOnTimeHours, 0, 2, rightStr);
       break;
-    case 18:
+    case SCR_SOLAR_OFF_TIME:
       dtostrf(chPrefs.solarOffTimeMinutes * 0.01f + chPrefs.solarOffTimeHours, 0, 2, rightStr);
       break;
-    case 19:
+    case SCR_LED_BRIGHTNESS:
       itoa(chPrefs.ledBrightLevel, rightStr, 10);
       break;
-    case 20:
+    case SCR_BUZZER_LEVEL:
       itoa(chPrefs.buzzerLevel, rightStr, 10);
       break;
-    case 21:
+    case SCR_SAVE:
       strcpy(rightStr, "SAUE");  // SAVE
       break;
   }
