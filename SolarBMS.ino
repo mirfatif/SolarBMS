@@ -24,8 +24,7 @@
 #define BUZZER_PWM_MAX 40  // 13.3% (255 * 13.3 / 100) PWM gives 7.3V (out of 12V); sound distorts above this level
 #define BUZZER_PWM_MIN 1
 
-uint8_t buzzerReason = 0, buzzerReasonTmp = 0;
-bool beeping = false;
+bool buzzerOn = false;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -36,8 +35,17 @@ ZMPT101B acVoltageSensor(PIN_AC_VOLT, 50);
 
 ////////////////////////////////////////////////////////////////////
 
-DS3231 rtc;  // Uses I2C pins A4 (SDA) and A5 (SCL), address 0x68
-bool rtcFlags;
+class DS3231_RTC : public DS3231 {
+  bool flags;
+
+public:
+
+  byte getHr() {
+    return getHour(flags, flags);
+  }
+};
+
+DS3231_RTC rtc;  // Uses I2C pins A4 (SDA) and A5 (SCL), address 0x68
 
 ////////////////////////////////////////////////////////////////////
 
@@ -68,7 +76,6 @@ enum Screen {
 
 MAX7219 led;  // Uses pins 10 (CLK), 11 (CS), 12 (DIN)
 bool ledOn = true;
-uint8_t showingWarning = 1;
 Screen screenNum = SCR_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
@@ -91,12 +98,7 @@ INA219_WE dcSensor = INA219_WE();  // Uses I2C pins A4 (SDA) and A5 (SCL), addre
 
 char leftStr[8] = "HELLO";
 char rightStr[8] = "JI";
-bool blinkLeft, blinkRight;
-float power;
-uint8_t hoursNow, minutesNow;
-bool minusButtonPressed, menuButtonPressed, plusButtonPressed, hasGrid, hasSolar, inverterRecentlyTurnedOff;
-bool batteryVoltageOkSinceLongEnough, batteryRecentlyKilled, batteryVoltLowWindowPassed;
-bool batteryLowCurrentDrawWindowPassed, batteryHighCurrentDrawWindowPassed, batteryCritCurrentDrawWindowPassed;
+bool blinkLeft, blinkRight, hasGrid, hasSolar, minusButtonPressed, menuButtonPressed, plusButtonPressed;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -104,6 +106,29 @@ bool batteryLowCurrentDrawWindowPassed, batteryHighCurrentDrawWindowPassed, batt
 #define MIN_DELAY_TO_GRID_SEC 5
 
 #define PREFS_INIT_MARKER 0x42
+
+enum EEPROM_Addr {
+  EE_INIT_MARKER = 0,
+  EE_BATTERY_FULL_CHARGE_V,         // 1
+  EE_BATTERY_DISCH_VOLT_LOW,        // 2
+  EE_BATTERY_DISCH_VOLT_CRIT,       // 3
+  EE_BATTERY_DISCH_CURR_CRIT,       // 4
+  EE_BATTERY_DISCH_CURR_HIGH,       // 5
+  EE_PRIORITIZE_SOLAR,              // 6
+  EE_BATTERY_DISCH_CURR_LOW,        // 7
+  EE_DELAY_TO_INV_AFTER_BATT_KILL,  // 8
+  EE_DELAY_DAYTIME_TO_INV,          // 9
+  EE_WINDOW_TO_GRID_VOLT_LOW,       // 10
+  EE_WINDOW_TO_GRID_CURR_CRIT,      // 11
+  EE_WINDOW_DAYTIME_CURR_HIGH,      // 12
+  EE_WINDOW_DAYTIME_CURR_LOW,       // 13
+  EE_SOLAR_ON_HOUR,                 // 14
+  EE_SOLAR_ON_MIN,                  // 15
+  EE_SOLAR_OFF_HOUR,                // 16
+  EE_SOLAR_OFF_MIN,                 // 17
+  EE_LED_BRIGHT_LEVEL,              // 18
+  EE_BUZZER_LEVEL                   // 19
+};
 
 class Prefs {
 public:
@@ -128,51 +153,53 @@ public:
   uint8_t buzzerLevel = 1;                       // 21. Level (1-10, step: 1)
 
   void load() {
-    if (EEPROM.read(0) != PREFS_INIT_MARKER)
+    if (EEPROM.read(EE_INIT_MARKER) != PREFS_INIT_MARKER) {
       return;
+    }
 
-    batteryFullChargeVolts = EEPROM.read(1);
-    batteryDischargedVoltsLow = EEPROM.read(2);
-    batteryDischargedVoltsCrit = EEPROM.read(3);
-    batteryDischargeCurrentCrit = EEPROM.read(4);
-    batteryDischargeCurrentHigh = EEPROM.read(5);
-    prioritizeSolarOverGrid = EEPROM.read(6) != 0;
-    batteryDischargeCurrentLow = EEPROM.read(7);
-    delayToInverterAfterBatteryKill = EEPROM.read(8);
-    delayDaytimeToInverter = EEPROM.read(9);
-    windowToGridOnVoltageLow = EEPROM.read(10);
-    windowToGridOnCurrentCrit = EEPROM.read(11);
-    windowToGridDaytimeOnCurrentHigh = EEPROM.read(12);
-    windowToGridDaytimeOnCurrentLow = EEPROM.read(13);
-    solarOnTimeHours = EEPROM.read(14);
-    solarOnTimeMinutes = EEPROM.read(15);
-    solarOffTimeHours = EEPROM.read(16);
-    solarOffTimeMinutes = EEPROM.read(17);
-    ledBrightLevel = EEPROM.read(18);
-    buzzerLevel = EEPROM.read(19);
+    batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
+    batteryDischargedVoltsLow = EEPROM.read(EE_BATTERY_DISCH_VOLT_LOW);
+    batteryDischargedVoltsCrit = EEPROM.read(EE_BATTERY_DISCH_VOLT_CRIT);
+    batteryDischargeCurrentCrit = EEPROM.read(EE_BATTERY_DISCH_CURR_CRIT);
+    batteryDischargeCurrentHigh = EEPROM.read(EE_BATTERY_DISCH_CURR_HIGH);
+    prioritizeSolarOverGrid = (EEPROM.read(EE_PRIORITIZE_SOLAR) != 0);
+    batteryDischargeCurrentLow = EEPROM.read(EE_BATTERY_DISCH_CURR_LOW);
+    delayToInverterAfterBatteryKill = EEPROM.read(EE_DELAY_TO_INV_AFTER_BATT_KILL);
+    delayDaytimeToInverter = EEPROM.read(EE_DELAY_DAYTIME_TO_INV);
+    windowToGridOnVoltageLow = EEPROM.read(EE_WINDOW_TO_GRID_VOLT_LOW);
+    windowToGridOnCurrentCrit = EEPROM.read(EE_WINDOW_TO_GRID_CURR_CRIT);
+    windowToGridDaytimeOnCurrentHigh = EEPROM.read(EE_WINDOW_DAYTIME_CURR_HIGH);
+    windowToGridDaytimeOnCurrentLow = EEPROM.read(EE_WINDOW_DAYTIME_CURR_LOW);
+    solarOnTimeHours = EEPROM.read(EE_SOLAR_ON_HOUR);
+    solarOnTimeMinutes = EEPROM.read(EE_SOLAR_ON_MIN);
+    solarOffTimeHours = EEPROM.read(EE_SOLAR_OFF_HOUR);
+    solarOffTimeMinutes = EEPROM.read(EE_SOLAR_OFF_MIN);
+    ledBrightLevel = EEPROM.read(EE_LED_BRIGHT_LEVEL);
+    buzzerLevel = EEPROM.read(EE_BUZZER_LEVEL);
   }
 
   void persist() {
-    EEPROM.update(0, PREFS_INIT_MARKER);
-    EEPROM.update(1, batteryFullChargeVolts);
-    EEPROM.update(2, batteryDischargedVoltsLow);
-    EEPROM.update(3, batteryDischargedVoltsCrit);
-    EEPROM.update(4, batteryDischargeCurrentCrit);
-    EEPROM.update(5, batteryDischargeCurrentHigh);
-    EEPROM.update(6, prioritizeSolarOverGrid ? 1 : 0);
-    EEPROM.update(7, batteryDischargeCurrentLow);
-    EEPROM.update(8, delayToInverterAfterBatteryKill);
-    EEPROM.update(9, delayDaytimeToInverter);
-    EEPROM.update(10, windowToGridOnVoltageLow);
-    EEPROM.update(11, windowToGridOnCurrentCrit);
-    EEPROM.update(12, windowToGridDaytimeOnCurrentHigh);
-    EEPROM.update(13, windowToGridDaytimeOnCurrentLow);
-    EEPROM.update(14, solarOnTimeHours);
-    EEPROM.update(15, solarOnTimeMinutes);
-    EEPROM.update(16, solarOffTimeHours);
-    EEPROM.update(17, solarOffTimeMinutes);
-    EEPROM.update(18, ledBrightLevel);
-    EEPROM.update(19, buzzerLevel);
+    EEPROM.update(EE_INIT_MARKER, PREFS_INIT_MARKER);
+
+    EEPROM.update(EE_BATTERY_FULL_CHARGE_V, batteryFullChargeVolts);
+    EEPROM.update(EE_BATTERY_DISCH_VOLT_LOW, batteryDischargedVoltsLow);
+    EEPROM.update(EE_BATTERY_DISCH_VOLT_CRIT, batteryDischargedVoltsCrit);
+    EEPROM.update(EE_BATTERY_DISCH_CURR_CRIT, batteryDischargeCurrentCrit);
+    EEPROM.update(EE_BATTERY_DISCH_CURR_HIGH, batteryDischargeCurrentHigh);
+    EEPROM.update(EE_PRIORITIZE_SOLAR, prioritizeSolarOverGrid ? 1 : 0);
+    EEPROM.update(EE_BATTERY_DISCH_CURR_LOW, batteryDischargeCurrentLow);
+    EEPROM.update(EE_DELAY_TO_INV_AFTER_BATT_KILL, delayToInverterAfterBatteryKill);
+    EEPROM.update(EE_DELAY_DAYTIME_TO_INV, delayDaytimeToInverter);
+    EEPROM.update(EE_WINDOW_TO_GRID_VOLT_LOW, windowToGridOnVoltageLow);
+    EEPROM.update(EE_WINDOW_TO_GRID_CURR_CRIT, windowToGridOnCurrentCrit);
+    EEPROM.update(EE_WINDOW_DAYTIME_CURR_HIGH, windowToGridDaytimeOnCurrentHigh);
+    EEPROM.update(EE_WINDOW_DAYTIME_CURR_LOW, windowToGridDaytimeOnCurrentLow);
+    EEPROM.update(EE_SOLAR_ON_HOUR, solarOnTimeHours);
+    EEPROM.update(EE_SOLAR_ON_MIN, solarOnTimeMinutes);
+    EEPROM.update(EE_SOLAR_OFF_HOUR, solarOffTimeHours);
+    EEPROM.update(EE_SOLAR_OFF_MIN, solarOffTimeMinutes);
+    EEPROM.update(EE_LED_BRIGHT_LEVEL, ledBrightLevel);
+    EEPROM.update(EE_BUZZER_LEVEL, buzzerLevel);
   }
 };
 
@@ -198,7 +225,7 @@ float lerp(float x0, float x1, float y0, float y1, float x) {
   }
 }
 
-void setBrightness(char brightness = prefs.ledBrightLevel - 1) {
+void setBrightness(uint8_t brightness = prefs.ledBrightLevel - 1) {
   led.MAX7219_SetBrightness(brightness);
 }
 
@@ -233,11 +260,11 @@ void discardChangedPrefs() {
 
 ////////////////////////////////////////////////////////////////////
 
-bool isTsOlderThan(unsigned long tsMillis, unsigned int seconds) {
-  return millis() - tsMillis > seconds * 1000L;
+bool isTsOlderThanSec(unsigned long tsMillis, uint16_t seconds) {
+  return millis() - tsMillis > seconds * 1000;
 }
 
-bool isTsOlderThanMillis(unsigned long tsMillis, unsigned int ms) {
+bool isTsOlderThanMillis(unsigned long tsMillis, uint16_t ms) {
   return millis() - tsMillis > ms;
 }
 
@@ -253,18 +280,18 @@ public:
     return startedAt > stoppedAt;
   }
 
-  bool isOlderThan(unsigned int seconds) {
-    return isTsOlderThan(startedAt, seconds);
+  bool isOlderThan(uint16_t seconds) {
+    return isTsOlderThanSec(startedAt, seconds);
   }
 
   // Give timeout 0 to ignore repeated occurrences within a given window
-  void updateTs(bool isActive, unsigned int timeoutSec) {
+  void updateTs(bool isActive, uint16_t timeoutSec) {
     if (isOngoing()) {
       if (!isActive) {
         stoppedAt = millis();
       }
     } else if (isActive) {
-      if (millis() - stoppedAt < timeoutSec * 1000L) {
+      if (millis() - stoppedAt < timeoutSec * 1000) {
         startedAt = millis() - (stoppedAt - startedAt);
         stoppedAt = 0;
       } else {
@@ -326,7 +353,7 @@ public:
     // INA219 sensor gives both the battery voltage and current. No need to use voltage sensor.
     // analogRead(PIN_DC_VOLT)
 
-    // Battery voltage is the sum of bus voltage and shunt voltage.
+    // Battery voltage is the sum of bus voltage and shunt voltage (though is latter is very small).
     voltRecords[pos] = (dcSensor.getShuntVoltage_mV() + dcSensor.getBusVoltage_V() * 1000) / 1000;
     currentRecords[pos] = dcSensor.getCurrent_mA() / 1000;
 
@@ -344,8 +371,8 @@ public:
       current += currentRecords[i];
     }
 
-    volts = volts / INA219_SAMPLE_COUNT;
-    current = current / INA219_SAMPLE_COUNT;
+    volts /= INA219_SAMPLE_COUNT;
+    current /= INA219_SAMPLE_COUNT;
 
     volts -= INA219_BUS_VOLTAGE_OFFSET * (volts > 14 ? 2 : 1);
 
@@ -404,8 +431,6 @@ enum InverterHaltReason {
 
 InverterHaltReason inverterHaltReason;
 
-String inverterHaltReasonName(InverterHaltReason reason);
-
 String inverterHaltReasonName(InverterHaltReason reason = inverterHaltReason) {
   if (reason == INV_NO_REASON) {
     return "NO_REASON";
@@ -422,14 +447,10 @@ bool onInverter() {
   return ts.switchedToInverter > ts.switchedToGrid;
 }
 
-bool onGrid() {
-  return ts.switchedToGrid > ts.switchedToInverter;
-}
-
 void switchToInverter() {
   if (onInverter()) {
     // Let the inverter start before switching off grid.
-    if (digitalRead(PIN_AC_RELAY) != HIGH && (!hasGrid || isTsOlderThan(ts.switchedToInverter, 5))) {
+    if (digitalRead(PIN_AC_RELAY) != HIGH && (!hasGrid || isTsOlderThanSec(ts.switchedToInverter, 5))) {
       digitalWrite(PIN_AC_RELAY, HIGH);
     }
     return;
@@ -447,7 +468,7 @@ void switchToInverter() {
 void switchToGrid(InverterHaltReason reason);
 
 void switchToGrid(InverterHaltReason reason) {
-  if (onGrid()) {
+  if (!onInverter()) {
     return;
   }
 
@@ -467,13 +488,13 @@ void updateBatteryVoltageCurrentTimestamps() {
   }
 
   ts.battery.voltageOk.updateTs(battery.isVoltageOkOrHigh, 0);
-  ts.battery.voltageLow.updateTs(battery.isVoltageLowOrCriticallyLow, prefs.windowToGridOnVoltageLow * 60L);
+  ts.battery.voltageLow.updateTs(battery.isVoltageLowOrCriticallyLow, prefs.windowToGridOnVoltageLow * 60);
   ts.battery.dischargeCurrentCritical.updateTs(battery.isDischargingCritically || battery.isDischargingVeryCritically,
                                                prefs.windowToGridOnCurrentCrit);
   ts.battery.dischargeCurrentHighOrAbove.updateTs(battery.isDischargingHigh
                                                     || battery.isDischargingCritically
                                                     || battery.isDischargingVeryCritically,
-                                                  prefs.windowToGridDaytimeOnCurrentHigh * 60L);
+                                                  prefs.windowToGridDaytimeOnCurrentHigh * 60);
   // Keep this window small to ignore temporary fluctuations
   ts.battery.dischargeCurrentLow.updateTs(battery.isDischargingLow, 10);
 
@@ -481,33 +502,38 @@ void updateBatteryVoltageCurrentTimestamps() {
   ts.battery.chargeCurrentHigh.updateTs(battery.isChargingHigh, 10);
 }
 
-void handleInverterGridSwitching() {
-  hoursNow = rtc.getHour(rtcFlags, rtcFlags);
-  minutesNow = rtc.getMinute();
+bool isDaytime() {
+  uint8_t hoursNow = rtc.getHr();
+  uint8_t minutesNow = rtc.getMinute();
 
+  return (hoursNow > prefs.solarOnTimeHours
+          || (hoursNow == prefs.solarOnTimeHours && minutesNow >= prefs.solarOnTimeMinutes))
+         && (hoursNow < prefs.solarOffTimeHours
+             || (hoursNow == prefs.solarOffTimeHours && minutesNow < prefs.solarOffTimeMinutes));
+}
+
+void handleInverterGridSwitching() {
   hasGrid = acVoltageSensor.getRmsVoltage() > GRID_VOLTAGE_THRESHOLD;
-  hasSolar = prefs.prioritizeSolarOverGrid
-             && (hoursNow > prefs.solarOnTimeHours
-                 || (hoursNow == prefs.solarOnTimeHours && minutesNow >= prefs.solarOnTimeMinutes))
-             && (hoursNow < prefs.solarOffTimeHours
-                 || (hoursNow == prefs.solarOffTimeHours && minutesNow <= prefs.solarOffTimeMinutes));
+  hasSolar = prefs.prioritizeSolarOverGrid && isDaytime();
+
+  auto batteryVoltageOkSinceLongEnough = [](uint8_t minutes = prefs.delayToInverterAfterBatteryKill) -> bool {
+    return ts.battery.voltageOk.isOngoing() && ts.battery.voltageOk.isOlderThan(minutes * 60);
+  };
 
   if (hasGrid) {
     if (!hasSolar) {
       switchToGrid(INV_NO_REASON);
     } else {
-      batteryVoltageOkSinceLongEnough = ts.battery.voltageOk.isOngoing()
-                                        && ts.battery.voltageOk.isOlderThan(prefs.delayToInverterAfterBatteryKill * 60L);
-      inverterRecentlyTurnedOff = !isTsOlderThan(ts.switchedToGrid, prefs.delayDaytimeToInverter * 60L);
+      bool inverterRecentlyTurnedOff = !isTsOlderThanSec(ts.switchedToGrid, prefs.delayDaytimeToInverter * 60);
 
-      if (batteryVoltageOkSinceLongEnough && !inverterRecentlyTurnedOff) {
+      if (!inverterRecentlyTurnedOff && batteryVoltageOkSinceLongEnough()) {
         switchToInverter();
       }
     }
   } else if (!battery.isVoltageLowOrCriticallyLow) {
-    batteryRecentlyKilled = !isTsOlderThan(ts.battery.voltageLowOrCurrentHigh, prefs.delayToInverterAfterBatteryKill * 60L);
+    bool batteryRecentlyKilled = !isTsOlderThanSec(ts.battery.voltageLowOrCurrentHigh, prefs.delayToInverterAfterBatteryKill * 60);
 
-    if (!batteryRecentlyKilled) {
+    if (!batteryRecentlyKilled && batteryVoltageOkSinceLongEnough(1)) {
       switchToInverter();
     }
   }
@@ -516,9 +542,9 @@ void handleInverterGridSwitching() {
     if (battery.isVoltageCriticallyLow) {
       switchToGrid(INV_BATTERY_LOW);
     } else if (battery.isVoltageLowOrCriticallyLow) {
-      batteryVoltLowWindowPassed = ts.battery.voltageLow.isOlderThan(prefs.windowToGridOnVoltageLow * 60L);
+      bool batteryVoltLowWindowPassed = ts.battery.voltageLow.isOlderThan(prefs.windowToGridOnVoltageLow * 60);
 
-      if (batteryVoltLowWindowPassed && isTsOlderThan(ts.switchedToInverter, MIN_DELAY_TO_GRID_SEC)) {
+      if (batteryVoltLowWindowPassed && isTsOlderThanSec(ts.switchedToInverter, MIN_DELAY_TO_GRID_SEC)) {
         switchToGrid(INV_BATTERY_LOW);
       }
     }
@@ -528,20 +554,20 @@ void handleInverterGridSwitching() {
     if (battery.isDischargingVeryCritically) {
       switchToGrid(INV_BATTERY_OVERLOAD);
     } else if (battery.isDischargingCritically) {
-      batteryCritCurrentDrawWindowPassed = ts.battery.dischargeCurrentCritical.isOlderThan(prefs.windowToGridOnCurrentCrit);
+      bool batteryCritCurrentDrawWindowPassed = ts.battery.dischargeCurrentCritical.isOlderThan(prefs.windowToGridOnCurrentCrit);
       if (batteryCritCurrentDrawWindowPassed) {
         switchToGrid(INV_BATTERY_OVERLOAD);
       }
-    } else if (hasGrid && hasSolar && isTsOlderThan(ts.switchedToInverter, MIN_DELAY_TO_GRID_SEC)) {
+    } else if (hasGrid && hasSolar && isTsOlderThanSec(ts.switchedToInverter, MIN_DELAY_TO_GRID_SEC)) {
       if (battery.isDischargingHigh) {
-        batteryHighCurrentDrawWindowPassed =
-          ts.battery.dischargeCurrentHighOrAbove.isOlderThan(prefs.windowToGridDaytimeOnCurrentHigh * 60L);
+        bool batteryHighCurrentDrawWindowPassed =
+          ts.battery.dischargeCurrentHighOrAbove.isOlderThan(prefs.windowToGridDaytimeOnCurrentHigh * 60);
         if (batteryHighCurrentDrawWindowPassed) {
           switchToGrid(INV_SOLAR_NOT_ENOUGH);
         }
       } else if (battery.isDischargingLow) {
-        batteryLowCurrentDrawWindowPassed =
-          ts.battery.dischargeCurrentLow.isOlderThan(prefs.windowToGridDaytimeOnCurrentLow * 60L);
+        bool batteryLowCurrentDrawWindowPassed =
+          ts.battery.dischargeCurrentLow.isOlderThan(prefs.windowToGridDaytimeOnCurrentLow * 60);
         if (batteryLowCurrentDrawWindowPassed) {
           switchToGrid(INV_SOLAR_NOT_ENOUGH);
         }
@@ -551,39 +577,40 @@ void handleInverterGridSwitching() {
 }
 
 void setBuzzerAndWarning() {
-  buzzerReasonTmp = 0;
+  uint8_t reasonTmp = 0;
+
   blinkLeft = false;
   blinkRight = false;
 
   // Before raising alarms, give a 5-30 seconds window for temporary spikes / dips in battery voltage / current.
   if (inverterHaltReason != INV_NO_REASON) {
-    buzzerReasonTmp = (1 << 0);
+    reasonTmp = (1 << 0);
   }
 
   if (battery.isVoltageLowOrCriticallyLow) {
     if (ts.battery.voltageLow.isOlderThan(5)) {
-      buzzerReasonTmp |= (1 << 1);
+      reasonTmp |= (1 << 1);
     }
     blinkLeft = true;
   }
 
   if (battery.isDischargingCritically || battery.isDischargingVeryCritically) {
     if (ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
-      buzzerReasonTmp |= (1 << 2);
+      reasonTmp |= (1 << 2);
     }
     blinkRight = true;
   }
 
   if (battery.isVoltageHigh) {
     if (ts.battery.voltageHigh.isOlderThan(30)) {
-      buzzerReasonTmp |= (1 << 3);
+      reasonTmp |= (1 << 3);
     }
     blinkLeft = true;
   }
 
   if (battery.isChargingHigh) {
     if (ts.battery.chargeCurrentHigh.isOlderThan(5)) {
-      buzzerReasonTmp |= (1 << 4);
+      reasonTmp |= (1 << 4);
     }
     blinkRight = true;
   }
@@ -591,32 +618,34 @@ void setBuzzerAndWarning() {
   if (hasSolar) {
     if (battery.isDischargingLow) {
       if (ts.battery.dischargeCurrentLow.isOlderThan(30)) {
-        buzzerReasonTmp |= (1 << 5);
+        reasonTmp |= (1 << 5);
       }
       blinkRight = true;
     } else if (battery.isDischarging) {
       if (ts.battery.dischargeCurrentHighOrAbove.isOlderThan(5)) {
-        buzzerReasonTmp |= (1 << 5);
+        reasonTmp |= (1 << 5);
       }
       blinkRight = true;
-    } else if (onGrid()) {
+    } else if (!onInverter()) {
       // Already convered above. Inverter halt reason must be set.
-      buzzerReasonTmp |= (1 << 6);
+      reasonTmp |= (1 << 6);
     }
   }
 
-  if (buzzerReasonTmp == 0) {
-    buzzerReason = 0;
-  } else if (buzzerReason != buzzerReasonTmp) {
-    buzzerReason = buzzerReasonTmp;
-    buzzerReasonTmp = 0;
+  static uint8_t reason = 0;
+
+  if (reasonTmp == 0) {
+    reason = 0;
+  } else if (reason != reasonTmp) {
+    reason = reasonTmp;
+    reasonTmp = 0;
 
     Serial.print("Buzzing due to");
 
-    auto printReason = [](const char *reason, String more = "") {
-      if (buzzerReasonTmp != 0) {
+    auto printReason = [&](const char *reason, String more = "") {
+      if (reasonTmp != 0) {
         Serial.print(",");
-        buzzerReasonTmp = 1;
+        reasonTmp = 1;
       }
       Serial.print(" ");
       Serial.print(reason);
@@ -624,7 +653,7 @@ void setBuzzerAndWarning() {
     };
 
     for (int i = 0; i <= 6; i++) {
-      if ((buzzerReason & (1 << i)) == 0) {
+      if ((reason & (1 << i)) == 0) {
         continue;
       }
 
@@ -655,6 +684,8 @@ void setBuzzerAndWarning() {
 
     Serial.println();
   }
+
+  buzzerOn = reason != 0;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -692,10 +723,12 @@ void updateDisplay(bool showLeft = true, bool showRight = true) {
 }
 
 void handle2HzTimer() {
+  static bool beeping = false;
+
   if (screenNum == SCR_BUZZER_LEVEL && chPrefs.buzzerLevel != prefs.buzzerLevel && !beeping) {
     beep(chPrefs.buzzerLevel);
     beeping = true;
-  } else if (buzzerReason != 0 && !beeping) {
+  } else if (buzzerOn && !beeping) {
     beep();
     beeping = true;
   } else {
@@ -703,25 +736,36 @@ void handle2HzTimer() {
     beeping = false;
   }
 
+  static uint8_t state = 1;
+
   if (ledOn) {
-    if (inverterHaltReason != INV_NO_REASON && (showingWarning <= 2) && screenNum <= SCR_VOLT_TEMP) {
+    if (inverterHaltReason != INV_NO_REASON && (state <= 2) && screenNum <= SCR_VOLT_TEMP) {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
-    } else if (screenNum <= SCR_VOLT_PWR && blinkLeft && showingWarning == 1) {
+    } else if (screenNum <= SCR_VOLT_PWR && blinkLeft && state == 1) {
       updateDisplay(false, true);
-      showingWarning = 3;
-    } else if (screenNum <= SCR_VOLT_PWR && blinkRight && showingWarning == 4) {
+      state = 3;
+    } else if (screenNum <= SCR_VOLT_PWR && blinkRight && state == 4) {
       updateDisplay(true, false);
-      showingWarning = 2;
+      state = 2;
     } else {
       updateDisplay();
     }
-    showingWarning++;
-    if (showingWarning > 4) {
-      showingWarning = 1;
+    state++;
+    if (state > 4) {
+      state = 1;
     }
   }
+}
+
+bool isButtonPressed(uint8_t pin) {
+  if (!digitalRead(pin)) {
+    // Check if button is stable for 20 ms before declaring it pressed
+    delay(20);
+    return !digitalRead(pin);
+  }
+  return false;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -849,7 +893,7 @@ void handleButtonsPressed() {
     case SCR_CLOCK:
       if (!clk.updated) {
         clk.updated = true;
-        clk.hours = rtc.getHour(rtcFlags, rtcFlags);
+        clk.hours = rtc.getHr();
         clk.minutes = rtc.getMinute();
       }
       if (clk.minutes != 0 && clk.minutes != 15 && clk.minutes != 30 && clk.minutes != 45) {
@@ -888,7 +932,7 @@ void handleButtonsPressed() {
 ////////////////////////////////////////////////////////////////////
 
 void updateDisplayMsg() {
-  if (screenNum > SCR_VOLT_TEMP && isTsOlderThan(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
+  if (screenNum > SCR_VOLT_TEMP && isTsOlderThanSec(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println("No activity. Jumping to first screen...");
     screenNum = SCR_VOLT_CURR;
     discardChangedPrefs();
@@ -901,6 +945,8 @@ void updateDisplayMsg() {
   itoa(screenNum, leftStr, 10);
   leftStr[strlen(leftStr) + 1] = '\0';
   leftStr[strlen(leftStr)] = '.';
+
+  float power;
 
   switch (screenNum) {
     case SCR_VOLT_CURR:
@@ -963,7 +1009,7 @@ void updateDisplayMsg() {
       if (clk.updated) {
         dtostrf(clk.minutes * 0.01f + clk.hours, 0, 2, rightStr);
       } else {
-        dtostrf(rtc.getMinute() * 0.01f + rtc.getHour(rtcFlags, rtcFlags), 0, 2, rightStr);
+        dtostrf(rtc.getMinute() * 0.01f + rtc.getHr(), 0, 2, rightStr);
       }
       break;
     case SCR_SOLAR_ON_TIME:
@@ -1024,11 +1070,13 @@ void setup() {
 
   led.Begin();
 
+  rtc.setClockMode(false);  // Set 24h
+
   loadPrefs();
 
   for (uint8_t i = 0; i < INA219_SAMPLE_COUNT; i++) {
     battery.update(prefs);
-    delay(round(1.0f / INA219_SAMPLE_COUNT));
+    delay(1000 / INA219_SAMPLE_COUNT);
   }
 }
 
@@ -1040,7 +1088,7 @@ void loop() {
     ts.humanActivity = millis();
   }
 
-  if (ledOn && isTsOlderThan(ts.humanActivity, 5 * 60)) {
+  if (ledOn && isTsOlderThanSec(ts.humanActivity, 5 * 60)) {
     //shutdownDisplay();
   }
 
@@ -1052,9 +1100,9 @@ void loop() {
   }
 
   if (!minusButtonPressed && !menuButtonPressed && !plusButtonPressed) {
-    minusButtonPressed = !digitalRead(PIN_BUTTON_MINUS);
-    menuButtonPressed = !digitalRead(PIN_BUTTON_MENU);
-    plusButtonPressed = !digitalRead(PIN_BUTTON_PLUS);
+    minusButtonPressed = isButtonPressed(PIN_BUTTON_MINUS);
+    menuButtonPressed = isButtonPressed(PIN_BUTTON_MENU);
+    plusButtonPressed = isButtonPressed(PIN_BUTTON_PLUS);
   }
 
   battery.update(prefs);  // Take 10 samples per second
