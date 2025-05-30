@@ -23,7 +23,8 @@
 #define BUZZER_PWM_MAX 40  // 13.3% (255 * 13.3 / 100) PWM gives 7.3V (out of 12V); sound distorts above this level
 #define BUZZER_PWM_MIN 1
 
-bool buzzerOn = false, beeping = false;
+uint8_t buzzerReason = 0, buzzerReasonTmp = 0;
+bool beeping = false;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -527,54 +528,97 @@ void handleInverterGridSwitching() {
 }
 
 void setBuzzerAndWarning() {
-  buzzerOn = false;
+  buzzerReasonTmp = 0;
   blinkLeft = false;
   blinkRight = false;
 
   // Before raising alarms, give a 5-30 seconds window for temporary spikes / dips in battery voltage / current.
   if (inverterHaltReason != INV_NO_REASON) {
-    buzzerOn = true;
-    Serial.print("Buzzing due to inverter halt due to ");
-    Serial.println(inverterHaltReasonName());
+    buzzerReasonTmp = (1 << 0);
   }
 
   if (battery.isVoltageLowOrCriticallyLow && ts.battery.voltageLow.isOlderThan(5)) {
-    buzzerOn = true;
+    buzzerReasonTmp |= (1 << 1);
     blinkLeft = true;
-    Serial.println("Buzzing due to battery low...");
   }
 
   if ((battery.isDischargingCritically || battery.isDischargingVeryCritically)
       && ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
-    buzzerOn = true;
+    buzzerReasonTmp |= (1 << 2);
     blinkRight = true;
-    Serial.println("Buzzing due to battery high discharging rate...");
   }
 
   if (battery.isVoltageHigh && ts.battery.voltageHigh.isOlderThan(30)) {
-    buzzerOn = true;
+    buzzerReasonTmp |= (1 << 3);
     blinkLeft = true;
-    Serial.println("Buzzing due to battery high voltage...");
   }
 
   if (battery.isChargingHigh && ts.battery.chargeCurrentHigh.isOlderThan(5)) {
-    buzzerOn = true;
+    buzzerReasonTmp |= (1 << 4);
     blinkRight = true;
-    Serial.println("Buzzing due to battery high charging rate...");
   }
 
   if (hasSolar) {
     if (battery.isDischarging
         && (ts.battery.dischargeCurrentLow.isOlderThan(30)
             || (!battery.isDischargingLow && ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)))) {
-      buzzerOn = true;
+      buzzerReasonTmp |= (1 << 5);
       blinkRight = true;
-      Serial.println("Buzzing due to battery discharging during daytime...");
     } else if (onGrid()) {
       // Already convered above. Inverter halt reason must be set.
-      buzzerOn = true;
-      Serial.println("Buzzing due to not using solar...");
+      buzzerReasonTmp |= (1 << 6);
     }
+  }
+
+  if (buzzerReasonTmp == 0) {
+    buzzerReason = 0;
+  } else if (buzzerReason != buzzerReasonTmp) {
+    buzzerReason = buzzerReasonTmp;
+    buzzerReasonTmp = 0;
+
+    Serial.print("Buzzing due to");
+
+    auto printReason = [](const char *reason, String more = "") {
+      if (buzzerReasonTmp != 0) {
+        Serial.print(",");
+        buzzerReasonTmp = 1;
+      }
+      Serial.print(" ");
+      Serial.print(reason);
+      Serial.print(more);
+    };
+
+    for (int i = 0; i <= 6; i++) {
+      if ((buzzerReason & (1 << i)) == 0) {
+        continue;
+      }
+
+      switch (i) {
+        case 0:
+          printReason("inverter halt b/c of ", inverterHaltReasonName());
+          break;
+        case 1:
+          printReason("battery low");
+          break;
+        case 2:
+          printReason("battery high discharging rate");
+          break;
+        case 3:
+          printReason("battery high voltage");
+          break;
+        case 4:
+          printReason("battery high charging rate");
+          break;
+        case 5:
+          printReason("battery discharging during daytime");
+          break;
+        case 6:
+          printReason("not using solar");
+          break;
+      }
+    }
+
+    Serial.println();
   }
 }
 
@@ -602,7 +646,7 @@ void handle2HzTimer() {
   if (screenNum == 20 && chPrefs.buzzerLevel != prefs.buzzerLevel && !beeping) {
     beep(chPrefs.buzzerLevel);
     beeping = true;
-  } else if (buzzerOn && !beeping) {
+  } else if (buzzerReason != 0 && !beeping) {
     beep();
     beeping = true;
   } else {
