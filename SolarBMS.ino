@@ -5,6 +5,7 @@
 #include <max7219.h>
 #include <INA219_WE.h>
 
+#define PIN_IR_SENSOR 3
 #define PIN_AC_RELAY 4
 #define PIN_INV_RELAY 5
 #define PIN_BUZZER 6
@@ -282,7 +283,7 @@ public:
 
 class Timestamps {
 public:
-  unsigned long twoHzTimer, loopCheck, buttonPressed;
+  unsigned long humanActivity = millis(), twoHzTimer, loopCheck, buttonPressed;
   unsigned long switchedToGrid = 0, switchedToInverter = 1;
   BatteryEvents battery;
 };
@@ -666,6 +667,20 @@ void beep(uint8_t buzzerLevel = prefs.buzzerLevel) {
   }
 }
 
+void startDisplay() {
+  if (!ledOn) {
+    led.MAX7219_ShutdownStop();
+    ledOn = true;
+  }
+}
+
+void shutdownDisplay() {
+  if (ledOn) {
+    led.MAX7219_ShutdownStart();
+    ledOn = false;
+  }
+}
+
 void updateDisplay(bool showLeft = true, bool showRight = true) {
   led.Clear();
   if (showLeft) {
@@ -761,11 +776,10 @@ void handleButtonsPressed() {
   Serial.print(minusButtonPressed ? "-" : (menuButtonPressed ? "Menu" : "+"));
   Serial.println(" button pressed");
 
-  ts.buttonPressed = millis();
+  ts.buttonPressed = ts.humanActivity = millis();
 
   if (!ledOn) {
-    led.MAX7219_ShutdownStop();
-    ledOn = true;
+    startDisplay();
     return;
   }
 
@@ -791,10 +805,7 @@ void handleButtonsPressed() {
     case SCR_VOLT_CURR:
     case SCR_VOLT_PWR:
     case SCR_VOLT_TEMP:
-      if (ledOn) {
-        led.MAX7219_ShutdownStart();
-        ledOn = false;
-      }
+      shutdownDisplay();
       break;
     case SCR_BTRY_FULL_VOLT:
       handleMinMaxPrefButtonPress(chPrefs.batteryFullChargeVolts, 120, 160);
@@ -985,6 +996,7 @@ void setup() {
   while (!Serial)
     ;
 
+  pinMode(PIN_IR_SENSOR, INPUT_PULLUP);
   pinMode(PIN_AC_RELAY, OUTPUT);
   pinMode(PIN_INV_RELAY, OUTPUT);
   pinMode(PIN_BUZZER, OUTPUT);
@@ -1022,6 +1034,15 @@ void setup() {
 
 void loop() {
   delay(100);
+
+  if (digitalRead(PIN_IR_SENSOR) == LOW) {
+    startDisplay();
+    ts.humanActivity = millis();
+  }
+
+  if (ledOn && isTsOlderThan(ts.humanActivity, 5 * 60)) {
+    //shutdownDisplay();
+  }
 
   // Using String, ISP, float point etc. in ISR (hardware timer interrupts) is problematic.
   // Se we'll be handling the 2 Hz timer logic manually here.
