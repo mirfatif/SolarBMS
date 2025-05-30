@@ -237,7 +237,7 @@ public:
         stoppedAt = millis();
       }
     } else if (isActive) {
-      if (millis() - startedAt < timeoutSec * 1000L) {
+      if (millis() - stoppedAt < timeoutSec * 1000L) {
         startedAt = millis() - (stoppedAt - startedAt);
         stoppedAt = 0;
       } else {
