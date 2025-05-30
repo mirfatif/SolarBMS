@@ -15,6 +15,11 @@
       text-decoration: underline;
     }
 
+    a.no-color {
+      color: black;
+      text-decoration: none;
+    }
+
     img {
       display: block;
       margin: auto;
@@ -55,22 +60,22 @@
   <ul>
     <li>
       <b>Over-discharge protection</b>
-      <div>Inverter is turned off if battery voltage drops below <code>BV<sub>low</sub></code>, even if there is no grid. A 2 minutes window is given if voltages remain above <code>BV<sub>crit</sub></code>.</div>
-      <div>Discharging current is also limited to <code>BI<sub>high</sub></code>. A 10 seconds window is given if discharge rate is below <code>BI<sub>crit</sub></code> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</div>
+      <div>Inverter is turned off if battery voltage drops below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a>, even if there is no grid. A 2 minutes window is given if voltages remain above <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a>.</div>
+      <div>Discharging current is also limited to <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. A 10 seconds window is given if discharge rate is below <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</div>
     </li>
     <li>
       <b>Overcharge protection</b>
-      <div>Start beeping if battery is overcharged i.e. charged above <code>BV<sub>full</sub></code> or at a rate higher than <code>BI<sub>high</sub></code>. We cannot control the PWM controller with Arduino. But we can cry.</div>
+      <div>Start beeping if battery is overcharged i.e. charged above <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a> or at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. We cannot control the PWM controller with Arduino. But we can cry.</div>
     </li>
   </ul>
 
   <h2>Alarms</h2>
   <p>Raise alarm (start beeping) if any of the following is true:</p>
   <ul>
-    <li>Battery is above <code>BV<sub>full</sub></code></li>
-    <li>Battery is below <code>BV<sub>low</sub></code></li>
-    <li>Battery is being charged at a rate higher than <code>BI<sub>high</sub></code></li>
-    <li>Battery is being discharged at a rate higher than <code>BI<sub>high</sub></code></li>
+    <li>Battery is above <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
+    <li>Battery is below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
+    <li>Battery is being charged at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
+    <li>Battery is being discharged at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
     <li>During daytime:
       <ul>
         <li>Battery is being discharged (at any rate; we should be using solar)</li>
@@ -88,8 +93,8 @@
   <h2>On-Screen Warnings</h2>
   <p>Inverter turned off (and switched to grid) due to:</p>
   <ul>
-    <li><strong>E 1</strong>: Battery low – voltage below <code>BV<sub>low</sub></code></li>
-    <li><strong>E 2</strong>: Battery overloaded – high current (> <code>BI<sub>high</sub></code>) drained</li>
+    <li><strong>E 1</strong>: Battery low – voltage below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
+    <li><strong>E 2</strong>: Battery overloaded – high current (> <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>) drained</li>
     <li><strong>E 3</strong>: Load higher than the solar power (during daytime) – due to morning / evening, clouds etc.</li>
   </ul>
 
@@ -99,10 +104,10 @@
     <li>First 3 screens are informatory. On these screens, setting buttons turn off the display. Then press any button to turn it back on.</li>
     <li>On SAVE screen (last), setting buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
-        <li><code>BV<sub>low</sub></code> higher than <code>BV<sub>full</sub></code></li>
-        <li><code>BV<sub>crit</sub></code> higher than <code>BV<sub>low</sub></code></li>
-        <li><code>BI<sub>high</sub></code> higher than <code>BI<sub>crit</sub></code></li>
-        <li><code>BI<sub>low</sub></code> higher than <code>BI<sub>high</sub></code></li>
+        <li><a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
+        <li><a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
+        <li><a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> higher than <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a></li>
+        <li><a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
         <li><code>BI<sub>crit-high</sub></code> window higher than <code>BI<sub>high-low</sub></code> window</li>
         <li><code>BI<sub>high-low</sub></code> window higher than <code>BI<sub>below-low</sub></code> window</li>
       </ul>
@@ -114,19 +119,19 @@
     <li>Battery voltage (left, Volts) and current (right, Ampere)</li>
     <li>Battery voltage (left, Volts) and power being drawn from or fed to the battery (product of voltage and current) (right, Watt)</li>
     <li>Battery voltage (left, Volts) and temperature (right, °C)</li>
-    <li>Battery full charge voltage <code>BV<sub>full</sub></code> (Volts, range: 12.0-16.0, default: 14.4)</li>
-    <li>Battery discharged voltage low threshold <code>BV<sub>low</sub></code> (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
-    <li>Battery discharged voltage critical threshold <code>BV<sub>crit</sub></code> (Volts, range: 9.0-12.0, default: 11.0)</li>
-    <li>Battery discharge current critical threshold <code>BI<sub>crit</sub></code> (Ampere, range: 20-60, default: 50)</li>
-    <li>Battery discharge current high threshold <code>BI<sub>high</sub></code> (Ampere, range: 10-30, default: 20 (@ C10))</li>
-    <li>Battery discharge current low threshold <code>BI<sub>low</sub></code> (Ampere, range: 1-15, default: 5)</li>
+    <li id="pref_btry_volt_full">Battery full charge voltage <code>BV<sub>full</sub></code> (Volts, range: 12.0-16.0, default: 14.4)</li>
+    <li id="pref_btry_volt_low">Battery discharged voltage low threshold <code>BV<sub>low</sub></code> (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
+    <li id="pref_btry_volt_crit">Battery discharged voltage critical threshold <code>BV<sub>crit</sub></code> (Volts, range: 9.0-12.0, default: 11.0)</li>
+    <li id="pref_btry_curr_crit">Battery discharge current critical threshold <code>BI<sub>crit</sub></code> (Ampere, range: 20-60, default: 50)</li>
+    <li id="pref_btry_curr_high">Battery discharge current high threshold <code>BI<sub>high</sub></code> (Ampere, range: 10-30, default: 20 (@ C10))</li>
+    <li id="pref_btry_curr_low">Battery discharge current low threshold <code>BI<sub>low</sub></code> (Ampere, range: 1-15, default: 5)</li>
     <li>Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
-    <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <code>BV<sub>low</sub></code> (Minutes, range: 1-10, default: 5)</li>
+    <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> (Minutes, range: 1-10, default: 5)</li>
     <li>Delay before switching AC load back to inverter (daytime) after inverter was turned off for any reason (e.g. due to clouds, or battery overload or low voltage condition), now solar is available (Minutes, range: 1-10, default: 5)</li>
-    <li>Window before switching AC load to grid if battery voltages are between <code>BV<sub>low</sub></code> and <code>BV<sub>crit</sub></code> (Minutes, range: 1-10, default: 2)</li>
-    <li>Window before switching AC load to grid if battery discharge current is between <code>BI<sub>crit</sub></code> and <code>BI<sub>high</sub></code> (Seconds, range: 5-60, default: 10)</li>
-    <li>Window before switching AC load to grid (daytime) if battery discharge current is between <code>BI<sub>high</sub></code> and <code>BI<sub>low</sub></code> (Minutes, range: 1-10, default: 2)</li>
-    <li>Window before switching AC load to grid (daytime) if battery discharge current is below <code>BI<sub>low</sub></code> (Minutes, range: 1-15, default: 5)</li>
+    <li>Window before switching AC load to grid if battery voltages are between <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> and <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
+    <li>Window before switching AC load to grid if battery discharge current is between <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> and <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> (Seconds, range: 5-60, default: 10)</li>
+    <li>Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
+    <li>Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
     <li>Clock time (24h format)</li>
     <li>Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
     <li>Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
