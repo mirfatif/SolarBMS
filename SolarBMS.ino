@@ -63,6 +63,7 @@ INA219_WE dcSensor = INA219_WE();  // Uses I2C pins A4 (SDA) and A5 (SCL), addre
 
 char leftStr[8] = "HELLO";
 char rightStr[8] = "JI";
+bool blinkLeft, blinkRight;
 float power;
 uint8_t hoursNow, minutesNow;
 bool minusButtonPressed, menuButtonPressed, plusButtonPressed, hasGrid, hasSolar, inverterRecentlyTurnedOff;
@@ -166,14 +167,6 @@ float lerp(float x0, float x1, float y0, float y1, float x) {
     return y0;  // Avoid division by zero
   } else {
     return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
-  }
-}
-
-void beep(uint8_t buzzerLevel = prefs.buzzerLevel) {
-  if (buzzerLevel <= 0) {
-    analogWrite(PIN_BUZZER, 0);
-  } else {
-    analogWrite(PIN_BUZZER, round(lerp(BUZZER_LEVEL_MIN, BUZZER_LEVEL_MAX, BUZZER_PWM_MIN, BUZZER_PWM_MAX, buzzerLevel)));
   }
 }
 
@@ -440,17 +433,7 @@ void switchToGrid(InverterHaltReason reason) {
   ts.switchedToGrid = millis();
 }
 
-void handleInverterGridSwitching() {
-  hoursNow = rtc.getHour(rtcFlags, rtcFlags);
-  minutesNow = rtc.getMinute();
-
-  hasGrid = acVoltageSensor.getRmsVoltage() > GRID_VOLTAGE_THRESHOLD;
-  hasSolar = prefs.prioritizeSolarOverGrid
-             && (hoursNow > prefs.solarOnTimeHours
-                 || (hoursNow == prefs.solarOnTimeHours && minutesNow >= prefs.solarOnTimeMinutes))
-             && (hoursNow < prefs.solarOffTimeHours
-                 || (hoursNow == prefs.solarOffTimeHours && minutesNow <= prefs.solarOffTimeMinutes));
-
+void updateBatteryVoltageCurrentTimestamps() {
   if (battery.isVoltageLowOrCriticallyLow || battery.isDischargingCritically || battery.isDischargingVeryCritically) {
     ts.battery.voltageLowOrCurrentHigh = millis();
   }
@@ -472,6 +455,18 @@ void handleInverterGridSwitching() {
 
   ts.battery.voltageHigh.updateTs(battery.isVoltageHigh, 10);
   ts.battery.chargeCurrentHigh.updateTs(battery.isChargingHigh, 10);
+}
+
+void handleInverterGridSwitching() {
+  hoursNow = rtc.getHour(rtcFlags, rtcFlags);
+  minutesNow = rtc.getMinute();
+
+  hasGrid = acVoltageSensor.getRmsVoltage() > GRID_VOLTAGE_THRESHOLD;
+  hasSolar = prefs.prioritizeSolarOverGrid
+             && (hoursNow > prefs.solarOnTimeHours
+                 || (hoursNow == prefs.solarOnTimeHours && minutesNow >= prefs.solarOnTimeMinutes))
+             && (hoursNow < prefs.solarOffTimeHours
+                 || (hoursNow == prefs.solarOffTimeHours && minutesNow <= prefs.solarOffTimeMinutes));
 
   if (hasGrid) {
     if (!hasSolar) {
@@ -529,43 +524,79 @@ void handleInverterGridSwitching() {
       }
     }
   }
+}
 
-  // Before raising alarms, give a 5 seconds window for temporary spikes / dips in battery voltage / current.
+void setBuzzerAndWarning() {
+  buzzerOn = false;
+  blinkLeft = false;
+  blinkRight = false;
+
+  // Before raising alarms, give a 5-30 seconds window for temporary spikes / dips in battery voltage / current.
   if (inverterHaltReason != INV_NO_REASON) {
     buzzerOn = true;
     Serial.print("Buzzing due to inverter halt due to ");
     Serial.println(inverterHaltReasonName());
-  } else if (battery.isVoltageLowOrCriticallyLow && ts.battery.voltageLow.isOlderThan(5)) {
+  }
+
+  if (battery.isVoltageLowOrCriticallyLow && ts.battery.voltageLow.isOlderThan(5)) {
     buzzerOn = true;
+    blinkLeft = true;
     Serial.println("Buzzing due to battery low...");
-  } else if ((battery.isDischargingCritically || battery.isDischargingVeryCritically)
-             && ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
+  }
+
+  if ((battery.isDischargingCritically || battery.isDischargingVeryCritically)
+      && ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
     buzzerOn = true;
+    blinkRight = true;
     Serial.println("Buzzing due to battery high discharging rate...");
-  } else if (battery.isVoltageHigh && ts.battery.voltageHigh.isOlderThan(30)) {
+  }
+
+  if (battery.isVoltageHigh && ts.battery.voltageHigh.isOlderThan(30)) {
     buzzerOn = true;
+    blinkLeft = true;
     Serial.println("Buzzing due to battery high voltage...");
-  } else if (battery.isChargingHigh && ts.battery.chargeCurrentHigh.isOlderThan(5)) {
+  }
+
+  if (battery.isChargingHigh && ts.battery.chargeCurrentHigh.isOlderThan(5)) {
     buzzerOn = true;
+    blinkRight = true;
     Serial.println("Buzzing due to battery high charging rate...");
-  } else if (hasSolar) {
+  }
+
+  if (hasSolar) {
     if (battery.isDischarging
         && (ts.battery.dischargeCurrentLow.isOlderThan(30)
             || (!battery.isDischargingLow && ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)))) {
       buzzerOn = true;
+      blinkRight = true;
       Serial.println("Buzzing due to battery discharging during daytime...");
     } else if (onGrid()) {
+      // Already convered above. Inverter halt reason must be set.
       buzzerOn = true;
       Serial.println("Buzzing due to not using solar...");
-    } else {
-      buzzerOn = false;
     }
-  } else {
-    buzzerOn = false;
   }
 }
 
 ////////////////////////////////////////////////////////////////////
+
+void beep(uint8_t buzzerLevel = prefs.buzzerLevel) {
+  if (buzzerLevel <= 0) {
+    analogWrite(PIN_BUZZER, 0);
+  } else {
+    analogWrite(PIN_BUZZER, round(lerp(BUZZER_LEVEL_MIN, BUZZER_LEVEL_MAX, BUZZER_PWM_MIN, BUZZER_PWM_MAX, buzzerLevel)));
+  }
+}
+
+void updateDisplay(bool showLeft = true, bool showRight = true) {
+  led.Clear();
+  if (showLeft) {
+    led.DisplayText(leftStr, 0);
+  }
+  if (showRight) {
+    led.DisplayText(rightStr, 1);
+  }
+}
 
 void handle2HzTimer() {
   if (screenNum == 20 && chPrefs.buzzerLevel != prefs.buzzerLevel && !beeping) {
@@ -584,6 +615,11 @@ void handle2HzTimer() {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
+    } else if (screenNum <= 2 && blinkLeft && showingWarning == 1) {
+      updateDisplay(false, true);
+      showingWarning = 3;
+    } else if (screenNum <= 2 && blinkRight && showingWarning == 4) {
+      updateDisplay(true, false);
     } else {
       updateDisplay();
     }
@@ -760,12 +796,6 @@ void handleButtonsPressed() {
 
 ////////////////////////////////////////////////////////////////////
 
-void updateDisplay() {
-  led.Clear();
-  led.DisplayText(leftStr, 0);
-  led.DisplayText(rightStr, 1);
-}
-
 void updateDisplayMsg() {
   if (screenNum > 2 && isTsOlderThan(ts.buttonPressed, PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println("No activity. Jumping to first screen...");
@@ -931,7 +961,9 @@ void loop() {
     return;
   }
 
+  updateBatteryVoltageCurrentTimestamps();
   handleInverterGridSwitching();
+  setBuzzerAndWarning();
   handleButtonsPressed();
   updateDisplayMsg();
 
