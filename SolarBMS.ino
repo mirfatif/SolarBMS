@@ -537,32 +537,44 @@ void setBuzzerAndWarning() {
     buzzerReasonTmp = (1 << 0);
   }
 
-  if (battery.isVoltageLowOrCriticallyLow && ts.battery.voltageLow.isOlderThan(5)) {
-    buzzerReasonTmp |= (1 << 1);
+  if (battery.isVoltageLowOrCriticallyLow) {
+    if (ts.battery.voltageLow.isOlderThan(5)) {
+      buzzerReasonTmp |= (1 << 1);
+    }
     blinkLeft = true;
   }
 
-  if ((battery.isDischargingCritically || battery.isDischargingVeryCritically)
-      && ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
-    buzzerReasonTmp |= (1 << 2);
+  if (battery.isDischargingCritically || battery.isDischargingVeryCritically) {
+    if (ts.battery.dischargeCurrentCritical.isOlderThan(5)) {
+      buzzerReasonTmp |= (1 << 2);
+    }
     blinkRight = true;
   }
 
-  if (battery.isVoltageHigh && ts.battery.voltageHigh.isOlderThan(30)) {
-    buzzerReasonTmp |= (1 << 3);
+  if (battery.isVoltageHigh) {
+    if (ts.battery.voltageHigh.isOlderThan(30)) {
+      buzzerReasonTmp |= (1 << 3);
+    }
     blinkLeft = true;
   }
 
-  if (battery.isChargingHigh && ts.battery.chargeCurrentHigh.isOlderThan(5)) {
-    buzzerReasonTmp |= (1 << 4);
+  if (battery.isChargingHigh) {
+    if (ts.battery.chargeCurrentHigh.isOlderThan(5)) {
+      buzzerReasonTmp |= (1 << 4);
+    }
     blinkRight = true;
   }
 
   if (hasSolar) {
-    if (battery.isDischarging
-        && (ts.battery.dischargeCurrentLow.isOlderThan(30)
-            || (!battery.isDischargingLow && ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)))) {
-      buzzerReasonTmp |= (1 << 5);
+    if (battery.isDischargingLow) {
+      if (ts.battery.dischargeCurrentLow.isOlderThan(30)) {
+        buzzerReasonTmp |= (1 << 5);
+      }
+      blinkRight = true;
+    } else if (battery.isDischarging) {
+      if (ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)) {
+        buzzerReasonTmp |= (1 << 5);
+      }
       blinkRight = true;
     } else if (onGrid()) {
       // Already convered above. Inverter halt reason must be set.
@@ -664,6 +676,7 @@ void handle2HzTimer() {
       showingWarning = 3;
     } else if (screenNum <= 2 && blinkRight && showingWarning == 4) {
       updateDisplay(true, false);
+      showingWarning = 2;
     } else {
       updateDisplay();
     }
