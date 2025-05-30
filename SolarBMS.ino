@@ -185,6 +185,7 @@ void setBrightness(char brightness = prefs.ledBrightLevel - 1) {
 
 void loadPrefs() {
   prefs.load();
+  chPrefs = prefs;
   setBrightness();
 }
 
