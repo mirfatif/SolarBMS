@@ -250,7 +250,7 @@ public:
 class BatteryEvents {
 public:
   unsigned long voltageLowOrCurrentHigh;
-  OngoingEventTs dischargeCurrentCritical, dischargeCurrentHighOrAbove, dischargeCurrentLow, dischargeCurrentLowOrAbove;
+  OngoingEventTs dischargeCurrentCritical, dischargeCurrentHighOrAbove, dischargeCurrentLow;
   OngoingEventTs voltageOk, voltageLow, voltageHigh, chargeCurrentHigh;
 };
 
@@ -447,12 +447,8 @@ void updateBatteryVoltageCurrentTimestamps() {
                                                     || battery.isDischargingCritically
                                                     || battery.isDischargingVeryCritically,
                                                   prefs.windowToGridDaytimeOnCurrentHigh * 60L);
+  // Keep this window small to ignore temporary fluctuations
   ts.battery.dischargeCurrentLow.updateTs(battery.isDischargingLow, 10);
-  ts.battery.dischargeCurrentLowOrAbove.updateTs(battery.isDischargingLow
-                                                   || battery.isDischargingHigh
-                                                   || battery.isDischargingCritically
-                                                   || battery.isDischargingVeryCritically,
-                                                 prefs.windowToGridDaytimeOnCurrentLow * 60L);
 
   ts.battery.voltageHigh.updateTs(battery.isVoltageHigh, 10);
   ts.battery.chargeCurrentHigh.updateTs(battery.isChargingHigh, 10);
@@ -518,7 +514,7 @@ void handleInverterGridSwitching() {
         }
       } else if (battery.isDischargingLow) {
         batteryLowCurrentDrawWindowPassed =
-          ts.battery.dischargeCurrentLowOrAbove.isOlderThan(prefs.windowToGridDaytimeOnCurrentLow * 60L);
+          ts.battery.dischargeCurrentLow.isOlderThan(prefs.windowToGridDaytimeOnCurrentLow * 60L);
         if (batteryLowCurrentDrawWindowPassed) {
           switchToGrid(INV_SOLAR_NOT_ENOUGH);
         }
@@ -572,7 +568,7 @@ void setBuzzerAndWarning() {
       }
       blinkRight = true;
     } else if (battery.isDischarging) {
-      if (ts.battery.dischargeCurrentLowOrAbove.isOlderThan(5)) {
+      if (ts.battery.dischargeCurrentHighOrAbove.isOlderThan(5)) {
         buzzerReasonTmp |= (1 << 5);
       }
       blinkRight = true;
