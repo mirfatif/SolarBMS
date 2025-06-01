@@ -358,7 +358,8 @@ class Battery {
 public:
   float volts;    // V
   float current;  // A (negative is battery discharging)
-  bool isVoltageCriticallyLow, isVoltageLowOrCriticallyLow, isVoltageHigh, isVoltageOkOrHigh, isChargingHigh;
+  bool isVoltageBelowStable, isVoltageCriticallyLow, isVoltageLowOrCriticallyLow;
+  bool isVoltageHigh, isVoltageVeryHigh, isVoltageOkOrHigh, isChargingHigh;
   bool isDischarging, isDischargingLow, isDischargingHigh, isDischargingCritically, isDischargingVeryCritically;
 
   void update(Prefs prefs) {
@@ -386,7 +387,7 @@ public:
     volts /= INA219_SAMPLE_COUNT;
     current /= INA219_SAMPLE_COUNT;
 
-    volts -= INA219_BUS_VOLTAGE_OFFSET * (volts > 14 ? 2 : 1);
+    volts -= INA219_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
 
     // We are getting negative current when charging the battery. Inverse it.
     current *= -1;
@@ -415,6 +416,7 @@ public:
       currentState = BI_NONE;
     }
 
+    isVoltageBelowStable = volts * 10 * 2 < prefs.batteryFullChargeVolts + prefs.batteryDischargedVoltsLow;
     isVoltageCriticallyLow = voltState == BV_CRITICALLY_LOW;
     isVoltageLowOrCriticallyLow = isVoltageCriticallyLow || voltState == BV_LOW;
     isDischarging = current < 0;
@@ -424,6 +426,7 @@ public:
     isDischargingVeryCritically = currentState == BI_DISCH_VERY_CRITICAL;
 
     isVoltageHigh = voltState == BV_HIGH;
+    isVoltageVeryHigh = volts > (prefs.batteryFullChargeVolts * 1.01);
     isVoltageOkOrHigh = isVoltageHigh || voltState == BV_OK;
     isChargingHigh = currentState == BI_CHARGING_HIGH;
   }
@@ -577,7 +580,7 @@ void handleInverterGridSwitching() {
         if (batteryHighCurrentDrawWindowPassed) {
           switchToGrid(INV_SOLAR_NOT_ENOUGH);
         }
-      } else if (battery.isDischargingLow) {
+      } else if (battery.isDischargingLow && battery.isVoltageBelowStable) {
         bool batteryLowCurrentDrawWindowPassed =
           ts.battery.dischargeCurrentLow.isOlderThanMin(prefs.windowToGridDaytimeOnCurrentLow);
         if (batteryLowCurrentDrawWindowPassed) {
@@ -614,7 +617,7 @@ void setBuzzerAndWarning() {
   }
 
   if (battery.isVoltageHigh) {
-    if (battery.volts > (prefs.batteryFullChargeVolts * 1.01) || ts.battery.voltageHigh.isOlderThanSec(30)) {
+    if (battery.isVoltageVeryHigh || ts.battery.voltageHigh.isOlderThanSec(30)) {
       reasonTmp |= (1 << 3);
     }
     blinkLeft = true;
@@ -629,7 +632,7 @@ void setBuzzerAndWarning() {
 
   if (hasSolar) {
     if (battery.isDischargingLow) {
-      if (ts.battery.dischargeCurrentLow.isOlderThanSec(30)) {
+      if (battery.isVoltageBelowStable && ts.battery.dischargeCurrentLow.isOlderThanSec(30)) {
         reasonTmp |= (1 << 5);
       }
       blinkRight = true;
