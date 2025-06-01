@@ -101,7 +101,7 @@
   <h2>Display + Settings</h2>
   <ul>
     <li>Use push buttons to jump to the next screen (center) and to change the configurable values (left and right).</li>
-    <li>First 3 screens are informatory. On these screens, setting buttons turn off the display. Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand to turn it back on.</li>
+    <li>First 3 screens are informatory. On these screens, setting buttons turn off the display. Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared obstacle detector) to turn the display back on.</li>
     <li>On SAVE screen (last), setting buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
         <li><a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
@@ -478,10 +478,17 @@
   <h2>Flowchart:</h2>
   <a href="flowchart.svg"><img src="flowchart.svg" width="600" /></a>
 
-  <h2 style="page-break-before: always;">Code</h2>
+  <h2 style="page-break-before: always;">Code:</h2>
   <a href="https://github.com/mirfatif/SolarBMS/SolarBMS.ino">https://github.com/mirfatif/SolarBMS/SolarBMS.ino</a>
+  <h3>Libraries:</h3>
+  <ul>
+    <li>DS3231 <sup><a href="#16">[16]</a></sup></li>
+    <li>INA219_WE <sup><a href="#17">[17]</a></sup></li>
+    <li>max7219 <sup><a href="#18">[18]</a></sup></li>
+    <li>ZMPT101B-arduino <sup><a href="#19">[19]</a></sup></li>
+  </ul>
 
-  <h2>Finally</h2>
+  <h2>Finally:</h2>
   <a href="image.jpg"><img src="image.jpg" width="500" /></a>
 
   <h2>Links</h2>
@@ -501,6 +508,10 @@
     <li id="13"><a href="https://digilog.pk/products/12x12x9mm-tactile-push-button-switch">https://digilog.pk/products/12x12x9mm-tactile-push-button-switch</a></li>
     <li id="14"><a href="https://digilog.pk/products/411a-lm2596-buck-converter-step-down-module-power-supply">https://digilog.pk/products/411a-lm2596-buck-converter-step-down-module-power-supply</a></li>
     <li id="15"><a href="https://digilog.pk/products/h11aa1-optocoupler-dip-6-pin-ic">https://digilog.pk/products/h11aa1-optocoupler-dip-6-pin-ic</a></li>
+    <li id="16"><a href="https://github.com/NorthernWidget/DS3231">https://github.com/NorthernWidget/DS3231</a></li>
+    <li id="17"><a href="https://github.com/wollewald/INA219_WE">https://github.com/wollewald/INA219_WE</a></li>
+    <li id="18"><a href="https://github.com/JemRF/max7219">https://github.com/JemRF/max7219</a></li>
+    <li id="19"><a href="https://github.com/Abdurraziq/ZMPT101B-arduino">https://github.com/Abdurraziq/ZMPT101B-arduino</a></li>
   </ol>
 
 </body>
