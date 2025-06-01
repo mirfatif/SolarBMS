@@ -602,7 +602,7 @@ void setBuzzerAndWarning() {
   }
 
   if (battery.isVoltageHigh) {
-    if (ts.battery.voltageHigh.isOlderThan(30)) {
+    if (battery.volts > (prefs.batteryFullChargeVolts * 1.01) || ts.battery.voltageHigh.isOlderThan(30)) {
       reasonTmp |= (1 << 3);
     }
     blinkLeft = true;
