@@ -108,26 +108,26 @@ bool blinkLeft, blinkRight, hasGrid, hasSolar, minusButtonPressed, menuButtonPre
 #define PREFS_INIT_MARKER 0x42
 
 enum EEPROM_Addr {
-  EE_INIT_MARKER = 0,
-  EE_BATTERY_FULL_CHARGE_V,         // 1
-  EE_BATTERY_DISCH_VOLT_LOW,        // 2
-  EE_BATTERY_DISCH_VOLT_CRIT,       // 3
-  EE_BATTERY_DISCH_CURR_CRIT,       // 4
-  EE_BATTERY_DISCH_CURR_HIGH,       // 5
-  EE_PRIORITIZE_SOLAR,              // 6
-  EE_BATTERY_DISCH_CURR_LOW,        // 7
-  EE_DELAY_TO_INV_AFTER_BATT_KILL,  // 8
-  EE_DELAY_DAYTIME_TO_INV,          // 9
-  EE_WINDOW_TO_GRID_VOLT_LOW,       // 10
-  EE_WINDOW_TO_GRID_CURR_CRIT,      // 11
-  EE_WINDOW_DAYTIME_CURR_HIGH,      // 12
-  EE_WINDOW_DAYTIME_CURR_LOW,       // 13
-  EE_SOLAR_ON_HOUR,                 // 14
-  EE_SOLAR_ON_MIN,                  // 15
-  EE_SOLAR_OFF_HOUR,                // 16
-  EE_SOLAR_OFF_MIN,                 // 17
-  EE_LED_BRIGHT_LEVEL,              // 18
-  EE_BUZZER_LEVEL                   // 19
+  EE_BATTERY_FULL_CHARGE_V,
+  EE_BATTERY_DISCH_VOLT_LOW,
+  EE_BATTERY_DISCH_VOLT_CRIT,
+  EE_BATTERY_DISCH_CURR_CRIT,
+  EE_BATTERY_DISCH_CURR_HIGH,
+  EE_PRIORITIZE_SOLAR,
+  EE_BATTERY_DISCH_CURR_LOW,
+  EE_DELAY_TO_INV_AFTER_BATT_KILL,
+  EE_DELAY_DAYTIME_TO_INV,
+  EE_WINDOW_TO_GRID_VOLT_LOW,
+  EE_WINDOW_TO_GRID_CURR_CRIT,
+  EE_WINDOW_DAYTIME_CURR_HIGH,
+  EE_WINDOW_DAYTIME_CURR_LOW,
+  EE_SOLAR_ON_HOUR,
+  EE_SOLAR_ON_MIN,
+  EE_SOLAR_OFF_HOUR,
+  EE_SOLAR_OFF_MIN,
+  EE_LED_BRIGHT_LEVEL,
+  EE_BUZZER_LEVEL,
+  EE_CRC
 };
 
 class Prefs {
@@ -152,17 +152,13 @@ public:
   uint8_t ledBrightLevel = 1;                    // 20. Level (1-10, step: 1)
   uint8_t buzzerLevel = 1;                       // 21. Level (1-10, step: 1)
 
-  void load() {
-    if (EEPROM.read(EE_INIT_MARKER) != PREFS_INIT_MARKER) {
-      return;
-    }
-
+  bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
     batteryDischargedVoltsLow = EEPROM.read(EE_BATTERY_DISCH_VOLT_LOW);
     batteryDischargedVoltsCrit = EEPROM.read(EE_BATTERY_DISCH_VOLT_CRIT);
     batteryDischargeCurrentCrit = EEPROM.read(EE_BATTERY_DISCH_CURR_CRIT);
     batteryDischargeCurrentHigh = EEPROM.read(EE_BATTERY_DISCH_CURR_HIGH);
-    prioritizeSolarOverGrid = (EEPROM.read(EE_PRIORITIZE_SOLAR) != 0);
+    prioritizeSolarOverGrid = (bool)EEPROM.read(EE_PRIORITIZE_SOLAR);
     batteryDischargeCurrentLow = EEPROM.read(EE_BATTERY_DISCH_CURR_LOW);
     delayToInverterAfterBatteryKill = EEPROM.read(EE_DELAY_TO_INV_AFTER_BATT_KILL);
     delayDaytimeToInverter = EEPROM.read(EE_DELAY_DAYTIME_TO_INV);
@@ -176,17 +172,17 @@ public:
     solarOffTimeMinutes = EEPROM.read(EE_SOLAR_OFF_MIN);
     ledBrightLevel = EEPROM.read(EE_LED_BRIGHT_LEVEL);
     buzzerLevel = EEPROM.read(EE_BUZZER_LEVEL);
+
+    return EEPROM.read(EE_CRC) == computeCRC();
   }
 
   void persist() {
-    EEPROM.update(EE_INIT_MARKER, PREFS_INIT_MARKER);
-
     EEPROM.update(EE_BATTERY_FULL_CHARGE_V, batteryFullChargeVolts);
     EEPROM.update(EE_BATTERY_DISCH_VOLT_LOW, batteryDischargedVoltsLow);
     EEPROM.update(EE_BATTERY_DISCH_VOLT_CRIT, batteryDischargedVoltsCrit);
     EEPROM.update(EE_BATTERY_DISCH_CURR_CRIT, batteryDischargeCurrentCrit);
     EEPROM.update(EE_BATTERY_DISCH_CURR_HIGH, batteryDischargeCurrentHigh);
-    EEPROM.update(EE_PRIORITIZE_SOLAR, prioritizeSolarOverGrid ? 1 : 0);
+    EEPROM.update(EE_PRIORITIZE_SOLAR, (uint8_t)prioritizeSolarOverGrid);
     EEPROM.update(EE_BATTERY_DISCH_CURR_LOW, batteryDischargeCurrentLow);
     EEPROM.update(EE_DELAY_TO_INV_AFTER_BATT_KILL, delayToInverterAfterBatteryKill);
     EEPROM.update(EE_DELAY_DAYTIME_TO_INV, delayDaytimeToInverter);
@@ -200,6 +196,47 @@ public:
     EEPROM.update(EE_SOLAR_OFF_MIN, solarOffTimeMinutes);
     EEPROM.update(EE_LED_BRIGHT_LEVEL, ledBrightLevel);
     EEPROM.update(EE_BUZZER_LEVEL, buzzerLevel);
+
+    EEPROM.update(EE_CRC, computeCRC());
+  }
+
+private:
+  void computeCRC8(uint8_t &crc, uint8_t pref) {
+    crc ^= pref;
+    for (uint8_t i = 0; i < 8; i++) {
+      // If the MSB is 1, shift and XOR with polynomial
+      if (crc & 0x80) {
+        crc = (crc << 1) ^ 0x07;
+      } else {
+        crc <<= 1;
+      }
+    }
+  }
+
+  uint8_t computeCRC() {
+    uint8_t crc = 0x00;
+
+    computeCRC8(crc, batteryFullChargeVolts);
+    computeCRC8(crc, batteryDischargedVoltsLow);
+    computeCRC8(crc, batteryDischargedVoltsCrit);
+    computeCRC8(crc, batteryDischargeCurrentCrit);
+    computeCRC8(crc, batteryDischargeCurrentHigh);
+    computeCRC8(crc, batteryDischargeCurrentLow);
+    computeCRC8(crc, (uint8_t)prioritizeSolarOverGrid);
+    computeCRC8(crc, delayToInverterAfterBatteryKill);
+    computeCRC8(crc, delayDaytimeToInverter);
+    computeCRC8(crc, windowToGridOnVoltageLow);
+    computeCRC8(crc, windowToGridOnCurrentCrit);
+    computeCRC8(crc, windowToGridDaytimeOnCurrentHigh);
+    computeCRC8(crc, windowToGridDaytimeOnCurrentLow);
+    computeCRC8(crc, solarOnTimeHours);
+    computeCRC8(crc, solarOnTimeMinutes);
+    computeCRC8(crc, solarOffTimeHours);
+    computeCRC8(crc, solarOffTimeMinutes);
+    computeCRC8(crc, ledBrightLevel);
+    computeCRC8(crc, buzzerLevel);
+
+    return crc;
   }
 };
 
@@ -232,8 +269,11 @@ void setBrightness(uint8_t brightness = prefs.ledBrightLevel - 1) {
 ////////////////////////////////////////////////////////////////////
 
 void loadPrefs() {
-  prefs.load();
-  chPrefs = prefs;
+  if (prefs.load()) {
+    chPrefs = prefs;
+  } else {
+    prefs = chPrefs;
+  }
   setBrightness();
 }
 
