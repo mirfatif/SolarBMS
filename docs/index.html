@@ -136,7 +136,7 @@
     <li>Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
     <li>Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
     <li>Display brightness (Level, range: 1-10, default: 1)</li>
-    <li>Buzzer intensity (Level, range: 1-10, default: 1)</li>
+    <li>Buzzer loudness (Level, range: 1-10, default: 1)</li>
     <li>Save</li>
   </ol>
 
@@ -215,7 +215,7 @@
 
   <b>For Buzzer:</b>
   <ul>
-    <li><strong>2N3904 transistor</strong> – controls voltage supply (5-12V) to the buzzer to adjust the intensity.
+    <li><strong>2N3904 transistor</strong> – controls voltage supply (5-12V) to the buzzer to adjust the loudness.
       <ul>
         <li>Collector-emitter voltage: 40V</li>
         <li>Max collector current: 200mA</li>
@@ -230,6 +230,7 @@
       </ul>
     </li>
     <li><strong>1N4007 diode</strong> – for flyback protection with the buzzer.</li>
+    <li>Insert an <strong>RC filter</strong> (b/w Arduino and transistor, or b/w transistor and buzzer), or only a <strong>capacitor</strong> parallel to the buzzer, to flatten / smooth out the averaged output of PWM.</li>
   </ul>
 
   <b>For Relay (inverter)</b>
@@ -241,7 +242,11 @@
       </ul>
     </li>
     <li><strong>1N4007 diode</strong> – for flyback protection at the relay coil.</li>
-    <li><strong>100µF 16V capacitor</strong> – for stabilizing voltage at the relay coil.</li>
+    <li><strong>47µF 16V capacitor</strong> – for stabilizing voltage at the relay coil.
+      <ul>
+        <li>Purpose is to act as a local energy reservoir, supplying extra current to avoid the voltage dip during the initial surge when the relay coil is energized. But size it wisely (or add a small resistor in series) to avoid high inrush current to the capacitor itself when the transistor turns on (though BJTs can tolerate short over-current spikes).</li>
+      </ul>
+    </li>
     <li>2 x <strong>1N5822 Schottky diode</strong> – for diode ORing. Power sources isolation is required because inverter relay is triggered from 2 sources in parallel: Arduino and a power adapter. Latter is used to bypass the protection system.</li>
   </ul>
 
