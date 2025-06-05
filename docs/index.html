@@ -45,7 +45,12 @@
 
   <h2>Operational Logic</h2>
   <ol>
-    <li>During daytime, power is drawn from solar to run the inverter (if sunlight is sufficient and/or according to solar on/off time settings) and charge the battery.</li>
+    <li>During daytime, power is drawn from solar to run the inverter (if sunlight is sufficient and/or according to solar on/off time settings) and charge the battery.
+      <ul>
+        <li>You can configure time (in minutes, before configured sunlight time) in which load is shifted from grid to solar if sunlight is sufficient to bear the load. Otherwise, load is silently shifted back to grid.</li>
+        <li>Similarly, at evening, load is kept on solar as long as sunlight is sufficient.</li>
+      </ul>
+    </li>
     <li>If the AC load exceeds solar supply and the battery begins to discharge, switch to grid even during daytime.</li>
     <li>At night or on cloudy days:
       <ul>
@@ -133,6 +138,7 @@
     <li>Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
     <li>Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
     <li>Clock time (24h format)</li>
+    <li>Time before solar on time, try switch to solar (Minutes, range: 0-60, default: 0)</li>
     <li>Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
     <li>Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
     <li>Display brightness (Level, range: 1-10, default: 1)</li>

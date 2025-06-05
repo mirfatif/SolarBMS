@@ -65,6 +65,7 @@ enum Screen {
   SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,
   SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,
   SCR_CLOCK,
+  SCR_PRE_SOLAR_TRY_TIME,
   SCR_SOLAR_ON_TIME,
   SCR_SOLAR_OFF_TIME,
   SCR_LED_BRIGHTNESS,
@@ -118,6 +119,7 @@ enum EEPROM_Addr {
   EE_WINDOW_TO_GRID_CURR_CRIT,
   EE_WINDOW_DAYTIME_CURR_HIGH,
   EE_WINDOW_DAYTIME_CURR_LOW,
+  EE_PRE_SOLAR_TRY_TIME,
   EE_SOLAR_ON_HOUR,
   EE_SOLAR_ON_MIN,
   EE_SOLAR_OFF_HOUR,
@@ -142,12 +144,13 @@ public:
   uint8_t windowToGridOnCurrentCrit = 10;        // 14. Seconds (5-60, step: 5) | Battery current b/w high and critical
   uint8_t windowToGridDaytimeOnCurrentHigh = 2;  // 15. Minutes (1-10, step: 1) | Battery current b/w low and high
   uint8_t windowToGridDaytimeOnCurrentLow = 5;   // 16. Minutes (1-15, step: 1) | Battery current below low
-  uint8_t solarOnTimeHours = 7;                  // 18. Hour of the day (5-10, step: 1)
-  uint8_t solarOnTimeMinutes = 0;                // 18. Minute of the hour (0-45, step: 15)
-  uint8_t solarOffTimeHours = 17;                // 19. Hour of the day (14-19, step: 1)
-  uint8_t solarOffTimeMinutes = 0;               // 19. Minute of the hour (0-45, step: 15)
-  uint8_t ledBrightLevel = 1;                    // 20. Level (1-10, step: 1)
-  uint8_t buzzerLevel = 1;                       // 21. Level (1-10, step: 1)
+  uint8_t preSolarTryTime = 0;                   // 18. Minutes (0-60, step: 15)
+  uint8_t solarOnTimeHours = 7;                  // 19. Hour of the day (5-10, step: 1)
+  uint8_t solarOnTimeMinutes = 0;                // 19. Minute of the hour (0-45, step: 15)
+  uint8_t solarOffTimeHours = 17;                // 20. Hour of the day (14-19, step: 1)
+  uint8_t solarOffTimeMinutes = 0;               // 20. Minute of the hour (0-45, step: 15)
+  uint8_t ledBrightLevel = 1;                    // 21. Level (1-10, step: 1)
+  uint8_t buzzerLevel = 1;                       // 22. Level (1-10, step: 1)
 
   bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
@@ -163,6 +166,7 @@ public:
     windowToGridOnCurrentCrit = EEPROM.read(EE_WINDOW_TO_GRID_CURR_CRIT);
     windowToGridDaytimeOnCurrentHigh = EEPROM.read(EE_WINDOW_DAYTIME_CURR_HIGH);
     windowToGridDaytimeOnCurrentLow = EEPROM.read(EE_WINDOW_DAYTIME_CURR_LOW);
+    preSolarTryTime = EEPROM.read(EE_PRE_SOLAR_TRY_TIME);
     solarOnTimeHours = EEPROM.read(EE_SOLAR_ON_HOUR);
     solarOnTimeMinutes = EEPROM.read(EE_SOLAR_ON_MIN);
     solarOffTimeHours = EEPROM.read(EE_SOLAR_OFF_HOUR);
@@ -187,6 +191,7 @@ public:
     EEPROM.update(EE_WINDOW_TO_GRID_CURR_CRIT, windowToGridOnCurrentCrit);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_HIGH, windowToGridDaytimeOnCurrentHigh);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_LOW, windowToGridDaytimeOnCurrentLow);
+    EEPROM.update(EE_PRE_SOLAR_TRY_TIME, preSolarTryTime);
     EEPROM.update(EE_SOLAR_ON_HOUR, solarOnTimeHours);
     EEPROM.update(EE_SOLAR_ON_MIN, solarOnTimeMinutes);
     EEPROM.update(EE_SOLAR_OFF_HOUR, solarOffTimeHours);
@@ -508,7 +513,8 @@ public:
 
 enum SolarState {
   SOLAR_OFF,
-  SOLAR_ON
+  SOLAR_ON,
+  SOLAR_PRE_TRY
 } solarState;
 
 // Inverter turned off (and switched to grid) due to:
@@ -621,9 +627,38 @@ SolarState checkSolarConditions() {
       Serial.println("It's sun time");
     }
     return SOLAR_ON;
-  } else {
+  }
+
+  static Ts tsPreSolarTry;
+
+  if (solarState == SOLAR_PRE_TRY) {
+    if (isBatteryGoodForSolar()) {
+      return SOLAR_PRE_TRY;
+    } else {
+      Serial.println("Battery not good for trying pre-solar time");
+      tsPreSolarTry.set();
+      return SOLAR_OFF;
+    }
+  }
+
+  if (hoursNow > prefs.solarOnTimeHours     // Still not midnight
+      || prefs.preSolarTryTime == 0         // Pre-solar try not configured
+      || !tsPreSolarTry.isOlderThanMin(15)  // Recently tried
+      || !battery.ev.voltageBelowFloat.isOngoingAndOlderThanSec(30)
+      || !isBatteryGoodForSolar()) {
     return SOLAR_OFF;
   }
+
+  // It's after midnight, and before solar on time. So remaining minutes should never be negative.
+  uint16_t remMinutes = (uint16_t)(prefs.solarOnTimeHours - hoursNow) * 60 + prefs.solarOnTimeMinutes - minutesNow;
+
+  if (remMinutes < 5 || remMinutes > prefs.preSolarTryTime) {
+    return SOLAR_OFF;
+  }
+
+  Serial.println("Let's try pre-solar time");
+
+  return SOLAR_PRE_TRY;
 }
 
 bool hasJustSwitchedToInverter() {
@@ -708,7 +743,7 @@ void handleInverterGridSwitching() {
         startInverter();
       }
     } else if (!prefs.prioritizeSolarOverGrid
-               || !isBatteryGoodForSolar()) {  // Try to remain on solar as long as possible.
+               || !isBatteryGoodForSolar()) {  // Try to remain on solar as long as possible in the morning and evening.
       switchToGrid(INV_NO_REASON);
     }
   } else if (shouldSwitchToInverterNoGrid()) {
@@ -736,12 +771,14 @@ void setBuzzerAndWarning() {
 
   if (battery.isVoltageCriticallyLow
       || (battery.isVoltageLow
+          && solarState != SOLAR_PRE_TRY
           && battery.ev.voltageLowOrCriticallyLow.isOlderThanSec(5))) {
     reasonTmp |= (1 << 1);
   }
 
   if (battery.isDischargingVeryCritically
       || (battery.isDischargingCritically
+          && solarState != SOLAR_PRE_TRY
           && battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(5))) {
     reasonTmp |= (1 << 2);
   }
@@ -1033,6 +1070,9 @@ void handleButtonsPressed() {
         handleTimePrefButtonPress(clk.hours, clk.minutes, 0, 23);
       }
       break;
+    case SCR_PRE_SOLAR_TRY_TIME:
+      handleMinMaxPrefButtonPress(chPrefs.preSolarTryTime, 0, 60, 15);
+      break;
     case SCR_SOLAR_ON_TIME:
       handleTimePrefButtonPress(chPrefs.solarOnTimeHours, chPrefs.solarOnTimeMinutes, 5, 10);
       break;
@@ -1142,6 +1182,9 @@ void updateDisplayMsg() {
       } else {
         dtostrf(rtc.getMinute() * 0.01f + rtc.getHr(), 0, 2, rightStr);
       }
+      break;
+    case SCR_PRE_SOLAR_TRY_TIME:
+      itoa(chPrefs.preSolarTryTime, rightStr, 10);
       break;
     case SCR_SOLAR_ON_TIME:
       dtostrf(chPrefs.solarOnTimeMinutes * 0.01f + chPrefs.solarOnTimeHours, 0, 2, rightStr);
