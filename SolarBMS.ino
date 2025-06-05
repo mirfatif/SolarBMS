@@ -11,9 +11,9 @@
 #define PIN_AC_RELAY 4
 #define PIN_INV_RELAY 5
 #define PIN_BUZZER 6
-#define PIN_BUTTON_MINUS 7
+#define PIN_BUTTON_DOWN 7
 #define PIN_BUTTON_MENU 8
-#define PIN_BUTTON_PLUS 9
+#define PIN_BUTTON_UP 9
 #define PIN_DC_VOLT A0
 #define PIN_AC_VOLT A1
 
@@ -99,7 +99,7 @@ INA219_WE dcSensor = INA219_WE();  // Uses I2C pins A4 (SDA) and A5 (SCL), addre
 
 char leftStr[8] = "HELLO";
 char rightStr[8] = "JI";
-bool blinkLeft, blinkRight, hasGrid, minusButtonPressed, menuButtonPressed, plusButtonPressed;
+bool blinkLeft, blinkRight, hasGrid, downButtonPressed, menuButtonPressed, upButtonPressed;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -278,12 +278,12 @@ void loadPrefs() {
 }
 
 void saveChangedPrefs() {
-  Serial.println("Saving prefs...");
+  Serial.println(F("Saving prefs..."));
   chPrefs.persist();
   prefs = chPrefs;
   setBrightness();
   if (clk.updated) {
-    Serial.println("Updating clock...");
+    Serial.println(F("Updating clock..."));
     rtc.setHour(clk.hours);
     rtc.setMinute(clk.minutes);
     rtc.setSecond(0);
@@ -292,7 +292,7 @@ void saveChangedPrefs() {
 }
 
 void discardChangedPrefs() {
-  Serial.println("Discarding prefs...");
+  Serial.println(F("Discarding prefs..."));
   chPrefs = prefs;
   setBrightness();
   clk.updated = false;
@@ -547,15 +547,15 @@ enum InverterHaltReason {
   INV_SOLAR_NOT_ENOUGH   // Morning / evening, clouds, very high load
 } inverterHaltReason;
 
-String inverterHaltReasonName(InverterHaltReason reason = inverterHaltReason) {
+const __FlashStringHelper *inverterHaltReasonName(InverterHaltReason reason = inverterHaltReason) {
   if (reason == INV_NO_REASON) {
-    return "NO_REASON";
+    return F("NO_REASON");
   } else if (reason == INV_BATTERY_LOW) {
-    return "BATTERY_LOW";
+    return F("BATTERY_LOW");
   } else if (reason == INV_BATTERY_OVERLOAD) {
-    return "BATTERY_OVERLOAD";
+    return F("BATTERY_OVERLOAD");
   } else {
-    return "SOLAR_NOT_ENOUGH";
+    return F("SOLAR_NOT_ENOUGH");
   }
 }
 
@@ -575,7 +575,7 @@ void handleSwitchToInverterSched() {
 
   ts.invertedStarted.updateTs(false);
 
-  Serial.println("Switching to inverter...");
+  Serial.println(F("Switching to inverter..."));
 
   digitalWrite(PIN_AC_RELAY, HIGH);
   ts.switchedToInverter.set();
@@ -586,7 +586,7 @@ void startInverter() {
     return;
   }
 
-  Serial.println("Starting inverter...");
+  Serial.println(F("Starting inverter..."));
 
   inverterHaltReason = INV_NO_REASON;
   digitalWrite(PIN_INV_RELAY, LOW);
@@ -611,7 +611,7 @@ void switchToGrid(InverterHaltReason reason) {
 
   inverterHaltReason = reason;
 
-  Serial.print("Switching to grid... ");
+  Serial.print(F("Switching to grid... "));
   Serial.println(inverterHaltReasonName());
 
   digitalWrite(PIN_AC_RELAY, LOW);
@@ -646,7 +646,7 @@ SolarState checkSolarConditions() {
 
   if (isSunTime) {
     if (solarState != SOLAR_ON) {
-      Serial.println("It's sun time");
+      Serial.println(F("It's sun time"));
     }
     return SOLAR_ON;
   }
@@ -657,7 +657,7 @@ SolarState checkSolarConditions() {
     if (isBatteryGoodForSolar()) {
       return SOLAR_PRE_TRY;
     } else {
-      Serial.println("Battery not good for trying pre-solar time");
+      Serial.println(F("Battery not good for trying pre-solar time"));
       tsPreSolarTry.set();
       return SOLAR_OFF;
     }
@@ -678,7 +678,7 @@ SolarState checkSolarConditions() {
     return SOLAR_OFF;
   }
 
-  Serial.println("Let's try pre-solar time");
+  Serial.println(F("Let's try pre-solar time"));
 
   return SOLAR_PRE_TRY;
 }
@@ -825,17 +825,19 @@ void setBuzzerAndWarning() {
     reason = reasonTmp;
     reasonTmp = 0;
 
-    Serial.print("Buzzing due to");
+    Serial.print(F("Buzzing due to"));
 
-    auto printReason = [&](const char *reason, String more = "") {
+    auto printReason = [&](const __FlashStringHelper *reason, const __FlashStringHelper *more = nullptr) {
       if (reasonTmp != 0) {
-        Serial.print(",");
+        Serial.print(F(","));
       }
       reasonTmp = 1;
 
-      Serial.print(" ");
+      Serial.print(F(" "));
       Serial.print(reason);
-      Serial.print(more);
+      if (more) {
+        Serial.print(more);
+      }
     };
 
     for (int i = 0; i <= 6; i++) {
@@ -845,22 +847,22 @@ void setBuzzerAndWarning() {
 
       switch (i) {
         case 0:
-          printReason("inverter halt b/c of ", inverterHaltReasonName());
+          printReason(F("inverter halt b/c of "), inverterHaltReasonName());
           break;
         case 1:
-          printReason("battery low");
+          printReason(F("battery low"));
           break;
         case 2:
-          printReason("battery high discharging rate");
+          printReason(F("battery high discharging rate"));
           break;
         case 3:
-          printReason("battery high voltage");
+          printReason(F("battery high voltage"));
           break;
         case 4:
-          printReason("battery high charging rate");
+          printReason(F("battery high charging rate"));
           break;
         case 5:
-          printReason("battery discharging during daytime");
+          printReason(F("battery discharging during daytime"));
           break;
       }
     }
@@ -960,11 +962,11 @@ bool isButtonPressed(uint8_t pin) {
 ////////////////////////////////////////////////////////////////////
 
 bool anyButtonPressed() {
-  return minusButtonPressed || menuButtonPressed || plusButtonPressed;
+  return downButtonPressed || menuButtonPressed || upButtonPressed;
 }
 
 void handleMinMaxPrefButtonPress(uint8_t &pref, uint8_t min, uint8_t max, uint8_t step = 1) {
-  if (plusButtonPressed) {
+  if (upButtonPressed) {
     if (pref < max) {
       pref += step;
     } else {
@@ -978,7 +980,7 @@ void handleMinMaxPrefButtonPress(uint8_t &pref, uint8_t min, uint8_t max, uint8_
 }
 
 void handleTimePrefButtonPress(uint8_t &h, uint8_t &m, uint8_t minH, uint8_t maxH) {
-  if (plusButtonPressed) {
+  if (upButtonPressed) {
     if (m == 45) {
       if (h == maxH) {
         h = minH;
@@ -1006,8 +1008,8 @@ void handleButtonsPressed() {
     return;
   }
 
-  Serial.print(minusButtonPressed ? "-" : (menuButtonPressed ? "Menu" : "+"));
-  Serial.println(" button pressed");
+  Serial.print(downButtonPressed ? F("DOWN") : (menuButtonPressed ? F("Menu") : F("UP")));
+  Serial.println(F(" button pressed"));
 
   ts.buttonPressed.set();
   ts.humanActivity.set();
@@ -1126,7 +1128,7 @@ void handleButtonsPressed() {
 
 void updateDisplayMsg() {
   if (screenNum > SCR_VOLT_TEMP && ts.buttonPressed.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
-    Serial.println("No activity. Jumping to first screen...");
+    Serial.println(F("No activity. Jumping to first screen..."));
     screenNum = SCR_VOLT_CURR;
     discardChangedPrefs();
   }
@@ -1178,7 +1180,7 @@ void updateDisplayMsg() {
       itoa(chPrefs.batteryDischargeCurrentLow, rightStr, 10);
       break;
     case SCR_SOLAR_GRID_MODE:
-      strcpy(rightStr, chPrefs.prioritizeSolarOverGrid ? "5U8" : "U58");
+      strcpy_P(rightStr, chPrefs.prioritizeSolarOverGrid ? PSTR("5U8") : PSTR("U58"));
       break;
     case SCR_DLY_TO_INV_AFT_BTRY_KILL:
       itoa(chPrefs.delayToInverterAfterBatteryKill, rightStr, 10);
@@ -1221,7 +1223,7 @@ void updateDisplayMsg() {
       itoa(chPrefs.buzzerLevel, rightStr, 10);
       break;
     case SCR_SAVE:
-      strcpy(rightStr, "SAUE");  // SAVE
+      strcpy_P(rightStr, PSTR("SAUE"));  // SAVE
       break;
   }
 
@@ -1242,9 +1244,9 @@ void setup() {
   pinMode(PIN_AC_RELAY, OUTPUT);
   pinMode(PIN_INV_RELAY, OUTPUT);
   pinMode(PIN_BUZZER, OUTPUT);
-  pinMode(PIN_BUTTON_MINUS, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
   pinMode(PIN_BUTTON_MENU, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_PLUS, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
 
   digitalWrite(PIN_AC_RELAY, HIGH);
 
@@ -1255,7 +1257,7 @@ void setup() {
   Wire.begin();
 
   while (!dcSensor.init()) {
-    Serial.println("DC Sensor not ready");
+    Serial.println(F("DC Sensor not ready"));
     delay(100);
   }
   dcSensor.setADCMode(SAMPLE_MODE_128);
@@ -1301,10 +1303,10 @@ void loop() {
     tsTwoHzTimer.set();
   }
 
-  if (!minusButtonPressed && !menuButtonPressed && !plusButtonPressed) {
-    minusButtonPressed = isButtonPressed(PIN_BUTTON_MINUS);
+  if (!downButtonPressed && !menuButtonPressed && !upButtonPressed) {
+    downButtonPressed = isButtonPressed(PIN_BUTTON_DOWN);
     menuButtonPressed = isButtonPressed(PIN_BUTTON_MENU);
-    plusButtonPressed = isButtonPressed(PIN_BUTTON_PLUS);
+    upButtonPressed = isButtonPressed(PIN_BUTTON_UP);
   }
 
   battery.readSensors();  // Take 10 samples per second
@@ -1326,7 +1328,7 @@ void loop() {
   handleButtonsPressed();
   updateDisplayMsg();
 
-  minusButtonPressed = menuButtonPressed = plusButtonPressed = false;
+  downButtonPressed = menuButtonPressed = upButtonPressed = false;
 
   tsLoopCheck.set();
 }
