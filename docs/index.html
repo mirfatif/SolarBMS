@@ -6,6 +6,10 @@
   <title>Solar and Battery Management System Using Arduino Nano</title>
 
   <style>
+    body {
+      font-family: sans-serif;
+    }
+
     a {
       text-decoration: none;
       color: blue;
@@ -51,7 +55,7 @@
         <li>Similarly, at evening, load is kept on solar as long as sunlight is sufficient.</li>
       </ul>
     </li>
-    <li>If the AC load exceeds solar supply and the battery begins to discharge, switch to grid even during daytime.</li>
+    <li>If the AC load exceeds solar supply and the battery begins to discharge, switch to grid, even during daytime.</li>
     <li>At night or on cloudy days:
       <ul>
         <li>If grid is available, use it instead of draining the battery.</li>
@@ -124,12 +128,12 @@
     <li>Battery voltage (left, Volts) and current (right, Ampere)</li>
     <li>Battery voltage (left, Volts) and power being drawn from or fed to the battery (product of voltage and current) (right, Watt)</li>
     <li>Battery voltage (left, Volts) and temperature (right, °C)</li>
-    <li id="pref_btry_volt_full">Battery full charge voltage <code>BV<sub>full</sub></code> (Volts, range: 12.0-16.0, default: 14.4)</li>
-    <li id="pref_btry_volt_low">Battery discharged voltage low threshold <code>BV<sub>low</sub></code> (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
-    <li id="pref_btry_volt_crit">Battery discharged voltage critical threshold <code>BV<sub>crit</sub></code> (Volts, range: 9.0-12.0, default: 11.0)</li>
-    <li id="pref_btry_curr_crit">Battery discharge current critical threshold <code>BI<sub>crit</sub></code> (Ampere, range: 20-60, default: 50)</li>
-    <li id="pref_btry_curr_high">Battery discharge current high threshold <code>BI<sub>high</sub></code> (Ampere, range: 10-30, default: 20 (@ C10))</li>
-    <li id="pref_btry_curr_low">Battery discharge current low threshold <code>BI<sub>low</sub></code> (Ampere, range: 1-15, default: 5)</li>
+    <li id="pref_btry_volt_full"><code>BV<sub>full</sub></code>: Battery full charge voltage (Volts, range: 12.0-16.0, default: 14.4)</li>
+    <li id="pref_btry_volt_low"><code>BV<sub>low</sub></code>: Battery discharged voltage low threshold (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
+    <li id="pref_btry_volt_crit"><code>BV<sub>crit</sub></code>: Battery discharged voltage critical threshold (Volts, range: 9.0-12.0, default: 11.0)</li>
+    <li id="pref_btry_curr_crit"><code>BI<sub>crit</sub></code>: Battery discharge current critical threshold (Ampere, range: 20-60, default: 50)</li>
+    <li id="pref_btry_curr_high"><code>BI<sub>high</sub></code>: Battery discharge current high threshold (Ampere, range: 10-30, default: 20 (@ C10))</li>
+    <li id="pref_btry_curr_low"><code>BI<sub>low</sub></code>: Battery discharge current low threshold (Ampere, range: 1-15, default: 5)</li>
     <li>Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
     <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> (Minutes, range: 1-10, default: 5)</li>
     <li>Delay before switching AC load back to inverter (daytime) after inverter was turned off for any reason (e.g. due to clouds, or battery overload or low voltage condition), now solar is available (Minutes, range: 1-10, default: 5)</li>
