@@ -612,7 +612,9 @@ void switchToGrid(InverterHaltReason reason) {
   inverterHaltReason = reason;
 
   Serial.print(F("Switching to grid... "));
-  Serial.println(inverterHaltReasonName());
+  if (inverterHaltReason != INV_NO_REASON) {
+    Serial.println(inverterHaltReasonName());
+  }
 
   digitalWrite(PIN_AC_RELAY, LOW);
   digitalWrite(PIN_INV_RELAY, HIGH);
@@ -626,7 +628,7 @@ bool batteryVoltageOkSinceLongEnough(uint8_t minutes = prefs.delayToInverterAfte
 bool isBatteryGoodForSolar() {
   return !shouldSwitchToGridDueToBatteryLow()
          && !shouldSwitchToGridDueToSolarNotEnough()
-         && !shouldBeepDueToSolarNotEnough(60, 10);
+         && !shouldBeepDueToSolarNotEnough(15, 60);
 }
 
 SolarState checkSolarConditions();
@@ -697,9 +699,11 @@ bool shouldSwitchToGridDueToBatteryLow() {
   return false;
 }
 
-bool isBatteryDischargingBadly() {
+bool isBatteryDischargingBadly(uint16_t veryCritCurrentWindowSec = 2) {
   if (battery.isDischargingVeryCritically) {
-    return true;
+    bool batteryVeryCritCurrentDrawWindowPassed =
+      battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(veryCritCurrentWindowSec);
+    return batteryVeryCritCurrentDrawWindowPassed;
   } else if (battery.isDischargingCritically) {
     bool batteryCritCurrentDrawWindowPassed =
       battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(prefs.windowToGridOnCurrentCrit);
@@ -708,38 +712,38 @@ bool isBatteryDischargingBadly() {
   return false;
 }
 
+// Must check critical conditions first.
+bool isDischargingLowOrHighSince(uint16_t highCurrentWindowSec,
+                                 uint16_t lowCurrentWindowSec,
+                                 bool checkLowWindowWhenHigh = false) {
+  if (battery.isDischargingHigh) {
+    bool highCurrentDrawWindowPassed = battery.ev.dischargeCurrentHighOrAbove.isOlderThanSec(highCurrentWindowSec);
+    bool lowCurrentDrawWindowPassed = checkLowWindowWhenHigh
+                                      && battery.ev.dischargeCurrentLow.isOlderThanSec(highCurrentWindowSec);
+    return highCurrentDrawWindowPassed || lowCurrentDrawWindowPassed;
+  } else {
+    return battery.ev.dischargeCurrentLow.isOngoingAndOlderThanSec(lowCurrentWindowSec);
+  }
+}
+
 // Better check isBatteryDischargingBadly() first.
 bool shouldSwitchToGridDueToSolarNotEnough() {
   if (isBatteryDischargingBadly()) {
     return true;
   } else if (hasJustSwitchedToInverter()) {
     return false;
-  } else if (battery.isDischargingHigh) {
-    bool batteryHighCurrentDrawWindowPassed =
-      battery.ev.dischargeCurrentHighOrAbove.isOlderThanMin(prefs.windowToGridDaytimeOnCurrentHigh);
-    if (batteryHighCurrentDrawWindowPassed) {
-      return true;
-    }
-  } else if (battery.isDischargingLow) {
-    bool batteryLowCurrentDrawWindowPassed =
-      battery.ev.dischargeCurrentLow.isOlderThanMin(prefs.windowToGridDaytimeOnCurrentLow);
-    bool batteryVoltageBelowStableWindowPassed = battery.ev.voltageBelowStable.isOngoingAndOlderThanSec(30);
-    return batteryLowCurrentDrawWindowPassed && batteryVoltageBelowStableWindowPassed;
+  } else {
+    return isDischargingLowOrHighSince((uint16_t)prefs.windowToGridDaytimeOnCurrentHigh * 60,
+                                       (uint16_t)prefs.windowToGridDaytimeOnCurrentLow * 60);
   }
-  return false;
 }
 
-bool shouldBeepDueToSolarNotEnough(uint8_t lowCurrentDelaySec, uint8_t highCurrentDelaySec) {
-  if (isBatteryDischargingBadly()) {
+bool shouldBeepDueToSolarNotEnough(uint8_t highCurrentWindowSec, uint8_t lowCurrentWindowSec) {
+  if (isBatteryDischargingBadly(0)) {
     return true;
-  } else if (battery.isDischargingHigh) {
-    return battery.ev.dischargeCurrentLow.isOlderThanSec(highCurrentDelaySec)
-           || battery.ev.dischargeCurrentHighOrAbove.isOlderThanSec(highCurrentDelaySec);
-  } else if (battery.isDischargingLow) {
-    return battery.ev.voltageBelowStable.isOngoingAndOlderThanSec(30)
-           && battery.ev.dischargeCurrentLow.isOlderThanSec(lowCurrentDelaySec);
+  } else {
+    return isDischargingLowOrHighSince(highCurrentWindowSec, lowCurrentWindowSec, true);
   }
-  return false;
 }
 
 bool shouldSwitchToInverterWithGrid() {
@@ -813,7 +817,7 @@ void setBuzzerAndWarning() {
     reasonTmp |= (1 << 4);
   }
 
-  if (hasGrid && isOnInverter() && solarState == SOLAR_ON && shouldBeepDueToSolarNotEnough(30, 5)) {
+  if (hasGrid && isOnInverter() && solarState == SOLAR_ON && shouldBeepDueToSolarNotEnough(5, 30)) {
     reasonTmp |= (1 << 5);
   }
 
