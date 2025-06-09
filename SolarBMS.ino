@@ -435,7 +435,7 @@ public:
   public:
     Ts voltageOrCurrentBelowSafe;
     OngoingEventTs dischargeCurrentCritOrVeryCrit, dischargeCurrentHighOrAbove, dischargeCurrentLow;
-    OngoingEventTs voltageBelowStable, voltageBelowFloat;
+    OngoingEventTs voltageBelowFloat;
     OngoingEventTs voltageOkOrHigh, voltageLowOrCriticallyLow, voltageHigh, chargeCurrentHigh;
   } ev;
 
@@ -521,12 +521,11 @@ public:
                                                  || isDischargingVeryCritically,
                                                prefs.windowToGridDaytimeOnCurrentHigh);
     // Keep this window small to ignore temporary fluctuations
-    ev.dischargeCurrentLow.updateTsSec(isDischargingLow, 10);
+    ev.dischargeCurrentLow.updateTsSec(isDischargingLow && isVoltageBelowStable, 10);
 
     ev.voltageHigh.updateTsSec(isVoltageHigh, 10);
     ev.chargeCurrentHigh.updateTsSec(isChargingHigh, 10);
 
-    ev.voltageBelowStable.updateTs(isVoltageBelowStable);
     ev.voltageBelowFloat.updateTs(isVoltageBelowFloat);
   }
 } battery;
