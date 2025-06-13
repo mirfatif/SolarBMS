@@ -65,6 +65,7 @@ enum Screen {
   SCR_WIND_TO_GRID_ON_CURR_CRIT,
   SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,
   SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,
+  SCR_DLY_TO_INV_AFT_INV_START,
   SCR_CLOCK,
   SCR_PRE_SOLAR_TRY_TIME,
   SCR_SOLAR_ON_TIME,
@@ -120,6 +121,7 @@ enum EEPROM_Addr {
   EE_WINDOW_TO_GRID_CURR_CRIT,
   EE_WINDOW_DAYTIME_CURR_HIGH,
   EE_WINDOW_DAYTIME_CURR_LOW,
+  EE_DELAY_TO_INV_AFTER_INV_START,
   EE_PRE_SOLAR_TRY_TIME,
   EE_SOLAR_ON_HOUR,
   EE_SOLAR_ON_MIN,
@@ -145,13 +147,14 @@ public:
   uint8_t windowToGridOnCurrentCrit = 10;        // 14. Seconds (5-60, step: 5) | Battery current b/w high and critical
   uint8_t windowToGridDaytimeOnCurrentHigh = 2;  // 15. Minutes (1-10, step: 1) | Battery current b/w low and high
   uint8_t windowToGridDaytimeOnCurrentLow = 5;   // 16. Minutes (1-15, step: 1) | Battery current below low
-  uint8_t preSolarTryTime = 0;                   // 18. Minutes (0-60, step: 15)
-  uint8_t solarOnTimeHours = 7;                  // 19. Hour of the day (5-10, step: 1)
-  uint8_t solarOnTimeMinutes = 0;                // 19. Minute of the hour (0-45, step: 15)
-  uint8_t solarOffTimeHours = 17;                // 20. Hour of the day (14-19, step: 1)
-  uint8_t solarOffTimeMinutes = 0;               // 20. Minute of the hour (0-45, step: 15)
-  uint8_t ledBrightLevel = 1;                    // 21. Level (1-10, step: 1)
-  uint8_t buzzerLevel = 1;                       // 22. Level (1-10, step: 1)
+  uint8_t delayToInvAfterInvStart = 5;           // 17. Seconds (0-10, step: 1)
+  uint8_t preSolarTryTime = 0;                   // 19. Minutes (0-60, step: 15)
+  uint8_t solarOnTimeHours = 7;                  // 20. Hour of the day (5-10, step: 1)
+  uint8_t solarOnTimeMinutes = 0;                // 20. Minute of the hour (0-45, step: 15)
+  uint8_t solarOffTimeHours = 17;                // 21. Hour of the day (14-19, step: 1)
+  uint8_t solarOffTimeMinutes = 0;               // 21. Minute of the hour (0-45, step: 15)
+  uint8_t ledBrightLevel = 1;                    // 22. Level (1-10, step: 1)
+  uint8_t buzzerLevel = 1;                       // 23. Level (1-10, step: 1)
 
   bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
@@ -167,6 +170,7 @@ public:
     windowToGridOnCurrentCrit = EEPROM.read(EE_WINDOW_TO_GRID_CURR_CRIT);
     windowToGridDaytimeOnCurrentHigh = EEPROM.read(EE_WINDOW_DAYTIME_CURR_HIGH);
     windowToGridDaytimeOnCurrentLow = EEPROM.read(EE_WINDOW_DAYTIME_CURR_LOW);
+    delayToInvAfterInvStart = EEPROM.read(EE_DELAY_TO_INV_AFTER_INV_START);
     preSolarTryTime = EEPROM.read(EE_PRE_SOLAR_TRY_TIME);
     solarOnTimeHours = EEPROM.read(EE_SOLAR_ON_HOUR);
     solarOnTimeMinutes = EEPROM.read(EE_SOLAR_ON_MIN);
@@ -192,6 +196,7 @@ public:
     EEPROM.update(EE_WINDOW_TO_GRID_CURR_CRIT, windowToGridOnCurrentCrit);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_HIGH, windowToGridDaytimeOnCurrentHigh);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_LOW, windowToGridDaytimeOnCurrentLow);
+    EEPROM.update(EE_DELAY_TO_INV_AFTER_INV_START, delayToInvAfterInvStart);
     EEPROM.update(EE_PRE_SOLAR_TRY_TIME, preSolarTryTime);
     EEPROM.update(EE_SOLAR_ON_HOUR, solarOnTimeHours);
     EEPROM.update(EE_SOLAR_ON_MIN, solarOnTimeMinutes);
@@ -232,6 +237,8 @@ private:
     computeCRC8(crc, windowToGridOnCurrentCrit);
     computeCRC8(crc, windowToGridDaytimeOnCurrentHigh);
     computeCRC8(crc, windowToGridDaytimeOnCurrentLow);
+    computeCRC8(crc, delayToInvAfterInvStart);
+    computeCRC8(crc, preSolarTryTime);
     computeCRC8(crc, solarOnTimeHours);
     computeCRC8(crc, solarOnTimeMinutes);
     computeCRC8(crc, solarOffTimeHours);
@@ -554,9 +561,8 @@ bool isOnGrid() {
   return !isOnInverter();
 }
 
-// Let the inverter start before switching off grid.
-void handleSwitchToInverterSched() {
-  if (isOnInverter() || (hasGrid && !ts.invertedStarted.isOngoingAndOlderThanSec(5))) {
+void switchToInverter() {
+  if (isOnInverter()) {
     return;
   }
 
@@ -566,6 +572,17 @@ void handleSwitchToInverterSched() {
 
   digitalWrite(PIN_AC_RELAY, HIGH);
   ts.switchedToInverter.set();
+}
+
+// Let the inverter start before switching off grid.
+void handleSwitchToInverterSched() {
+  if (isOnInverter() || !ts.invertedStarted.isOngoing()) {
+    return;
+  }
+
+  if (!hasGrid || ts.invertedStarted.isOlderThanSec(prefs.delayToInvAfterInvStart)) {
+    switchToInverter();
+  }
 }
 
 void startInverter() {
@@ -578,10 +595,10 @@ void startInverter() {
   inverterHaltReason = INV_NO_REASON;
   digitalWrite(PIN_INV_RELAY, LOW);
 
-  if (hasGrid) {
+  if (hasGrid && prefs.delayToInvAfterInvStart != 0) {
     ts.invertedStarted.updateTs(true);
   } else {
-    handleSwitchToInverterSched();
+    switchToInverter();
   }
 }
 
@@ -601,6 +618,8 @@ void switchToGrid(InverterHaltReason reason) {
   Serial.print(F("Switching to grid... "));
   if (inverterHaltReason != INV_NO_REASON) {
     Serial.println(inverterHaltReasonName());
+  } else {
+    Serial.println();
   }
 
   digitalWrite(PIN_AC_RELAY, LOW);
@@ -1073,6 +1092,9 @@ void handleButtonsPressed() {
     case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridDaytimeOnCurrentLow, 1, 15);
       break;
+    case SCR_DLY_TO_INV_AFT_INV_START:
+      handleMinMaxPrefButtonPress(chPrefs.delayToInvAfterInvStart, 0, 10);
+      break;
     case SCR_CLOCK:
       if (!clk.updated) {
         clk.updated = true;
@@ -1190,6 +1212,9 @@ void updateDisplayMsg() {
       break;
     case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       itoa(chPrefs.windowToGridDaytimeOnCurrentLow, rightStr, 10);
+      break;
+    case SCR_DLY_TO_INV_AFT_INV_START:
+      itoa(chPrefs.delayToInvAfterInvStart, rightStr, 10);
       break;
     case SCR_CLOCK:
       if (clk.updated) {
