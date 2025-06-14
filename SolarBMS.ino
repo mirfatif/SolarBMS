@@ -4,7 +4,6 @@
 #include <DS3231.h>
 #include <INA219_WE.h>
 #include <max7219.h>
-#include <TimerOne_V2.h>
 #include <ZMPT101B.h>
 
 #define PIN_IR_SENSOR 3
@@ -303,21 +302,10 @@ void discardChangedPrefs() {
 #define A_YEAR_MILLIS (365LL * 24 * 60 * 60 * 1000)
 
 // Use 8-byte number to avoid the problem of millis() wrapping every 49 days.
-volatile uint64_t ms64;
-
-// Don't do addition here so that ticks are no skipped, though we can tolerate a few.
-void timer1_ISR() {
-  ms64++;
-}
-
 // We don't have true epoch time. A workaround: set timestamps to a year back so that unset
 // timestamps (0), when compared, are evaluated to being older than given few minutes, hours etc.
 uint64_t millis64() {
-  static uint64_t ms64Cpy;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    ms64Cpy = ms64;
-  }
-  return ms64Cpy + A_YEAR_MILLIS;
+  return (uint64_t)millis() + A_YEAR_MILLIS;
 }
 
 class Ts {
@@ -1252,10 +1240,6 @@ void setup() {
   pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
 
   digitalWrite(PIN_AC_RELAY, HIGH);
-
-  // Note: Hardware PWM on pins D9/D10 is disabled.
-  Timer1.initialize(1000);  // 1 millisecond interrupt
-  Timer1.attachInterrupt(timer1_ISR);
 
   Wire.begin();
 
