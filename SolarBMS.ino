@@ -674,7 +674,8 @@ SolarState checkSolarConditions() {
   if (hoursNow > prefs.solarOnTimeHours     // Still not midnight
       || prefs.preSolarTryTime == 0         // Pre-solar try not configured
       || !tsPreSolarTry.isOlderThanMin(15)  // Recently tried
-      || !battery.ev.voltageBelowFloat.isOngoingAndOlderThanSec(30)
+      || battery.isVoltageBelowFloat
+      || !battery.ev.voltageBelowFloat.isOlderThanSec(30)
       || !isBatteryGoodForSolar()) {
     return SOLAR_OFF;
   }
