@@ -1253,7 +1253,7 @@ void setup() {
   while (!Serial)
     ;
 
-  pinMode(PIN_IR_SENSOR, INPUT_PULLUP);
+  pinMode(PIN_IR_SENSOR, INPUT);
   pinMode(PIN_AC_RELAY, OUTPUT);
   pinMode(PIN_INV_RELAY, OUTPUT);
   pinMode(PIN_BUZZER, OUTPUT);
@@ -1300,7 +1300,7 @@ void loop() {
   }
 
   if (ledOn && ts.humanActivity.isOlderThanMin(5)) {
-    //shutdownDisplay();
+    shutdownDisplay();
   }
 
   static Ts tsTwoHzTimer;

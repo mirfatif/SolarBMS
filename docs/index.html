@@ -110,6 +110,7 @@
   <ul>
     <li>Use push buttons to jump to the next screen (center) and to change the configurable values (left and right).</li>
     <li>First 3 screens are informatory. On these screens, setting buttons turn off the display. Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared obstacle detector) to turn the display back on.</li>
+    <li>When display is on, waving hand before IR sensor rotates the display between informatory screens.</li>
     <li>On SAVE screen (last), setting buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
         <li><a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
@@ -122,6 +123,7 @@
     </li>
     <li>Display jumps back to the first screen after 30 seconds of inactivity on settings screens.</li>
   </ul>
+
   <p>Screens:</p>
   <ol>
     <li>Battery voltage (left, Volts) and current (right, Ampere)</li>
@@ -200,6 +202,11 @@
         <li>Left (DOWN): Decrease a configurable value (setting).</li>
         <li>Center (MENU): Switch between screens and turn off the display.</li>
         <li>Right (UP): Increase a configurable value (setting).</li>
+      </ul>
+    </li>
+    <li><strong>IR Obstacle Sensor</strong> <sup><a href="#22">[22]</a></sup>:
+      <ul>
+        <li>Wave hand to turn on the display, or rotate between informatory screens.</li>
       </ul>
     </li>
     <li><strong>MP2307 Buck Converter</strong> <sup><a href="#21">[21]</a></sup> – converts 12V to 9V for Arduino Nano.</li>
@@ -405,7 +412,14 @@
     </li>
   </ul>
 
-  <h3>9. MP2307 Buck Converter</h3>
+  <h3>9. IR Obstacle Sensor</h3>
+  <ul>
+    <li><code>VCC</code> → 5V rail</li>
+    <li><code>GND</code> → GND rail</li>
+    <li><code>OUT</code> → Arduino Nano D3</li>
+  </ul>
+
+  <h3>10. MP2307 Buck Converter</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
@@ -421,7 +435,7 @@
     </li>
   </ul>
 
-  <h3>10. LM2596 Buck Converter</h3>
+  <h3>11. LM2596 Buck Converter</h3>
   <ul>
     <li><strong>Input:</strong> Same as MP2307.</li>
     <li><strong>Output:</strong>
@@ -432,7 +446,7 @@
     </li>
   </ul>
 
-  <h3>11. Power Supply Summary</h3>
+  <h3>12. Power Supply Summary</h3>
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
@@ -496,6 +510,7 @@
     <li id="19"><a href="https://github.com/Abdurraziq/ZMPT101B-arduino">https://github.com/Abdurraziq/ZMPT101B-arduino</a></li>
     <li id="20"><a href="https://github.com/kotwatthana/TimerOne_V2">https://github.com/kotwatthana/TimerOne_V2</a></li>
     <li id="21"><a href="https://digilog.pk/products/mini-360-dc-to-dc-step-down-buck-converter-module-in-pakistan">https://digilog.pk/products/mini-360-dc-to-dc-step-down-buck-converter-module-in-pakistan</a></li>
+    <li id="22"><a href="https://digilog.pk/products/ir-infrared-obstacle-avoidance-sensor-module-in-pakistan">https://digilog.pk/products/ir-infrared-obstacle-avoidance-sensor-module-in-pakistan</a></li>
   </ol>
 
 </body>
