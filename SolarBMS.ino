@@ -98,7 +98,7 @@ INA219_WE dcSensor = INA219_WE();  // Uses I2C pins A4 (SDA) and A5 (SCL), addre
 
 char leftStr[8] = "HELLO";
 char rightStr[8] = "JI";
-bool blinkLeft, blinkRight, hasGrid, downButtonPressed, menuButtonPressed, upButtonPressed;
+bool blinkLeft, blinkRight, hasGrid, downButtonPressed, menuButtonPressed, upButtonPressed, handWaved;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -896,11 +896,13 @@ void beep(uint8_t buzzerLevel = prefs.buzzerLevel) {
   }
 }
 
-void startDisplay() {
+bool startDisplay() {
   if (!ledOn) {
     led.MAX7219_ShutdownStop();
     ledOn = true;
+    return true;
   }
+  return false;
 }
 
 void shutdownDisplay() {
@@ -957,13 +959,22 @@ void handle2HzTimer() {
   }
 }
 
+void jumpToNextScreen() {
+  screenNum = (Screen)((uint8_t)screenNum + 1);
+}
+
+// Check if button is stable for 20 ms before declaring it pressed
 bool isButtonPressed(uint8_t pin) {
   if (!digitalRead(pin)) {
-    // Check if button is stable for 20 ms before declaring it pressed
     delay(20);
     return !digitalRead(pin);
   }
   return false;
+}
+
+// Check if hand is stable for 20 ms before declaring it waved
+bool isHandWaved() {
+  return isButtonPressed(PIN_IR_SENSOR);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -1021,8 +1032,7 @@ void handleButtonsPressed() {
   ts.buttonPressed.set();
   ts.humanActivity.set();
 
-  if (!ledOn) {
-    startDisplay();
+  if (startDisplay()) {
     return;
   }
 
@@ -1031,7 +1041,7 @@ void handleButtonsPressed() {
       screenNum = SCR_VOLT_CURR;
       discardChangedPrefs();
     } else {
-      screenNum = (Screen)((uint8_t)screenNum + 1);
+      jumpToNextScreen();
     }
     // Skip prefs related to SUB mode
     if (!chPrefs.prioritizeSolarOverGrid) {
@@ -1131,6 +1141,18 @@ void handleButtonsPressed() {
         screenNum = SCR_VOLT_CURR;
       }
       break;
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+
+void handleHandWaved() {
+  if (handWaved && !anyButtonPressed()) {
+    if (screenNum == SCR_VOLT_TEMP) {
+      screenNum = SCR_VOLT_CURR;
+    } else if (screenNum < SCR_VOLT_TEMP) {
+      jumpToNextScreen();
+    }
   }
 }
 
@@ -1294,8 +1316,8 @@ void setup() {
 void loop() {
   delay(100);
 
-  if (digitalRead(PIN_IR_SENSOR) == LOW) {
-    startDisplay();
+  if (isHandWaved()) {
+    handWaved = !startDisplay();
     ts.humanActivity.set();
   }
 
@@ -1335,9 +1357,10 @@ void loop() {
   handleInverterGridSwitching();
   setBuzzerAndWarning();
   handleButtonsPressed();
+  handleHandWaved();
   updateDisplayMsg();
 
-  downButtonPressed = menuButtonPressed = upButtonPressed = false;
+  downButtonPressed = menuButtonPressed = upButtonPressed = handWaved = false;
 
   tsLoopCheck.set();
 }
