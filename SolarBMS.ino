@@ -13,7 +13,6 @@
 #define PIN_BUTTON_DOWN 7
 #define PIN_BUTTON_MENU 8
 #define PIN_BUTTON_UP 9
-#define PIN_LIGHT_SENSOR 13
 #define PIN_DC_VOLT A0
 #define PIN_AC_VOLT A1
 

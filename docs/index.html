@@ -49,7 +49,7 @@
 
   <h2>Operational Logic</h2>
   <ol>
-    <li>During daytime, power is drawn from solar to run the inverter (if sunlight is sufficient and/or according to solar on/off time settings) and charge the battery.
+    <li>During daytime, power is drawn from solar to run the inverter (according to solar on/off time settings) and charge the battery.
       <ul>
         <li>You can configure time (in minutes, before configured sunlight time) in which load is shifted from grid to solar if sunlight is sufficient to bear the load. Otherwise, load is silently shifted back to grid.</li>
         <li>Similarly, at evening, load is kept on solar as long as sunlight is sufficient.</li>
@@ -90,7 +90,6 @@
         <li>Battery is being discharged (at any rate; we should be using solar)</li>
         <li>Inverter turned off (and switched to grid; we should be using solar)
           <ul>
-            <li>Light sensor can be used to sense clouds, to avoid false warnings.</li>
             <li>Exact reason of turning off the inverter is shown on screen. See warnings below.</li>
           </ul>
         </li>
@@ -188,7 +187,6 @@
         <li>I2C Address: 0x68</li>
       </ul>
     </li>
-    <li><strong>BH1750 Light Sensor Module (optional)</strong> <sup><a href="#8">[8]</a></sup> – measures solar irradiance to determine if sunlight is sufficient for AC load.</li>
     <li><strong>Relay Module</strong> <sup><a href="#9">[9]</a></sup> (in NO mode) – used to switch AC load between grid and inverter output.</li>
     <li><strong>5V Relay</strong> <sup><a href="#10">[10]</a></sup> (in NC mode) – used to turn off inverter when not needed (to save battery) or during battery protection events. This relay is installed inside the inverter in series with the main power button.
       <ul>
@@ -270,12 +268,11 @@
         <li>Output of Relay Module to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
       </ol>
     </li>
-    <li>4 x <strong>2 Pin T-Block Connector</strong> for:
+    <li>3 x <strong>2 Pin T-Block Connector</strong> for:
       <ol>
         <li>12V supply (battery)</li>
         <li>Relay (inverter)</li>
         <li>FL-2C Shunt Resistor</li>
-        <li>BH1750 Light Sensor</li>
       </ol>
     </li>
     <li><strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.</li>
@@ -286,7 +283,6 @@
     <li>4 x <strong>Plastic PCB Circuit Board Spacer</strong> – between veroboard and the box bottom.</li>
     <li><strong>2-Core Cable</strong> – for 12V power supply, Relay (inverter) and FL-2C Shunt Resistor connections.</li>
     <li><strong>3-Core Cable</strong> – for AC connections.</li>
-    <li><strong>4-Core Shielded Cable</strong> (for voice data) – for BH1750 Light Sensor connections.</li>
   </ul>
 
   <h2>Connections</h2>
@@ -474,7 +470,6 @@
       <ul>
         <li>Powers LM2596 (converted to 5V for Arduino/modules).</li>
         <li>Directly feeds voltage sensor and buzzer (12V).</li>
-        <li>Powers the BH1750 circuit (on rooftop).</li>
         <li>Also connected to inverter and solar charge controller (+ve side through shunt resistor).</li>
       </ul>
     </li>
@@ -484,107 +479,6 @@
       </ul>
     </li>
   </ul>
-
-  <h2>BH1750 Components + Connections (rooftop)</h2>
-
-  <p>I<sup>2</sup>C communication between BH1750 module and Arduino Nano over a few meters is highly prone to errors. So we build a separate circuit on rooftop which sends simply on (sunlight sufficient) / off (night or clouds) 10V signal back to Nano side.</p>
-
-  <h3>1. 3-Core Shielded Cable (Nano side)</h3>
-  <ul>
-    <li>Red → MP2307 OUT+ (10V)</li>
-    <li>Black → GND</li>
-    <li>White → 1 kΩ resistor → Arduino Nano D13
-      <ul>
-        <li>10V signal clamped to 5.1V using 1N4733A Zener diode</li>
-        <li>Noise filtering using 100 nF capacitor</li>
-      </ul>
-    </li>
-    <li>Shield → GND</li>
-  </ul>
-
-  <h3>2. DigiSpark ATtiny85 Board</h3>
-  <ul>
-    <li><code>VIN</code> → Shielded cable 10V core (red)</li>
-    <li><code>GND</code> → Shielded cable GND core (black)</li>
-    <li><code>5V</code> → BH1750, potentiometer</li>
-    <li><code>P0</code>-<code>P4</code> → input, output</li>
-  </ul>
-
-  <h3>3. BH1750 Light Sensor Module</h3>
-  <ul>
-    <li><code>VCC</code> → ATtiny85 5V pin</li>
-    <li><code>GND</code> → GND</li>
-    <li><code>SCL</code> → ATtiny85 P2 (PB2)</li>
-    <li><code>SDA</code> → ATtiny85 P0 (PB0)</li>
-  </ul>
-
-  <h3>4. Multi-Turn Potentiometer</h3>
-  <p>Adjusts light threshold.</p>
-  <ul>
-    <li>Terminal 1 → ATtiny85 5V pin</li>
-    <li>Terminal 2 → GND</li>
-    <li>Wiper → ATtiny85 P3 (PB3)</li>
-  </ul>
-
-  <h3>5. PC817 Optocoupler</h3>
-  <ul>
-    <li>LED side (input):
-      <ul>
-        <li>Anode → 1kΩ resistor → ATtiny85 P4 (PB4)</li>
-        <li>Cathode → GND</li>
-      </ul>
-    </li>
-    <li>Phototransistor side (output):
-      <ul>
-        <li>Collector →
-          <ul>
-            <li>10kΩ pull-up resistor → Shielded cable 10V core (red)</li>
-            <li>Shielded cable signal core (white)</li>
-          </ul>
-        </li>
-        <li>Emitter → GND</li>
-      </ul>
-    </li>
-  </ul>
-
-  <h3>Minor Components:</h3>
-
-  <ul>
-    <li><strong>Zener Diode 1N4733A</strong> (Nano side)
-      <ul>
-        <li>Clamps 10V signal to 5.1V.</li>
-        <li>Cathode → Arduino Nano D13</li>
-        <li>Anode → GND</li>
-      </ul>
-    </li>
-
-    <li><strong>10 kΩ Resistor</strong>
-      <ul>
-        <li>Pulls-up PC817 phototransistor collector to 10V</li>
-      </ul>
-    </li>
-
-    <li>2 x <strong>1 kΩ Resistor</strong>. Current limiting on:
-      <ul>
-        <li>PC817 optocoupler LED anode</li>
-        <li>10V signal coming from rooftop (Nano side)</li>
-      </ul>
-    </li>
-
-    <li><strong>100 µF 25V Electrolytic Capacitor</strong>
-      <ul>
-        <li>ATtiny85 input (10V to GND)</li>
-      </ul>
-    </li>
-
-    <li>2 x <strong>100 nF Ceramic Capacitor</strong>
-      <ul>
-        <li>ATtiny85 input (10V to GND)</li>
-        <li>Arduino Nano signal input (D13 to GND)</li>
-      </ul>
-    </li>
-  </ul>
-
 
   <h2 style="page-break-before: always;">Schematics</h2>
   <h3>Arduino Circuit:</h3>
