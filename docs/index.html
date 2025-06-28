@@ -164,11 +164,7 @@
             <li>With 100A 75mV (= 0.00075 Ω) shunt: 436A (= 0.32767V / 0.00075Ω, theoretically)</li>
           </ul>
         </li>
-      </ul>
-    </li>
-    <li><strong>0–25V DC Voltage Sensor Module</strong> <sup><a href="#5">[5]</a></sup> – monitors battery voltage level.
-      <ul>
-        <li>Alternatively use bus voltage from INA219 sensor if sensing high-side. Bus voltage + shunt voltage gives the battery voltage.</li>
+        <li>When sensing high-side, bus voltage + shunt voltage gives the battery voltage.</li>
       </ul>
     </li>
     <li><strong>ZMPT101B AC Single Phase Voltage Sensor Module</strong> <sup><a href="#6">[6]</a></sup> – measures grid voltage. Alternatively, simply detect the presence of AC power using:
@@ -302,24 +298,7 @@
     </li>
   </ul>
 
-  <h3>2. 0–25V DC Voltage Sensor</h3>
-  <ul>
-    <li><strong>Input:</strong>
-      <ul>
-        <li><code>VCC</code> → Battery 12V+</li>
-        <li><code>GND</code> → Battery 12V-</li>
-      </ul>
-    </li>
-    <li><strong>Output:</strong>
-      <ul>
-        <li><code>S</code> (Signal) → Arduino Nano A0 (analog input)</li>
-        <li><code>+</code> → Arduino Nano 5V</li>
-        <li><code>–</code> → Arduino Nano GND</li>
-      </ul>
-    </li>
-  </ul>
-
-  <h3>3. ZMPT101B AC Voltage Sensor</h3>
+  <h3>2. ZMPT101B AC Voltage Sensor</h3>
   <ul>
     <li><code>VCC</code> → Arduino Nano 5V</li>
     <li><code>OUT</code> → Arduino Nano A1</li>
@@ -332,7 +311,7 @@
     </li>
   </ul>
 
-  <h3>4. DS3231 RTC Module</h3>
+  <h3>3. DS3231 RTC Module</h3>
   <ul>
     <li><code>VCC</code> → Arduino Nano 5V</li>
     <li><code>GND</code> → Arduino Nano GND</li>
@@ -340,7 +319,7 @@
     <li><code>SCL</code> → Arduino Nano A5 (shared with INA219)</li>
   </ul>
 
-  <h3>5. 5V Relay Module (AC Changeover)</h3>
+  <h3>4. 5V Relay Module (AC Changeover)</h3>
   <ul>
     <li><code>VCC</code> → Arduino Nano 5V</li>
     <li><code>GND</code> → Arduino Nano GND</li>
@@ -354,7 +333,7 @@
     </li>
   </ul>
 
-  <h3>6. 5V Relay (Inverter)</h3>
+  <h3>5. 5V Relay (Inverter)</h3>
   <ul>
     <li><strong>Power ORing:</strong>
       <ul>
@@ -379,7 +358,7 @@
     <li>External 5V- adapter → Relay coil-</li>
   </ul>
 
-  <h3>7. MAX7219 8-Digit Display</h3>
+  <h3>6. MAX7219 8-Digit Display</h3>
   <ul>
     <li><code>VCC</code> → Arduino Nano 5V</li>
     <li><code>GND</code> → Arduino Nano GND</li>
@@ -388,7 +367,7 @@
     <li><code>CLK</code> → Arduino Nano D10 (SS)</li>
   </ul>
 
-  <h3>8. 5–12V Active Buzzer</h3>
+  <h3>7. 5–12V Active Buzzer</h3>
   <ul>
     <li><strong>Driver Circuit:</strong>
       <ul>
@@ -405,7 +384,7 @@
     </li>
   </ul>
 
-  <h3>9. Push Buttons (x3)</h3>
+  <h3>8. Push Buttons (x3)</h3>
   <ul>
     <li><strong>Each Button:</strong>
       <ul>
@@ -415,7 +394,7 @@
     </li>
   </ul>
 
-  <h3>10. LM2596 Buck Converter</h3>
+  <h3>9. LM2596 Buck Converter</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
@@ -431,12 +410,12 @@
     </li>
   </ul>
 
-  <h3>11. Power Supply Summary</h3>
+  <h3>10. Power Supply Summary</h3>
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
         <li>Powers LM2596 (converted to 5V for Arduino/modules).</li>
-        <li>Directly feeds voltage sensor and buzzer (12V).</li>
+        <li>Directly feeds buzzer (12V).</li>
         <li>Also connected to inverter and solar charge controller (+ve side through shunt resistor).</li>
       </ul>
     </li>

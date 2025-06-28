@@ -13,7 +13,6 @@
 #define PIN_BUTTON_DOWN 7
 #define PIN_BUTTON_MENU 8
 #define PIN_BUTTON_UP 9
-#define PIN_DC_VOLT A0
 #define PIN_AC_VOLT A1
 
 ////////////////////////////////////////////////////////////////////
@@ -442,9 +441,6 @@ public:
   bool isDischarging, isDischargingVeryCritically, isDischargingCritically, isDischargingHigh, isDischargingLow;
 
   void readSensors() {
-    // INA219 sensor gives both the battery voltage and current. No need to use voltage sensor.
-    // analogRead(PIN_DC_VOLT)
-
     // Battery voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
     voltRecords[pos] = (dcSensor.getShuntVoltage_mV() + dcSensor.getBusVoltage_V() * 1000) / 1000;
     currentRecords[pos] = dcSensor.getCurrent_mA() / 1000;
