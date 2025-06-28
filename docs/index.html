@@ -260,7 +260,17 @@
         <li>FL-2C Shunt Resistor</li>
       </ol>
     </li>
-    <li><strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.</li>
+    <li><strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.
+      <ul>
+        <li>High-frequency electrical noise from the inverter may cause excessive RMS current in fuse, even though DC measurement appears low (multimeter shows average DC). This high RMS may cause localized heating in fuse due to skin effect. To avoid this:
+          <ul>
+            <li>Use a slow-blow fuse.</li>
+            <li>Or run dedicated pairs of wires (positive and negative) from the battery to the inverter and Arduino circuit.</li>
+            <li>Or at least use a long wire for Arduino circuit power supply.</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
     <li><strong>DC Power Jack</strong> (male + female) – to make a detachable connection to Relay (inverter).</li>
     <li><strong>Veroboard Dotted</strong> (145mm x 65mm) – circuit designing.</li>
     <li><strong>2.54mm Pitch Female Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
