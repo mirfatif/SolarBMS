@@ -202,7 +202,8 @@
         <li>Right (UP): Increase a configurable value (setting).</li>
       </ul>
     </li>
-    <li><strong>LM2596 Buck Converter</strong> <sup><a href="#14">[14]</a></sup> – converts 12V to 5V for Arduino circuit.</li>
+    <li><strong>MP2307 Buck Converter</strong> <sup><a href="#21">[21]</a></sup> – converts 12V to 9V for Arduino Nano.</li>
+    <li><strong>LM2596 Buck Converter</strong> <sup><a href="#14">[14]</a></sup> – converts 12V to 5V for other modules.</li>
   </ul>
 
   <h3>Minor Parts</h3>
@@ -289,8 +290,8 @@
       <ul>
         <li><code>Vin+</code> → Shunt's battery-side terminal (charging would give negative current value)</li>
         <li><code>Vin–</code> → Shunt's load-side terminal (also connected to +ve terminals of inverter and solar charge controller)</li>
-        <li><code>GND</code> → Arduino Nano GND</li>
-        <li><code>VCC</code> → Arduino Nano 5V</li>
+        <li><code>GND</code> → GND rail</li>
+        <li><code>VCC</code> → 5V rail</li>
         <li><code>SDA</code> → Arduino Nano A4 (SDA)</li>
         <li><code>SCL</code> → Arduino Nano A5 (SCL)</li>
       </ul>
@@ -310,9 +311,9 @@
 
   <h3>2. ZMPT101B AC Voltage Sensor</h3>
   <ul>
-    <li><code>VCC</code> → Arduino Nano 5V</li>
+    <li><code>VCC</code> → 5V rail</li>
     <li><code>OUT</code> → Arduino Nano A1</li>
-    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>GND</code> → GND rail</li>
     <li><strong>AC Side:</strong>
       <ul>
         <li><code>L</code> → Live (220V)</li>
@@ -323,16 +324,16 @@
 
   <h3>3. DS3231 RTC Module</h3>
   <ul>
-    <li><code>VCC</code> → Arduino Nano 5V</li>
-    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>VCC</code> → 5V rail</li>
+    <li><code>GND</code> → GND rail</li>
     <li><code>SDA</code> → Arduino Nano A4 (shared with INA219)</li>
     <li><code>SCL</code> → Arduino Nano A5 (shared with INA219)</li>
   </ul>
 
   <h3>4. 5V Relay Module (AC Changeover)</h3>
   <ul>
-    <li><code>VCC</code> → Arduino Nano 5V</li>
-    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>VCC</code> → 5V rail</li>
+    <li><code>GND</code> → GND rail</li>
     <li><code>IN</code> → Arduino Nano D4 (control signal)</li>
     <li><strong>AC Load:</strong>
       <ul>
@@ -347,7 +348,7 @@
   <ul>
     <li><strong>Power ORing:</strong>
       <ul>
-        <li>Diode 1: Arduino 5V → Anode of 1N5822 → Cathode to relay coil+</li>
+        <li>Diode 1: Arduino circuit 5V rail → Anode of 1N5822 → Cathode to relay coil+</li>
         <li>Diode 2: External 5V+ adapter → Anode of 1N5822 → Cathode to relay coil+</li>
       </ul>
     </li>
@@ -370,8 +371,8 @@
 
   <h3>6. MAX7219 8-Digit Display</h3>
   <ul>
-    <li><code>VCC</code> → Arduino Nano 5V</li>
-    <li><code>GND</code> → Arduino Nano GND</li>
+    <li><code>VCC</code> → 5V rail</li>
+    <li><code>GND</code> → GND rail</li>
     <li><code>DIN</code> → Arduino Nano D12 (MISO)</li>
     <li><code>CS</code> → Arduino Nano D11 (MOSI)</li>
     <li><code>CLK</code> → Arduino Nano D10 (SS)</li>
@@ -404,7 +405,7 @@
     </li>
   </ul>
 
-  <h3>9. LM2596 Buck Converter</h3>
+  <h3>9. MP2307 Buck Converter</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
@@ -414,17 +415,29 @@
     </li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → Arduino Nano 5V pin (and all 5V modules)</li>
-        <li><code>OUT-</code> → Arduino Nano GND (common ground).</li>
+        <li><code>OUT+</code> → Arduino Nano <code>VIN</code> pin.</li>
+        <li><code>OUT-</code> → Arduino Nano <code>GND</code> (and common ground).</li>
       </ul>
     </li>
   </ul>
 
-  <h3>10. Power Supply Summary</h3>
+  <h3>10. LM2596 Buck Converter</h3>
+  <ul>
+    <li><strong>Input:</strong> Same as MP2307.</li>
+    <li><strong>Output:</strong>
+      <ul>
+        <li><code>OUT+</code> → All 5V modules and other circuit components.</li>
+        <li><code>OUT-</code> → Common ground.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>11. Power Supply Summary</h3>
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
-        <li>Powers LM2596 (converted to 5V for Arduino/modules).</li>
+        <li>Powers MP2307 (converted to 9V for Arduino).</li>
+        <li>Powers LM2596 (converted to 5V for modules).</li>
         <li>Directly feeds buzzer (12V).</li>
         <li>Also connected to inverter and solar charge controller (+ve side through shunt resistor).</li>
       </ul>
@@ -482,6 +495,7 @@
     <li id="18"><a href="https://github.com/JemRF/max7219">https://github.com/JemRF/max7219</a></li>
     <li id="19"><a href="https://github.com/Abdurraziq/ZMPT101B-arduino">https://github.com/Abdurraziq/ZMPT101B-arduino</a></li>
     <li id="20"><a href="https://github.com/kotwatthana/TimerOne_V2">https://github.com/kotwatthana/TimerOne_V2</a></li>
+    <li id="21"><a href="https://digilog.pk/products/mini-360-dc-to-dc-step-down-buck-converter-module-in-pakistan">https://digilog.pk/products/mini-360-dc-to-dc-step-down-buck-converter-module-in-pakistan</a></li>
   </ol>
 
 </body>
