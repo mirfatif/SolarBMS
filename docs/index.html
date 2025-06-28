@@ -211,17 +211,6 @@
 
   <h3>Minor Parts</h3>
 
-  <b>For H11AA1 Optocoupler:</b>
-  <ul>
-    <li>2 x <strong>22 kΩ 2W resistor</strong> (with live and neutral) – 220V (RMS, 311V peak) AC input current limiting.
-      <ul>
-        <li>Forward current: ~7mA ((311V - 1.2V) / 44kΩ)</li>
-        <li>Power rating: ~1W (7mA x 7mA x 22kΩ / 1000)</li>
-      </ul>
-    </li>
-    <li><strong>100 nF ceramic capacitor</strong> – stabilizes H11AA1 Optocoupler output (due to zero-crossing). Or use software debouncing logic.</li>
-  </ul>
-
   <b>For Buzzer:</b>
   <ul>
     <li><strong>2N3904 transistor</strong> – controls voltage supply (5-12V) to the buzzer to adjust the loudness.
@@ -330,11 +319,7 @@
     </li>
   </ul>
 
-  <h3>3. AC Detection</h3>
-  <p>Use any of the both methods.
-
-  </p>
-  <h4>3 (a). ZMPT101B AC Voltage Sensor</h4>
+  <h3>3. ZMPT101B AC Voltage Sensor</h3>
   <ul>
     <li><code>VCC</code> → Arduino Nano 5V</li>
     <li><code>OUT</code> → Arduino Nano A1</li>
@@ -343,24 +328,6 @@
       <ul>
         <li><code>L</code> → Live (220V)</li>
         <li><code>N</code> → Neutral (220V)</li>
-      </ul>
-    </li>
-  </ul>
-
-  <h4>3 (b). H11AA1 Optocoupler</h4>
-  <ul>
-    <li><strong>AC Side:</strong>
-      <ul>
-        <li>Live (220V) → 22 kΩ resistor → H11AA1 Pin 1</li>
-        <li>Neutral (220V) → 22 kΩ resistor → H11AA1 Pin 2</li>
-      </ul>
-    </li>
-    <li><strong>DC Side:</strong>
-      <ul>
-        <li>H11AA1 Pin 4 (collector) → Arduino Nano D2 (digital input with internal pull-up)</li>
-        <li>H11AA1 Pin 5 (emitter) → Arduino Nano GND</li>
-        <li>Leave the H11AA1 Pin 6 (base) unused since the internal NPN transistor is driven by the internal LEDs.</li>
-        <li>Add 100 nF capacitor between D2 and GND.</li>
       </ul>
     </li>
   </ul>
@@ -475,7 +442,7 @@
     </li>
     <li><strong>220V AC:</strong>
       <ul>
-        <li>Feeds ZMPT101B AC voltage sensor (or H11AA1 optocoupler) and relay module (for changeover coil).</li>
+        <li>Feeds ZMPT101B AC voltage sensor and relay module (for changeover coil).</li>
       </ul>
     </li>
   </ul>
