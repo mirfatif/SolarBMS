@@ -407,7 +407,7 @@ public:
 
 class Timestamps {
 public:
-  Ts humanActivity, buttonPressed, switchedToGrid, switchedToInverter;
+  Ts humanActivity, buttonPressed, switchedToGrid, switchedToInverter, screenChanged;
   OngoingEventTs invertedStarted;
 
   Timestamps() {
@@ -1012,6 +1012,7 @@ void handle2HzTimer() {
 
 void jumpToNextScreen() {
   screenNum = (Screen)((uint8_t)screenNum + 1);
+  ts.screenChanged.set();
 }
 
 // Check if button is stable for 20 ms before declaring it pressed
@@ -1227,16 +1228,24 @@ void updateDisplayMsg() {
   leftStr[strlen(leftStr) + 1] = '\0';
   leftStr[strlen(leftStr)] = '.';
 
+  auto notJustChangedScreen = []() -> bool {
+    return ts.screenChanged.isOlderThanSec(1);
+  };
+
   float power;
 
   switch (screenNum) {
     case SCR_VOLT_CURR:
-      dtostrf(battery.volts, 0, 2, leftStr);                                            // Battery volts
+      if (notJustChangedScreen()) {
+        dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
+      }
       dtostrf(round(battery.current * 10) == 0 ? 0 : battery.current, 0, 1, rightStr);  // Current
       break;
     case SCR_VOLT_PWR:
       power = battery.volts * battery.current;
-      dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
+      if (notJustChangedScreen()) {
+        dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
+      }
       if (abs(power) < 100) {
         dtostrf(round(power * 10) == 0 ? 0 : power, 0, 1, rightStr);
       } else {
@@ -1244,7 +1253,9 @@ void updateDisplayMsg() {
       }
       break;
     case SCR_VOLT_TEMP:
-      dtostrf(battery.volts, 0, 2, leftStr);          // Battery volts
+      if (notJustChangedScreen()) {
+        dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
+      }
       dtostrf(rtc.getTemperature(), 0, 1, rightStr);  // Temperature
       break;
     case SCR_BTRY_FULL_VOLT:
