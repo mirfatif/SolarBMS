@@ -51,6 +51,7 @@ enum Screen {
   SCR_VOLT_CURR = 1,
   SCR_VOLT_PWR,
   SCR_VOLT_TEMP,
+  SCR_PV_VOLT_CURR,
   SCR_BTRY_FULL_VOLT,
   SCR_BTRY_LOW_VOLT,
   SCR_BTRY_CRIT_VOLT,
@@ -419,39 +420,21 @@ public:
 
 ////////////////////////////////////////////////////////////////////
 
-class Battery {
+class DcSource {
+  INA219_WE sensor;
+
   float voltRecords[INA219_SAMPLE_COUNT];
   float currentRecords[INA219_SAMPLE_COUNT];
   uint8_t pos = 0;
 
-  enum BatteryCurrentState {
-    BI_OTHER,
-    BI_DISCH_LOW,
-    BI_DISCH_HIGH,
-    BI_DISCH_CRITICAL,
-    BI_DISCH_VERY_CRITICAL
-  } currentState;
-
 public:
-  class BatteryEvents {
-  public:
-    Ts voltageOrCurrentBelowSafe;
-    OngoingEventTs dischargeCurrentCritOrVeryCrit, dischargeCurrentHighOrAbove, dischargeCurrentLow;
-    OngoingEventTs voltageBelowFloat;
-    OngoingEventTs voltageOkOrHigh, voltageLowOrCriticallyLow, voltageHigh, chargeCurrentHigh;
-  } ev;
-
   float volts;    // V
-  float current;  // A (negative is battery discharging)
-
-  bool isVoltageCriticallyLow, isVoltageLow, isVoltageLowOrCriticallyLow, isVoltageBelowStable, isVoltageBelowFloat;
-  bool isVoltageHigh, isVoltageVeryHigh, isChargingHigh, isChargingVeryHigh;
-  bool isDischarging, isDischargingVeryCritically, isDischargingCritically, isDischargingHigh, isDischargingLow;
+  float current;  // A
 
   void readSensor() {
-    // Battery voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
-    voltRecords[pos] = (batterySensor.getShuntVoltage_mV() + batterySensor.getBusVoltage_V() * 1000) / 1000;
-    currentRecords[pos] = batterySensor.getCurrent_mA() / 1000;
+    // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
+    voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
+    currentRecords[pos] = sensor.getCurrent_mA() / 1000;
 
     pos++;
 
@@ -460,7 +443,12 @@ public:
     }
   }
 
-  void updateTs() {
+
+protected:
+  DcSource(INA219_WE sensor)
+    : sensor(sensor) {}
+
+  void averageReadings() {
     volts = 0;
     current = 0;
 
@@ -471,6 +459,36 @@ public:
 
     volts /= INA219_SAMPLE_COUNT;
     current /= INA219_SAMPLE_COUNT;
+  }
+};
+
+class Battery : public DcSource {
+  enum BatteryCurrentState {
+    BI_OTHER,
+    BI_DISCH_LOW,
+    BI_DISCH_HIGH,
+    BI_DISCH_CRITICAL,
+    BI_DISCH_VERY_CRITICAL
+  } currentState;
+
+public:
+  Battery()
+    : DcSource(batterySensor) {}
+
+  class BatteryEvents {
+  public:
+    Ts voltageOrCurrentBelowSafe;
+    OngoingEventTs dischargeCurrentCritOrVeryCrit, dischargeCurrentHighOrAbove, dischargeCurrentLow;
+    OngoingEventTs voltageBelowFloat;
+    OngoingEventTs voltageOkOrHigh, voltageLowOrCriticallyLow, voltageHigh, chargeCurrentHigh;
+  } ev;
+
+  bool isVoltageCriticallyLow, isVoltageLow, isVoltageLowOrCriticallyLow, isVoltageBelowStable, isVoltageBelowFloat;
+  bool isVoltageHigh, isVoltageVeryHigh, isChargingHigh, isChargingVeryHigh;
+  bool isDischarging, isDischargingVeryCritically, isDischargingCritically, isDischargingHigh, isDischargingLow;
+
+  void updateTs() {
+    averageReadings();
 
     volts -= INA219_BAT_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
 
@@ -531,32 +549,15 @@ public:
 
 ////////////////////////////////////////////////////////////////////
 
-class Solar {
-  float currentRecords[INA219_SAMPLE_COUNT];
-  uint8_t pos = 0;
-  float current;
+class Solar : public DcSource {
   OngoingEventTs currentSufficient;
 
 public:
-  void readSensor() {
-    currentRecords[pos] = solarSensor.getCurrent_mA() / 1000;
-
-    pos++;
-
-    if (pos == INA219_SAMPLE_COUNT) {
-      pos = 0;
-    }
-  }
+  Solar()
+    : DcSource(solarSensor) {}
 
   void updateTs() {
-    current = 0;
-
-    for (uint8_t i = 0; i < INA219_SAMPLE_COUNT; i++) {
-      current += currentRecords[i];
-    }
-
-    current /= INA219_SAMPLE_COUNT;
-
+    averageReadings();
     currentSufficient.updateTs(current >= prefs.solarMinCurrent);
   }
 
@@ -990,7 +991,7 @@ void handle2HzTimer() {
   static uint8_t state = 1;
 
   if (ledOn) {
-    if (inverterHaltReason != INV_NO_REASON && (state <= 2) && screenNum <= SCR_VOLT_TEMP) {
+    if (inverterHaltReason != INV_NO_REASON && (state <= 2) && screenNum <= SCR_PV_VOLT_CURR) {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
@@ -1110,6 +1111,7 @@ void handleButtonsPressed() {
     case SCR_VOLT_CURR:
     case SCR_VOLT_PWR:
     case SCR_VOLT_TEMP:
+    case SCR_PV_VOLT_CURR:
       shutdownDisplay();
       break;
     case SCR_BTRY_FULL_VOLT:
@@ -1203,9 +1205,9 @@ void handleButtonsPressed() {
 
 void handleHandWaved() {
   if (handWaved && !anyButtonPressed()) {
-    if (screenNum == SCR_VOLT_TEMP) {
+    if (screenNum == SCR_PV_VOLT_CURR) {
       screenNum = SCR_VOLT_CURR;
-    } else if (screenNum < SCR_VOLT_TEMP) {
+    } else if (screenNum < SCR_PV_VOLT_CURR) {
       jumpToNextScreen();
     }
   }
@@ -1214,7 +1216,7 @@ void handleHandWaved() {
 ////////////////////////////////////////////////////////////////////
 
 void updateDisplayMsg() {
-  if (screenNum > SCR_VOLT_TEMP && ts.buttonPressed.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
+  if (screenNum > SCR_PV_VOLT_CURR && ts.buttonPressed.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println(F("No activity. Jumping to first screen..."));
     screenNum = SCR_VOLT_CURR;
     discardChangedPrefs();
@@ -1232,14 +1234,18 @@ void updateDisplayMsg() {
     return ts.screenChanged.isOlderThanSec(1);
   };
 
+  auto formatVoltCurrent = [notJustChangedScreen](DcSource src) {
+    if (notJustChangedScreen()) {
+      dtostrf(src.volts, 0, 2, leftStr);  // Volts
+    }
+    dtostrf(round(src.current * 10) == 0 ? 0 : src.current, 0, 1, rightStr);  // Current
+  };
+
   float power;
 
   switch (screenNum) {
     case SCR_VOLT_CURR:
-      if (notJustChangedScreen()) {
-        dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
-      }
-      dtostrf(round(battery.current * 10) == 0 ? 0 : battery.current, 0, 1, rightStr);  // Current
+      formatVoltCurrent(battery);
       break;
     case SCR_VOLT_PWR:
       power = battery.volts * battery.current;
@@ -1257,6 +1263,9 @@ void updateDisplayMsg() {
         dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
       }
       dtostrf(rtc.getTemperature(), 0, 1, rightStr);  // Temperature
+      break;
+    case SCR_PV_VOLT_CURR:
+      formatVoltCurrent(solar);
       break;
     case SCR_BTRY_FULL_VOLT:
       dtostrf(0.1f * chPrefs.batteryFullChargeVolts, 0, 1, rightStr);
