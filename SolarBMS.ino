@@ -69,6 +69,7 @@ enum Screen {
   SCR_PRE_SOLAR_TRY_TIME,
   SCR_SOLAR_ON_TIME,
   SCR_SOLAR_OFF_TIME,
+  SCR_SOLAR_MIN_CURRENT,
   SCR_LED_BRIGHTNESS,
   SCR_BUZZER_LEVEL,
   SCR_SAVE
@@ -88,11 +89,13 @@ Screen screenNum = SCR_VOLT_CURR;
 
 #define INA219_SAMPLE_COUNT 10                           // Keep this many samples and take their average
 #define INA219_SHUNT_SIZE (1 / (1 / 0.1 + 1 / 0.00075))  // External 100A 75mV shunt in parallel with on-board 0.1Ω shunt
-#define INA219_SHUNT_VOLT_OFFSET_MV 0.010
-#define INA219_CORR_FACTOR 1.4
-#define INA219_BUS_VOLTAGE_OFFSET 0.04
+#define INA219_BAT_SHUNT_VOLT_OFFSET_MV 0.010
+#define INA219_BAT_CORR_FACTOR 1.4
+#define INA219_BAT_BUS_VOLTAGE_OFFSET 0.04
 
-INA219_WE dcSensor = INA219_WE();  // Uses I2C pins A4 (SDA) and A5 (SCL), address 0x40
+// I2C pins A4 (SDA) and A5 (SCL), address 0x40 and 0x41
+INA219_WE batterySensor = INA219_WE(0x40);
+INA219_WE solarSensor = INA219_WE(0x41);
 
 ////////////////////////////////////////////////////////////////////
 
@@ -126,6 +129,7 @@ enum EEPROM_Addr {
   EE_SOLAR_ON_MIN,
   EE_SOLAR_OFF_HOUR,
   EE_SOLAR_OFF_MIN,
+  EE_SOLAR_MIN_CURRENT,
   EE_LED_BRIGHT_LEVEL,
   EE_BUZZER_LEVEL,
   EE_CRC
@@ -152,8 +156,9 @@ public:
   uint8_t solarOnTimeMinutes = 0;                // 20. Minute of the hour (0-45, step: 15)
   uint8_t solarOffTimeHours = 17;                // 21. Hour of the day (14-19, step: 1)
   uint8_t solarOffTimeMinutes = 0;               // 21. Minute of the hour (0-45, step: 15)
-  uint8_t ledBrightLevel = 1;                    // 22. Level (1-10, step: 1)
-  uint8_t buzzerLevel = 1;                       // 23. Level (1-10, step: 1)
+  uint8_t solarMinCurrent = 15;                  // 22. Ampere (1-30, step: 1)
+  uint8_t ledBrightLevel = 1;                    // 23. Level (1-10, step: 1)
+  uint8_t buzzerLevel = 1;                       // 24. Level (1-10, step: 1)
 
   bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
@@ -175,6 +180,7 @@ public:
     solarOnTimeMinutes = EEPROM.read(EE_SOLAR_ON_MIN);
     solarOffTimeHours = EEPROM.read(EE_SOLAR_OFF_HOUR);
     solarOffTimeMinutes = EEPROM.read(EE_SOLAR_OFF_MIN);
+    solarMinCurrent = EEPROM.read(EE_SOLAR_MIN_CURRENT);
     ledBrightLevel = EEPROM.read(EE_LED_BRIGHT_LEVEL);
     buzzerLevel = EEPROM.read(EE_BUZZER_LEVEL);
 
@@ -201,6 +207,7 @@ public:
     EEPROM.update(EE_SOLAR_ON_MIN, solarOnTimeMinutes);
     EEPROM.update(EE_SOLAR_OFF_HOUR, solarOffTimeHours);
     EEPROM.update(EE_SOLAR_OFF_MIN, solarOffTimeMinutes);
+    EEPROM.update(EE_SOLAR_MIN_CURRENT, solarMinCurrent);
     EEPROM.update(EE_LED_BRIGHT_LEVEL, ledBrightLevel);
     EEPROM.update(EE_BUZZER_LEVEL, buzzerLevel);
 
@@ -242,6 +249,7 @@ private:
     computeCRC8(crc, solarOnTimeMinutes);
     computeCRC8(crc, solarOffTimeHours);
     computeCRC8(crc, solarOffTimeMinutes);
+    computeCRC8(crc, solarMinCurrent);
     computeCRC8(crc, ledBrightLevel);
     computeCRC8(crc, buzzerLevel);
 
@@ -440,10 +448,10 @@ public:
   bool isVoltageHigh, isVoltageVeryHigh, isChargingHigh, isChargingVeryHigh;
   bool isDischarging, isDischargingVeryCritically, isDischargingCritically, isDischargingHigh, isDischargingLow;
 
-  void readSensors() {
+  void readSensor() {
     // Battery voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
-    voltRecords[pos] = (dcSensor.getShuntVoltage_mV() + dcSensor.getBusVoltage_V() * 1000) / 1000;
-    currentRecords[pos] = dcSensor.getCurrent_mA() / 1000;
+    voltRecords[pos] = (batterySensor.getShuntVoltage_mV() + batterySensor.getBusVoltage_V() * 1000) / 1000;
+    currentRecords[pos] = batterySensor.getCurrent_mA() / 1000;
 
     pos++;
 
@@ -464,7 +472,7 @@ public:
     volts /= INA219_SAMPLE_COUNT;
     current /= INA219_SAMPLE_COUNT;
 
-    volts -= INA219_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
+    volts -= INA219_BAT_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
 
     // We are getting negative current when charging the battery. Inverse it.
     current *= -1;
@@ -523,6 +531,42 @@ public:
 
 ////////////////////////////////////////////////////////////////////
 
+class Solar {
+  float currentRecords[INA219_SAMPLE_COUNT];
+  uint8_t pos = 0;
+  float current;
+  OngoingEventTs currentSufficient;
+
+public:
+  void readSensor() {
+    currentRecords[pos] = solarSensor.getCurrent_mA() / 1000;
+
+    pos++;
+
+    if (pos == INA219_SAMPLE_COUNT) {
+      pos = 0;
+    }
+  }
+
+  void updateTs() {
+    current = 0;
+
+    for (uint8_t i = 0; i < INA219_SAMPLE_COUNT; i++) {
+      current += currentRecords[i];
+    }
+
+    current /= INA219_SAMPLE_COUNT;
+
+    currentSufficient.updateTs(current >= prefs.solarMinCurrent);
+  }
+
+  bool isCurrentSufficient(uint8_t sinceSec = 5) {
+    return currentSufficient.isOngoingAndOlderThanSec(sinceSec);
+  }
+} solar;
+
+////////////////////////////////////////////////////////////////////
+
 enum SolarState {
   SOLAR_OFF,
   SOLAR_ON,
@@ -534,7 +578,8 @@ enum InverterHaltReason {
   INV_NO_REASON,
   INV_BATTERY_LOW,       // Voltage below 11V
   INV_BATTERY_OVERLOAD,  // High current drain (> 20A)
-  INV_SOLAR_NOT_ENOUGH   // Morning / evening, clouds, very high load
+  INV_SOLAR_NOT_ENOUGH,  // Morning / evening, clouds
+  INV_SOLAR_OVERLOAD     // Very high load
 } inverterHaltReason;
 
 const __FlashStringHelper *inverterHaltReasonName(InverterHaltReason reason = inverterHaltReason) {
@@ -785,7 +830,7 @@ void handleInverterGridSwitching() {
     } else if (isBatteryDischargingBadly()) {
       switchToGrid(INV_BATTERY_OVERLOAD);
     } else if (hasGrid && solarState != SOLAR_OFF && shouldSwitchToGridDueToSolarNotEnough()) {
-      switchToGrid(INV_SOLAR_NOT_ENOUGH);
+      switchToGrid(solar.isCurrentSufficient() ? INV_SOLAR_OVERLOAD : INV_SOLAR_NOT_ENOUGH);
     }
   }
 }
@@ -794,13 +839,14 @@ void handleInverterGridSwitching() {
 void setBuzzerAndWarning() {
   uint8_t reasonTmp = 0;
 
-  if (inverterHaltReason != INV_NO_REASON) {
+  if (inverterHaltReason != INV_NO_REASON && inverterHaltReason != INV_SOLAR_NOT_ENOUGH) {
     reasonTmp = (1 << 0);
   }
 
   if (battery.isVoltageCriticallyLow
       || (battery.isVoltageLow
           && solarState != SOLAR_PRE_TRY
+          && solar.isCurrentSufficient()
           && battery.ev.voltageLowOrCriticallyLow.isOlderThanSec(5))) {
     reasonTmp |= (1 << 1);
   }
@@ -808,6 +854,7 @@ void setBuzzerAndWarning() {
   if (battery.isDischargingVeryCritically
       || (battery.isDischargingCritically
           && solarState != SOLAR_PRE_TRY
+          && solar.isCurrentSufficient()
           && battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(5))) {
     reasonTmp |= (1 << 2);
   }
@@ -820,7 +867,11 @@ void setBuzzerAndWarning() {
     reasonTmp |= (1 << 4);
   }
 
-  if (hasGrid && isOnInverter() && solarState == SOLAR_ON && shouldBeepDueToSolarNotEnough(5, 30)) {
+  if (hasGrid
+      && isOnInverter()
+      && solarState == SOLAR_ON
+      && solar.isCurrentSufficient()
+      && shouldBeepDueToSolarNotEnough(5, 30)) {
     reasonTmp |= (1 << 5);
   }
 
@@ -1123,6 +1174,9 @@ void handleButtonsPressed() {
     case SCR_SOLAR_OFF_TIME:
       handleTimePrefButtonPress(chPrefs.solarOffTimeHours, chPrefs.solarOffTimeMinutes, 14, 19);
       break;
+    case SCR_SOLAR_MIN_CURRENT:
+      handleMinMaxPrefButtonPress(chPrefs.solarMinCurrent, 1, 15);
+      break;
     case SCR_LED_BRIGHTNESS:
       handleMinMaxPrefButtonPress(chPrefs.ledBrightLevel, 1, 10);
       setBrightness(chPrefs.ledBrightLevel);
@@ -1251,6 +1305,9 @@ void updateDisplayMsg() {
     case SCR_SOLAR_OFF_TIME:
       dtostrf(chPrefs.solarOffTimeMinutes * 0.01f + chPrefs.solarOffTimeHours, 0, 2, rightStr);
       break;
+    case SCR_SOLAR_MIN_CURRENT:
+      itoa(chPrefs.solarMinCurrent, rightStr, 10);
+      break;
     case SCR_LED_BRIGHTNESS:
       itoa(chPrefs.ledBrightLevel, rightStr, 10);
       break;
@@ -1287,17 +1344,24 @@ void setup() {
 
   Wire.begin();
 
-  while (!dcSensor.init()) {
-    Serial.println(F("DC Sensor not ready"));
-    delay(100);
-  }
-  dcSensor.setADCMode(SAMPLE_MODE_128);
-  dcSensor.setMeasureMode(CONTINUOUS);
-  dcSensor.setPGain(PG_80);  // Max current = 80mV / 0.0007444Ω = 107A
-  dcSensor.setBusRange(BRNG_16);
-  dcSensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
-  dcSensor.setShuntVoltOffset_mV(INA219_SHUNT_VOLT_OFFSET_MV);
-  dcSensor.setCorrectionFactor(INA219_CORR_FACTOR);
+  auto initDcSensor = [](INA219_WE sensor, const __FlashStringHelper *name) {
+    while (!sensor.init()) {
+      Serial.print(name);
+      Serial.println(F(" sensor not ready"));
+      delay(100);
+    }
+    sensor.setADCMode(SAMPLE_MODE_128);
+    sensor.setMeasureMode(CONTINUOUS);
+    sensor.setPGain(PG_80);  // Max current = 80mV / 0.0007444Ω = 107A
+    sensor.setBusRange(BRNG_16);
+    sensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
+  };
+
+  initDcSensor(batterySensor, F("Battery"));
+  batterySensor.setShuntVoltOffset_mV(INA219_BAT_SHUNT_VOLT_OFFSET_MV);
+  batterySensor.setCorrectionFactor(INA219_BAT_CORR_FACTOR);
+
+  initDcSensor(solarSensor, F("Solar"));
 
   acVoltageSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
 
@@ -1308,7 +1372,8 @@ void setup() {
   loadPrefs();
 
   for (uint8_t i = 0; i < INA219_SAMPLE_COUNT; i++) {
-    battery.readSensors();
+    battery.readSensor();
+    solar.readSensor();
     delay(1000 / INA219_SAMPLE_COUNT);
   }
 }
@@ -1340,7 +1405,9 @@ void loop() {
     upButtonPressed = isButtonPressed(PIN_BUTTON_UP);
   }
 
-  battery.readSensors();  // Take 10 samples per second
+  // Take 10 samples per second
+  battery.readSensor();
+  solar.readSensor();
 
   static Ts tsLoopCheck;
 
@@ -1352,6 +1419,7 @@ void loop() {
   }
 
   battery.updateTs();
+  solar.updateTs();
 
   handleSwitchToInverterSched();
   handleInverterGridSwitching();
