@@ -48,10 +48,10 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 enum Screen {
-  SCR_VOLT_CURR = 1,
-  SCR_VOLT_PWR,
-  SCR_VOLT_TEMP,
-  SCR_PV_VOLT_CURR,
+  SCR_VOLT_CURR = 1,  // Informatory
+  SCR_VOLT_PWR,       // Informatory
+  SCR_VOLT_TEMP,      // Informatory
+  SCR_PV_VOLT_CURR,   // Informatory
   SCR_BTRY_FULL_VOLT,
   SCR_BTRY_LOW_VOLT,
   SCR_BTRY_CRIT_VOLT,
@@ -59,18 +59,19 @@ enum Screen {
   SCR_BTRY_HIGH_CURR,
   SCR_BTRY_LOW_CURR,
   SCR_SOLAR_GRID_MODE,
+  SCR_DLY_TO_INV_AFT_INV_START,
   SCR_DLY_TO_INV_AFT_BTRY_KILL,
-  SCR_DLY_DAYTIME_TO_INV,
+  SCR_DLY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT,  // Solar-only
+  SCR_DLY_DAYTIME_TO_INV,                   // Solar-only
   SCR_WIND_TO_GRID_ON_VOLT_LOW,
   SCR_WIND_TO_GRID_ON_CURR_CRIT,
-  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,
-  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,
-  SCR_DLY_TO_INV_AFT_INV_START,
-  SCR_CLOCK,
-  SCR_PRE_SOLAR_TRY_TIME,
-  SCR_SOLAR_ON_TIME,
-  SCR_SOLAR_OFF_TIME,
-  SCR_SOLAR_MIN_CURRENT,
+  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,  // Solar-only
+  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,   // Solar-only
+  SCR_CLOCK,                              // Solar-only
+  SCR_PRE_SOLAR_TRY_TIME,                 // Solar-only
+  SCR_SOLAR_ON_TIME,                      // Solar-only
+  SCR_SOLAR_OFF_TIME,                     // Solar-only
+  SCR_SOLAR_MIN_CURRENT,                  // Solar-only
   SCR_LED_BRIGHTNESS,
   SCR_BUZZER_LEVEL,
   SCR_SAVE
@@ -116,15 +117,16 @@ enum EEPROM_Addr {
   EE_BATTERY_DISCH_VOLT_CRIT,
   EE_BATTERY_DISCH_CURR_CRIT,
   EE_BATTERY_DISCH_CURR_HIGH,
-  EE_PRIORITIZE_SOLAR,
   EE_BATTERY_DISCH_CURR_LOW,
+  EE_PRIORITIZE_SOLAR,
+  EE_DELAY_TO_INV_AFTER_INV_START,
   EE_DELAY_TO_INV_AFTER_BATT_KILL,
+  EE_DELAY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT,
   EE_DELAY_DAYTIME_TO_INV,
   EE_WINDOW_TO_GRID_VOLT_LOW,
   EE_WINDOW_TO_GRID_CURR_CRIT,
   EE_WINDOW_DAYTIME_CURR_HIGH,
   EE_WINDOW_DAYTIME_CURR_LOW,
-  EE_DELAY_TO_INV_AFTER_INV_START,
   EE_PRE_SOLAR_TRY_TIME,
   EE_SOLAR_ON_HOUR,
   EE_SOLAR_ON_MIN,
@@ -138,28 +140,29 @@ enum EEPROM_Addr {
 
 class Prefs {
 public:
-  uint8_t batteryFullChargeVolts = 144;          // 4. 14.4V (120-160, step: 1)
-  uint8_t batteryDischargedVoltsLow = 120;       // 5. 12.0V (100-130, step: 1)
-  uint8_t batteryDischargedVoltsCrit = 110;      // 6. 11.0V (90-120, step: 1)
-  uint8_t batteryDischargeCurrentCrit = 50;      // 7. Ampere (20-60, step: 5)
-  uint8_t batteryDischargeCurrentHigh = 20;      // 8. Ampere (10-30, step: 5)
-  uint8_t batteryDischargeCurrentLow = 5;        // 9. Ampere (1-15, step: 1)
-  bool prioritizeSolarOverGrid = true;           // 10. Selection (SUB / USB mode)
-  uint8_t delayToInverterAfterBatteryKill = 5;   // 11. Minutes (1-10, step: 1) | Now battery above low level
-  uint8_t delayDaytimeToInverter = 5;            // 12. Minutes (1-10, step: 1) | Probably were clouds, but still daytime
-  uint8_t windowToGridOnVoltageLow = 2;          // 13. Minutes (1-10, step: 1) | Battery voltage b/w low and critical
-  uint8_t windowToGridOnCurrentCrit = 10;        // 14. Seconds (5-60, step: 5) | Battery current b/w high and critical
-  uint8_t windowToGridDaytimeOnCurrentHigh = 2;  // 15. Minutes (1-10, step: 1) | Battery current b/w low and high
-  uint8_t windowToGridDaytimeOnCurrentLow = 5;   // 16. Minutes (1-15, step: 1) | Battery current below low
-  uint8_t delayToInvAfterInvStart = 5;           // 17. Seconds (0-10, step: 1)
-  uint8_t preSolarTryTime = 0;                   // 19. Minutes (0-60, step: 15)
-  uint8_t solarOnTimeHours = 7;                  // 20. Hour of the day (5-10, step: 1)
-  uint8_t solarOnTimeMinutes = 0;                // 20. Minute of the hour (0-45, step: 15)
-  uint8_t solarOffTimeHours = 17;                // 21. Hour of the day (14-19, step: 1)
-  uint8_t solarOffTimeMinutes = 0;               // 21. Minute of the hour (0-45, step: 15)
-  uint8_t solarMinCurrent = 15;                  // 22. Ampere (1-30, step: 1)
-  uint8_t ledBrightLevel = 1;                    // 23. Level (1-10, step: 1)
-  uint8_t buzzerLevel = 1;                       // 24. Level (1-10, step: 1)
+  uint8_t batteryFullChargeVolts = 144;            // 5. 14.4V (120-160, step: 1)
+  uint8_t batteryDischargedVoltsLow = 120;         // 6. 12.0V (100-130, step: 1)
+  uint8_t batteryDischargedVoltsCrit = 110;        // 7. 11.0V (90-120, step: 1)
+  uint8_t batteryDischargeCurrentCrit = 50;        // 8. Ampere (20-60, step: 5)
+  uint8_t batteryDischargeCurrentHigh = 20;        // 9. Ampere (10-30, step: 5)
+  uint8_t batteryDischargeCurrentLow = 5;          // 10. Ampere (1-15, step: 1)
+  bool prioritizeSolarOverGrid = true;             // 11. Selection (SUB / USB mode)
+  uint8_t delayToInvAfterInvStart = 5;             // 12. Seconds (0-10, step: 1)
+  uint8_t delayToInverterAfterBatteryKill = 5;     // 13. Minutes (1-10, step: 1) | Now battery above low level
+  uint8_t delayDaytimeToInvAfterLowSunlight = 15;  // 14. Minutes (15-60, step: 15)
+  uint8_t delayDaytimeToInverter = 5;              // 15. Minutes (1-10, step: 1)
+  uint8_t windowToGridOnVoltageLow = 2;            // 16. Minutes (1-10, step: 1) | Battery voltage b/w low and critical
+  uint8_t windowToGridOnCurrentCrit = 10;          // 17. Seconds (5-60, step: 5) | Battery current b/w high and critical
+  uint8_t windowToGridDaytimeOnCurrentHigh = 2;    // 18. Minutes (1-10, step: 1) | Battery current b/w low and high
+  uint8_t windowToGridDaytimeOnCurrentLow = 5;     // 19. Minutes (1-15, step: 1) | Battery current below low
+  uint8_t preSolarTryTime = 0;                     // 21. Minutes (0-60, step: 15)
+  uint8_t solarOnTimeHours = 7;                    // 22. Hour of the day (5-10, step: 1)
+  uint8_t solarOnTimeMinutes = 0;                  // 22. Minute of the hour (0-45, step: 15)
+  uint8_t solarOffTimeHours = 17;                  // 23. Hour of the day (14-19, step: 1)
+  uint8_t solarOffTimeMinutes = 0;                 // 23. Minute of the hour (0-45, step: 15)
+  uint8_t solarMinCurrent = 15;                    // 24. Ampere (1-30, step: 1)
+  uint8_t ledBrightLevel = 1;                      // 25. Level (1-10, step: 1)
+  uint8_t buzzerLevel = 1;                         // 26. Level (1-10, step: 1)
 
   bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
@@ -167,15 +170,16 @@ public:
     batteryDischargedVoltsCrit = EEPROM.read(EE_BATTERY_DISCH_VOLT_CRIT);
     batteryDischargeCurrentCrit = EEPROM.read(EE_BATTERY_DISCH_CURR_CRIT);
     batteryDischargeCurrentHigh = EEPROM.read(EE_BATTERY_DISCH_CURR_HIGH);
-    prioritizeSolarOverGrid = (bool)EEPROM.read(EE_PRIORITIZE_SOLAR);
     batteryDischargeCurrentLow = EEPROM.read(EE_BATTERY_DISCH_CURR_LOW);
+    prioritizeSolarOverGrid = (bool)EEPROM.read(EE_PRIORITIZE_SOLAR);
+    delayToInvAfterInvStart = EEPROM.read(EE_DELAY_TO_INV_AFTER_INV_START);
     delayToInverterAfterBatteryKill = EEPROM.read(EE_DELAY_TO_INV_AFTER_BATT_KILL);
+    delayDaytimeToInvAfterLowSunlight = EEPROM.read(EE_DELAY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT);
     delayDaytimeToInverter = EEPROM.read(EE_DELAY_DAYTIME_TO_INV);
     windowToGridOnVoltageLow = EEPROM.read(EE_WINDOW_TO_GRID_VOLT_LOW);
     windowToGridOnCurrentCrit = EEPROM.read(EE_WINDOW_TO_GRID_CURR_CRIT);
     windowToGridDaytimeOnCurrentHigh = EEPROM.read(EE_WINDOW_DAYTIME_CURR_HIGH);
     windowToGridDaytimeOnCurrentLow = EEPROM.read(EE_WINDOW_DAYTIME_CURR_LOW);
-    delayToInvAfterInvStart = EEPROM.read(EE_DELAY_TO_INV_AFTER_INV_START);
     preSolarTryTime = EEPROM.read(EE_PRE_SOLAR_TRY_TIME);
     solarOnTimeHours = EEPROM.read(EE_SOLAR_ON_HOUR);
     solarOnTimeMinutes = EEPROM.read(EE_SOLAR_ON_MIN);
@@ -194,15 +198,16 @@ public:
     EEPROM.update(EE_BATTERY_DISCH_VOLT_CRIT, batteryDischargedVoltsCrit);
     EEPROM.update(EE_BATTERY_DISCH_CURR_CRIT, batteryDischargeCurrentCrit);
     EEPROM.update(EE_BATTERY_DISCH_CURR_HIGH, batteryDischargeCurrentHigh);
-    EEPROM.update(EE_PRIORITIZE_SOLAR, (uint8_t)prioritizeSolarOverGrid);
     EEPROM.update(EE_BATTERY_DISCH_CURR_LOW, batteryDischargeCurrentLow);
+    EEPROM.update(EE_PRIORITIZE_SOLAR, (uint8_t)prioritizeSolarOverGrid);
+    EEPROM.update(EE_DELAY_TO_INV_AFTER_INV_START, delayToInvAfterInvStart);
     EEPROM.update(EE_DELAY_TO_INV_AFTER_BATT_KILL, delayToInverterAfterBatteryKill);
+    EEPROM.update(EE_DELAY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT, delayDaytimeToInvAfterLowSunlight);
     EEPROM.update(EE_DELAY_DAYTIME_TO_INV, delayDaytimeToInverter);
     EEPROM.update(EE_WINDOW_TO_GRID_VOLT_LOW, windowToGridOnVoltageLow);
     EEPROM.update(EE_WINDOW_TO_GRID_CURR_CRIT, windowToGridOnCurrentCrit);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_HIGH, windowToGridDaytimeOnCurrentHigh);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_LOW, windowToGridDaytimeOnCurrentLow);
-    EEPROM.update(EE_DELAY_TO_INV_AFTER_INV_START, delayToInvAfterInvStart);
     EEPROM.update(EE_PRE_SOLAR_TRY_TIME, preSolarTryTime);
     EEPROM.update(EE_SOLAR_ON_HOUR, solarOnTimeHours);
     EEPROM.update(EE_SOLAR_ON_MIN, solarOnTimeMinutes);
@@ -238,13 +243,14 @@ private:
     computeCRC8(crc, batteryDischargeCurrentHigh);
     computeCRC8(crc, batteryDischargeCurrentLow);
     computeCRC8(crc, (uint8_t)prioritizeSolarOverGrid);
+    computeCRC8(crc, delayToInvAfterInvStart);
     computeCRC8(crc, delayToInverterAfterBatteryKill);
+    computeCRC8(crc, delayDaytimeToInvAfterLowSunlight);
     computeCRC8(crc, delayDaytimeToInverter);
     computeCRC8(crc, windowToGridOnVoltageLow);
     computeCRC8(crc, windowToGridOnCurrentCrit);
     computeCRC8(crc, windowToGridDaytimeOnCurrentHigh);
     computeCRC8(crc, windowToGridDaytimeOnCurrentLow);
-    computeCRC8(crc, delayToInvAfterInvStart);
     computeCRC8(crc, preSolarTryTime);
     computeCRC8(crc, solarOnTimeHours);
     computeCRC8(crc, solarOnTimeMinutes);
@@ -550,7 +556,7 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 class Solar : public DcSource {
-  OngoingEventTs currentSufficient;
+  OngoingEventTs sunlightEnough;
 
 public:
   Solar()
@@ -558,11 +564,11 @@ public:
 
   void updateTs() {
     averageReadings();
-    currentSufficient.updateTs(current >= prefs.solarMinCurrent);
+    sunlightEnough.updateTs(current >= prefs.solarMinCurrent);
   }
 
-  bool isCurrentSufficient(uint8_t sinceSec = 5) {
-    return currentSufficient.isOngoingAndOlderThanSec(sinceSec);
+  bool isSunlightEnough(uint8_t sinceSec = 5) {
+    return sunlightEnough.isOngoingAndOlderThanSec(sinceSec);
   }
 } solar;
 
@@ -579,7 +585,7 @@ enum InverterHaltReason {
   INV_NO_REASON,
   INV_BATTERY_LOW,       // Voltage below 11V
   INV_BATTERY_OVERLOAD,  // High current drain (> 20A)
-  INV_SOLAR_NOT_ENOUGH,  // Morning / evening, clouds
+  INV_LOW_SUNLIGHT,      // Morning / evening, clouds
   INV_SOLAR_OVERLOAD     // Very high load
 } inverterHaltReason;
 
@@ -590,8 +596,10 @@ const __FlashStringHelper *inverterHaltReasonName(InverterHaltReason reason = in
     return F("BATTERY_LOW");
   } else if (reason == INV_BATTERY_OVERLOAD) {
     return F("BATTERY_OVERLOAD");
+  } else if (reason == INV_LOW_SUNLIGHT) {
+    return F("LOW_SUNLIGHT");
   } else {
-    return F("SOLAR_NOT_ENOUGH");
+    return F("SOLAR_OVERLOAD");
   }
 }
 
@@ -796,15 +804,16 @@ bool shouldBeepDueToSolarNotEnough(uint8_t highCurrentWindowSec, uint8_t lowCurr
 }
 
 bool shouldSwitchToInverterWithGrid() {
-  bool inverterRecentlyTurnedOff = !ts.switchedToGrid.isOlderThanMin(prefs.delayDaytimeToInverter);
-  if (inverterRecentlyTurnedOff) {
-    return false;
-  }
-  if (inverterHaltReason == INV_SOLAR_NOT_ENOUGH) {
-    return batteryVoltageOkSinceLongEnough(15);
+  uint8_t delay;
+
+  if (inverterHaltReason == INV_LOW_SUNLIGHT || solarState == SOLAR_PRE_TRY) {
+    delay = prefs.delayDaytimeToInvAfterLowSunlight;
   } else {
-    return batteryVoltageOkSinceLongEnough();
+    delay = prefs.delayDaytimeToInverter;
   }
+
+  bool inverterRecentlyTurnedOff = !ts.switchedToGrid.isOlderThanMin(delay);
+  return !inverterRecentlyTurnedOff && batteryVoltageOkSinceLongEnough();
 }
 
 bool shouldSwitchToInverterNoGrid() {
@@ -838,7 +847,7 @@ void handleInverterGridSwitching() {
     } else if (isBatteryDischargingBadly()) {
       switchToGrid(INV_BATTERY_OVERLOAD);
     } else if (hasGrid && solarState != SOLAR_OFF && shouldSwitchToGridDueToSolarNotEnough()) {
-      switchToGrid(solar.isCurrentSufficient() ? INV_SOLAR_OVERLOAD : INV_SOLAR_NOT_ENOUGH);
+      switchToGrid(solar.isSunlightEnough() ? INV_SOLAR_OVERLOAD : INV_LOW_SUNLIGHT);
     }
   }
 }
@@ -847,14 +856,14 @@ void handleInverterGridSwitching() {
 void setBuzzerAndWarning() {
   uint8_t reasonTmp = 0;
 
-  if (inverterHaltReason != INV_NO_REASON && inverterHaltReason != INV_SOLAR_NOT_ENOUGH) {
+  if (inverterHaltReason != INV_NO_REASON && inverterHaltReason != INV_LOW_SUNLIGHT) {
     reasonTmp = (1 << 0);
   }
 
   if (battery.isVoltageCriticallyLow
       || (battery.isVoltageLow
           && solarState != SOLAR_PRE_TRY
-          && solar.isCurrentSufficient()
+          && solar.isSunlightEnough()
           && battery.ev.voltageLowOrCriticallyLow.isOlderThanSec(5))) {
     reasonTmp |= (1 << 1);
   }
@@ -862,7 +871,7 @@ void setBuzzerAndWarning() {
   if (battery.isDischargingVeryCritically
       || (battery.isDischargingCritically
           && solarState != SOLAR_PRE_TRY
-          && solar.isCurrentSufficient()
+          && solar.isSunlightEnough()
           && battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(5))) {
     reasonTmp |= (1 << 2);
   }
@@ -878,7 +887,7 @@ void setBuzzerAndWarning() {
   if (hasGrid
       && isOnInverter()
       && solarState == SOLAR_ON
-      && solar.isCurrentSufficient()
+      && solar.isSunlightEnough()
       && shouldBeepDueToSolarNotEnough(5, 30)) {
     reasonTmp |= (1 << 5);
   }
@@ -1126,9 +1135,9 @@ void handleButtonsPressed() {
     }
     // Skip prefs related to SUB mode
     if (!chPrefs.prioritizeSolarOverGrid) {
-      if (screenNum == SCR_DLY_DAYTIME_TO_INV) {
+      if (screenNum == SCR_DLY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT) {
         screenNum = SCR_WIND_TO_GRID_ON_VOLT_LOW;
-      } else if (screenNum >= SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH && screenNum <= SCR_SOLAR_OFF_TIME) {
+      } else if (screenNum >= SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH && screenNum <= SCR_SOLAR_MIN_CURRENT) {
         screenNum = SCR_LED_BRIGHTNESS;
       }
     }
@@ -1163,8 +1172,14 @@ void handleButtonsPressed() {
     case SCR_SOLAR_GRID_MODE:
       chPrefs.prioritizeSolarOverGrid = !chPrefs.prioritizeSolarOverGrid;
       break;
+    case SCR_DLY_TO_INV_AFT_INV_START:
+      handleMinMaxPrefButtonPress(chPrefs.delayToInvAfterInvStart, 0, 10);
+      break;
     case SCR_DLY_TO_INV_AFT_BTRY_KILL:
       handleMinMaxPrefButtonPress(chPrefs.delayToInverterAfterBatteryKill, 1, 10);
+      break;
+    case SCR_DLY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT:
+      handleMinMaxPrefButtonPress(chPrefs.delayDaytimeToInvAfterLowSunlight, 15, 60, 15);
       break;
     case SCR_DLY_DAYTIME_TO_INV:
       handleMinMaxPrefButtonPress(chPrefs.delayDaytimeToInverter, 1, 10);
@@ -1180,9 +1195,6 @@ void handleButtonsPressed() {
       break;
     case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridDaytimeOnCurrentLow, 1, 15);
-      break;
-    case SCR_DLY_TO_INV_AFT_INV_START:
-      handleMinMaxPrefButtonPress(chPrefs.delayToInvAfterInvStart, 0, 10);
       break;
     case SCR_CLOCK:
       if (!clk.updated) {
@@ -1262,11 +1274,15 @@ void updateDisplayMsg() {
     return ts.screenChanged.isOlderThanSec(1);
   };
 
-  auto formatVoltCurrent = [notJustChangedScreen](DcSource src) {
+  auto formatVolts = [notJustChangedScreen](DcSource src) {
     if (notJustChangedScreen()) {
-      dtostrf(src.volts, 0, 2, leftStr);  // Volts
+      dtostrf(src.volts, 0, 2, leftStr);
     }
-    dtostrf(round(src.current * 10) == 0 ? 0 : src.current, 0, 1, rightStr);  // Current
+  };
+
+  auto formatVoltCurrent = [formatVolts](DcSource src) {
+    formatVolts(src);
+    dtostrf(round(src.current * 10) == 0 ? 0 : src.current, 0, 1, rightStr);
   };
 
   float power;
@@ -1277,9 +1293,7 @@ void updateDisplayMsg() {
       break;
     case SCR_VOLT_PWR:
       power = battery.volts * battery.current;
-      if (notJustChangedScreen()) {
-        dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
-      }
+      formatVolts(battery);
       if (abs(power) < 100) {
         dtostrf(round(power * 10) == 0 ? 0 : power, 0, 1, rightStr);
       } else {
@@ -1287,9 +1301,7 @@ void updateDisplayMsg() {
       }
       break;
     case SCR_VOLT_TEMP:
-      if (notJustChangedScreen()) {
-        dtostrf(battery.volts, 0, 2, leftStr);  // Battery volts
-      }
+      formatVolts(battery);
       dtostrf(rtc.getTemperature(), 0, 1, rightStr);  // Temperature
       break;
     case SCR_PV_VOLT_CURR:
@@ -1316,8 +1328,14 @@ void updateDisplayMsg() {
     case SCR_SOLAR_GRID_MODE:
       strcpy_P(rightStr, chPrefs.prioritizeSolarOverGrid ? PSTR("5U8") : PSTR("U58"));
       break;
+    case SCR_DLY_TO_INV_AFT_INV_START:
+      itoa(chPrefs.delayToInvAfterInvStart, rightStr, 10);
+      break;
     case SCR_DLY_TO_INV_AFT_BTRY_KILL:
       itoa(chPrefs.delayToInverterAfterBatteryKill, rightStr, 10);
+      break;
+    case SCR_DLY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT:
+      itoa(chPrefs.delayDaytimeToInvAfterLowSunlight, rightStr, 10);
       break;
     case SCR_DLY_DAYTIME_TO_INV:
       itoa(chPrefs.delayDaytimeToInverter, rightStr, 10);
@@ -1333,9 +1351,6 @@ void updateDisplayMsg() {
       break;
     case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       itoa(chPrefs.windowToGridDaytimeOnCurrentLow, rightStr, 10);
-      break;
-    case SCR_DLY_TO_INV_AFT_INV_START:
-      itoa(chPrefs.delayToInvAfterInvStart, rightStr, 10);
       break;
     case SCR_CLOCK:
       if (clk.updated) {
@@ -1368,7 +1383,7 @@ void updateDisplayMsg() {
   }
 
   // If a button is pressed, immediately update the display. Don't wait for the timer.
-  if (anyButtonPressed()) {
+  if (anyButtonPressed() || handWaved) {
     updateDisplay();
   }
 }
