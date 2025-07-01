@@ -797,7 +797,14 @@ bool shouldBeepDueToSolarNotEnough(uint8_t highCurrentWindowSec, uint8_t lowCurr
 
 bool shouldSwitchToInverterWithGrid() {
   bool inverterRecentlyTurnedOff = !ts.switchedToGrid.isOlderThanMin(prefs.delayDaytimeToInverter);
-  return !inverterRecentlyTurnedOff && batteryVoltageOkSinceLongEnough();
+  if (inverterRecentlyTurnedOff) {
+    return false;
+  }
+  if (inverterHaltReason == INV_SOLAR_NOT_ENOUGH) {
+    return batteryVoltageOkSinceLongEnough(15);
+  } else {
+    return batteryVoltageOkSinceLongEnough();
+  }
 }
 
 bool shouldSwitchToInverterNoGrid() {
