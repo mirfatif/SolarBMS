@@ -1030,6 +1030,27 @@ bool isHandWaved() {
   return isButtonPressed(PIN_IR_SENSOR);
 }
 
+void handleDisplayOnOff() {
+  if (isHandWaved()) {
+    handWaved = !startDisplay();
+    ts.humanActivity.set();
+  }
+
+  if (ledOn && ts.humanActivity.isOlderThanMin(5) && !buzzerOn && inverterHaltReason == INV_NO_REASON) {
+    shutdownDisplay();
+  } else {
+    startDisplay();
+  }
+}
+
+void checkButtonPressed() {
+  if (!downButtonPressed && !menuButtonPressed && !upButtonPressed) {
+    downButtonPressed = isButtonPressed(PIN_BUTTON_DOWN);
+    menuButtonPressed = isButtonPressed(PIN_BUTTON_MENU);
+    upButtonPressed = isButtonPressed(PIN_BUTTON_UP);
+  }
+}
+
 ////////////////////////////////////////////////////////////////////
 
 bool anyButtonPressed() {
@@ -1401,14 +1422,7 @@ void setup() {
 void loop() {
   delay(100);
 
-  if (isHandWaved()) {
-    handWaved = !startDisplay();
-    ts.humanActivity.set();
-  }
-
-  if (ledOn && ts.humanActivity.isOlderThanMin(5)) {
-    shutdownDisplay();
-  }
+  handleDisplayOnOff();
 
   static Ts tsTwoHzTimer;
 
@@ -1419,11 +1433,7 @@ void loop() {
     tsTwoHzTimer.set();
   }
 
-  if (!downButtonPressed && !menuButtonPressed && !upButtonPressed) {
-    downButtonPressed = isButtonPressed(PIN_BUTTON_DOWN);
-    menuButtonPressed = isButtonPressed(PIN_BUTTON_MENU);
-    upButtonPressed = isButtonPressed(PIN_BUTTON_UP);
-  }
+  checkButtonPressed();
 
   // Take 10 samples per second
   battery.readSensor();
