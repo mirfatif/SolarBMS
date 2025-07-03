@@ -4,6 +4,7 @@
 #include <DS3231.h>
 #include <INA219_WE.h>
 #include <max7219.h>
+#include <TimerOne_V2.h>
 #include <ZMPT101B.h>
 
 #define PIN_IR_SENSOR 3
@@ -320,34 +321,47 @@ void discardChangedPrefs() {
 
 ////////////////////////////////////////////////////////////////////
 
-#define A_YEAR_MILLIS (365LL * 24 * 60 * 60 * 1000)
+#define A_DAY_CENTIS (24L * 60 * 60 * 100)
 
-// Use 8-byte number to avoid the problem of millis() wrapping every 49 days.
-// We don't have true epoch time. A workaround: set timestamps to a year back so that unset
+volatile uint32_t centi_sec;
+
+// Don't do addition here so that ticks are no skipped, though we can tolerate a few.
+void timer1_ISR() {
+  centi_sec++;
+}
+
+// We can use 8-byte number to avoid the problem of millis() wrapping every ~49 days.
+// But to preserve RAM, we use 4-byte number to save centi-seconds instead of milli-seconds.
+// In this way we can save timestamps up to ~497 days.
+// We don't have true epoch time. A workaround: set timestamps to a day back so that unset
 // timestamps (0), when compared, are evaluated to being older than given few minutes, hours etc.
-uint64_t millis64() {
-  return (uint64_t)millis() + A_YEAR_MILLIS;
+uint32_t centis() {
+  uint32_t cs;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    cs = centi_sec;
+  }
+  return cs + A_DAY_CENTIS;
 }
 
 class Ts {
 private:
-  uint64_t ts;
+  uint32_t ts;
 
 public:
-  uint64_t get() {
+  uint32_t get() {
     return ts;
   }
 
-  void set(uint64_t ms = millis64()) {
-    ts = ms;
+  void set(uint32_t cs = centis()) {
+    ts = cs;
   }
 
-  bool isOlderThanMillis(uint32_t ms) {
-    return millis64() - ts > ms;
+  bool isOlderThanCentis(uint32_t cs) {
+    return centis() - ts > cs;
   }
 
   bool isOlderThanSec(uint16_t seconds) {
-    return isOlderThanMillis((uint32_t)seconds * 1000);
+    return isOlderThanCentis((uint32_t)seconds * 100);
   }
 
   bool isOlderThanMin(uint8_t minutes) {
@@ -395,7 +409,7 @@ public:
       }
     } else if (isActive) {
       if (!stoppedAt.isOlderThanSec(timeoutSec)) {
-        startedAt.set(millis64() - (stoppedAt.get() - startedAt.get()));
+        startedAt.set(centis() - (stoppedAt.get() - startedAt.get()));
         stoppedAt.set(0);
       } else {
         startedAt.set();
@@ -1416,6 +1430,10 @@ void setup() {
 
   digitalWrite(PIN_AC_RELAY, HIGH);
 
+  // Note: Hardware PWM on pins D9/D10 is disabled.
+  Timer1.initialize(10000);  // 1 centi-second interrupt
+  Timer1.attachInterrupt(timer1_ISR);
+
   Wire.begin();
 
   auto initDcSensor = [](INA219_WE sensor, const __FlashStringHelper *name) {
@@ -1461,7 +1479,7 @@ void loop() {
 
   // Using String, ISP, float point etc. in ISR (hardware timer interrupts) is problematic.
   // Se we'll be handling the 2 Hz timer logic manually here.
-  if (tsTwoHzTimer.isOlderThanMillis(500)) {
+  if (tsTwoHzTimer.isOlderThanCentis(50)) {
     handle2HzTimer();
     tsTwoHzTimer.set();
   }
@@ -1477,7 +1495,7 @@ void loop() {
   // We'll be doing checks twice a second.
   // It also implements hysteresis debounce logic for buttons and current/voltage sensors
   // to prevent false button presses and rapid switching between power sources.
-  if (!tsLoopCheck.isOlderThanMillis(500)) {
+  if (!tsLoopCheck.isOlderThanCentis(50)) {
     return;
   }
 
