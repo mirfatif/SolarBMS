@@ -556,7 +556,7 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 class Solar : public DcSource {
-  OngoingEventTs sunlightEnough;
+  OngoingEventTs pvCurrentEnough, pvVoltsEnough;
 
 public:
   Solar()
@@ -564,11 +564,17 @@ public:
 
   void updateTs() {
     averageReadings();
-    sunlightEnough.updateTs(current >= prefs.solarMinCurrent);
+    pvCurrentEnough.updateTs(current >= prefs.solarMinCurrent);
+    pvVoltsEnough.updateTs(volts >= 15);
   }
 
-  bool isSunlightEnough(uint8_t sinceSec = 5) {
-    return sunlightEnough.isOngoingAndOlderThanSec(sinceSec);
+  // Should be called only when on inverter and battery is low or discharging.
+  bool isPvCurrentEnough(uint8_t sinceSec = 5) {
+    return pvCurrentEnough.isOngoingAndOlderThanSec(sinceSec);
+  }
+
+  bool isPvVoltsEnough(uint8_t sinceSec = 30) {
+    return pvVoltsEnough.isOngoingAndOlderThanSec(sinceSec);
   }
 } solar;
 
@@ -726,6 +732,7 @@ SolarState checkSolarConditions() {
       || !tsPreSolarTry.isOlderThanMin(15)  // Recently tried
       || battery.isVoltageBelowFloat
       || !battery.ev.voltageBelowFloat.isOlderThanSec(30)
+      || !solar.isPvVoltsEnough()
       || !isBatteryGoodForSolar()) {
     return SOLAR_OFF;
   }
@@ -804,6 +811,10 @@ bool shouldBeepDueToSolarNotEnough(uint8_t highCurrentWindowSec, uint8_t lowCurr
 }
 
 bool shouldSwitchToInverterWithGrid() {
+  if (solarState == SOLAR_ON && inverterHaltReason == INV_LOW_SUNLIGHT && !solar.isPvVoltsEnough()) {
+    return false;
+  }
+
   uint8_t delay;
 
   if (inverterHaltReason == INV_LOW_SUNLIGHT || solarState == SOLAR_PRE_TRY) {
@@ -847,7 +858,7 @@ void handleInverterGridSwitching() {
     } else if (isBatteryDischargingBadly()) {
       switchToGrid(INV_BATTERY_OVERLOAD);
     } else if (hasGrid && solarState != SOLAR_OFF && shouldSwitchToGridDueToSolarNotEnough()) {
-      switchToGrid(solar.isSunlightEnough() ? INV_SOLAR_OVERLOAD : INV_LOW_SUNLIGHT);
+      switchToGrid(solar.isPvCurrentEnough() ? INV_SOLAR_OVERLOAD : INV_LOW_SUNLIGHT);
     }
   }
 }
@@ -863,7 +874,7 @@ void setBuzzerAndWarning() {
   if (battery.isVoltageCriticallyLow
       || (battery.isVoltageLow
           && solarState != SOLAR_PRE_TRY
-          && solar.isSunlightEnough()
+          && solar.isPvCurrentEnough()
           && battery.ev.voltageLowOrCriticallyLow.isOlderThanSec(5))) {
     reasonTmp |= (1 << 1);
   }
@@ -871,7 +882,7 @@ void setBuzzerAndWarning() {
   if (battery.isDischargingVeryCritically
       || (battery.isDischargingCritically
           && solarState != SOLAR_PRE_TRY
-          && solar.isSunlightEnough()
+          && solar.isPvCurrentEnough()
           && battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(5))) {
     reasonTmp |= (1 << 2);
   }
@@ -887,7 +898,7 @@ void setBuzzerAndWarning() {
   if (hasGrid
       && isOnInverter()
       && solarState == SOLAR_ON
-      && solar.isSunlightEnough()
+      && solar.isPvCurrentEnough()
       && shouldBeepDueToSolarNotEnough(5, 30)) {
     reasonTmp |= (1 << 5);
   }
