@@ -15,15 +15,14 @@
 #define PIN_BUTTON_MENU 8
 #define PIN_BUTTON_UP 9
 #define PIN_AC_VOLT A1
+#define PIN_PV_VOLT A6
+#define PIN_PV_CURRENT A7
 
 ////////////////////////////////////////////////////////////////////
 
-#define BUZZER_LEVEL_MIN 1
-#define BUZZER_LEVEL_MAX 10
-
 // Buzzer calibration
-#define BUZZER_PWM_MAX 40  // 13.3% (255 * 13.3 / 100) PWM gives 7.3V (out of 12V); sound distorts above this level
-#define BUZZER_PWM_MIN 1
+#define CALIB_BUZZER_PWM_1 1
+#define CALIB_BUZZER_PWM_10 40  // 13.3% (255 * 13.3 / 100) PWM gives 7.3V (out of 12V); sound distorts above this level
 
 bool buzzerOn = false;
 
@@ -84,21 +83,21 @@ Screen screenNum = SCR_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
 
-// DC voltage sensor calibration
-#define DC_VOLT_10 404
-#define DC_VOLT_15 623
-
-////////////////////////////////////////////////////////////////////
-
-#define INA219_SAMPLE_COUNT 10                           // Keep this many samples and take their average
+#define DC_SAMPLE_COUNT 10                               // Keep this many samples and take their average
 #define INA219_SHUNT_SIZE (1 / (1 / 0.1 + 1 / 0.00075))  // External 100A 75mV shunt in parallel with on-board 0.1Ω shunt
 #define INA219_BAT_SHUNT_VOLT_OFFSET_MV 0.010
 #define INA219_BAT_CORR_FACTOR 1.4
 #define INA219_BAT_BUS_VOLTAGE_OFFSET 0.04
 
-// I2C pins A4 (SDA) and A5 (SCL), address 0x40 and 0x41
-INA219_WE batterySensor = INA219_WE(0x40);
-INA219_WE solarSensor = INA219_WE(0x41);
+INA219_WE batterySensor = INA219_WE();  // I2C pins A4 (SDA) and A5 (SCL), default address 0x40
+
+////////////////////////////////////////////////////////////////////
+
+// PV voltage / current calibration
+#define CALIB_PV_VOLT_0 10
+#define CALIB_PV_VOLT_25 800
+#define CALIB_PV_CURRENT_0 10
+#define CALIB_PV_CURRENT_60 700
 
 ////////////////////////////////////////////////////////////////////
 
@@ -441,10 +440,8 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 class DcSource {
-  INA219_WE sensor;
-
-  float voltRecords[INA219_SAMPLE_COUNT];
-  float currentRecords[INA219_SAMPLE_COUNT];
+  float voltRecords[DC_SAMPLE_COUNT];
+  float currentRecords[DC_SAMPLE_COUNT];
   uint8_t pos = 0;
 
 public:
@@ -452,33 +449,31 @@ public:
   float current;  // A
 
   void readSensor() {
-    // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
-    voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
-    currentRecords[pos] = sensor.getCurrent_mA() / 1000;
+    voltRecords[pos] = readVoltSensor();
+    currentRecords[pos] = readCurrentSensor();
 
     pos++;
 
-    if (pos == INA219_SAMPLE_COUNT) {
+    if (pos == DC_SAMPLE_COUNT) {
       pos = 0;
     }
   }
 
-
 protected:
-  DcSource(INA219_WE sensor)
-    : sensor(sensor) {}
+  virtual float readVoltSensor() = 0;
+  virtual float readCurrentSensor() = 0;
 
   void averageReadings() {
     volts = 0;
     current = 0;
 
-    for (uint8_t i = 0; i < INA219_SAMPLE_COUNT; i++) {
+    for (uint8_t i = 0; i < DC_SAMPLE_COUNT; i++) {
       volts += voltRecords[i];
       current += currentRecords[i];
     }
 
-    volts /= INA219_SAMPLE_COUNT;
-    current /= INA219_SAMPLE_COUNT;
+    volts /= DC_SAMPLE_COUNT;
+    current /= DC_SAMPLE_COUNT;
   }
 };
 
@@ -491,10 +486,16 @@ class Battery : public DcSource {
     BI_DISCH_VERY_CRITICAL
   } currentState;
 
-public:
-  Battery()
-    : DcSource(batterySensor) {}
+  float readVoltSensor() {
+    // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
+    return (batterySensor.getShuntVoltage_mV() + batterySensor.getBusVoltage_V() * 1000) / 1000;
+  }
 
+  float readCurrentSensor() {
+    return batterySensor.getCurrent_mA() / 1000;
+  }
+
+public:
   class BatteryEvents {
   public:
     Ts voltageOrCurrentBelowSafe;
@@ -572,14 +573,27 @@ public:
 class Solar : public DcSource {
   OngoingEventTs pvCurrentEnough, pvVoltsEnough;
 
-public:
-  Solar()
-    : DcSource(solarSensor) {}
+  float readVoltSensor() {
+    int volt = analogRead(PIN_PV_VOLT);
+    if (volt < CALIB_PV_VOLT_0) {
+      return 0;
+    }
+    return lerp(CALIB_PV_VOLT_0, CALIB_PV_VOLT_25, 0, 25, volt);
+  }
 
+  float readCurrentSensor() {
+    int current = analogRead(PIN_PV_CURRENT);
+    if (current < CALIB_PV_CURRENT_0) {
+      return 0;
+    }
+    return lerp(CALIB_PV_CURRENT_0, CALIB_PV_CURRENT_60, 0, 60, current);
+  }
+
+public:
   void updateTs() {
     averageReadings();
     pvCurrentEnough.updateTs(current >= prefs.solarMinCurrent);
-    pvVoltsEnough.updateTs(volts >= 15);
+    pvVoltsEnough.updateTs(volts >= 15 || current >= 5);
   }
 
   // Should be called only when on inverter and battery is low or discharging.
@@ -985,7 +999,7 @@ void beep(uint8_t buzzerLevel = prefs.buzzerLevel) {
   if (buzzerLevel <= 0) {
     analogWrite(PIN_BUZZER, 0);
   } else {
-    analogWrite(PIN_BUZZER, round(lerp(BUZZER_LEVEL_MIN, BUZZER_LEVEL_MAX, BUZZER_PWM_MIN, BUZZER_PWM_MAX, buzzerLevel)));
+    analogWrite(PIN_BUZZER, round(lerp(1, 10, CALIB_BUZZER_PWM_1, CALIB_BUZZER_PWM_10, buzzerLevel)));
   }
 }
 
@@ -1032,14 +1046,18 @@ void handle2HzTimer() {
   static uint8_t state = 1;
 
   if (ledOn) {
-    if (inverterHaltReason != INV_NO_REASON && (state <= 2) && screenNum <= SCR_PV_VOLT_CURR) {
+    if (!ts.screenChanged.isOlderThanSec(2) || screenNum > SCR_PV_VOLT_CURR) {
+      updateDisplay();
+    } else if (inverterHaltReason != INV_NO_REASON && state <= 2) {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
-    } else if (screenNum <= SCR_VOLT_PWR && blinkLeft && state == 1) {
+    } else if (screenNum > SCR_VOLT_PWR) {
+      updateDisplay();
+    } else if (blinkLeft && state == 1) {
       updateDisplay(false, true);
       state = 3;
-    } else if (screenNum <= SCR_VOLT_PWR && blinkRight && state == 4) {
+    } else if (blinkRight && state == 4) {
       updateDisplay(true, false);
       state = 2;
     } else {
@@ -1299,13 +1317,13 @@ void updateDisplayMsg() {
     return ts.screenChanged.isOlderThanSec(1);
   };
 
-  auto formatVolts = [notJustChangedScreen](DcSource src) {
+  auto formatVolts = [notJustChangedScreen](DcSource &src) {
     if (notJustChangedScreen()) {
       dtostrf(src.volts, 0, 2, leftStr);
     }
   };
 
-  auto formatVoltCurrent = [formatVolts](DcSource src) {
+  auto formatVoltCurrent = [formatVolts](DcSource &src) {
     formatVolts(src);
     dtostrf(round(src.current * 10) == 0 ? 0 : src.current, 0, 1, rightStr);
   };
@@ -1427,6 +1445,8 @@ void setup() {
   pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
   pinMode(PIN_BUTTON_MENU, INPUT_PULLUP);
   pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
+  pinMode(PIN_PV_VOLT, INPUT);
+  pinMode(PIN_PV_CURRENT, INPUT);
 
   digitalWrite(PIN_AC_RELAY, HIGH);
 
@@ -1436,24 +1456,17 @@ void setup() {
 
   Wire.begin();
 
-  auto initDcSensor = [](INA219_WE sensor, const __FlashStringHelper *name) {
-    while (!sensor.init()) {
-      Serial.print(name);
-      Serial.println(F(" sensor not ready"));
-      delay(100);
-    }
-    sensor.setADCMode(SAMPLE_MODE_128);
-    sensor.setMeasureMode(CONTINUOUS);
-    sensor.setPGain(PG_80);  // Max current = 80mV / 0.0007444Ω = 107A
-    sensor.setBusRange(BRNG_16);
-    sensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
-  };
-
-  initDcSensor(batterySensor, F("Battery"));
+  while (!batterySensor.init()) {
+    Serial.println(F("Battery sensor not ready"));
+    delay(100);
+  }
+  batterySensor.setADCMode(SAMPLE_MODE_128);
+  batterySensor.setMeasureMode(CONTINUOUS);
+  batterySensor.setPGain(PG_80);  // Max current = 80mV / 0.0007444Ω = 107A
+  batterySensor.setBusRange(BRNG_16);
+  batterySensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
   batterySensor.setShuntVoltOffset_mV(INA219_BAT_SHUNT_VOLT_OFFSET_MV);
   batterySensor.setCorrectionFactor(INA219_BAT_CORR_FACTOR);
-
-  initDcSensor(solarSensor, F("Solar"));
 
   acVoltageSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
 
@@ -1463,10 +1476,10 @@ void setup() {
 
   loadPrefs();
 
-  for (uint8_t i = 0; i < INA219_SAMPLE_COUNT; i++) {
+  for (uint8_t i = 0; i < DC_SAMPLE_COUNT; i++) {
     battery.readSensor();
     solar.readSensor();
-    delay(1000 / INA219_SAMPLE_COUNT);
+    delay(1000 / DC_SAMPLE_COUNT);
   }
 }
 
