@@ -16,8 +16,6 @@
 #define PIN_BUTTON_MENU 8
 #define PIN_BUTTON_UP 9
 #define PIN_AC_VOLT A1
-#define PIN_PV_VOLT A6
-#define PIN_PV_CURRENT A7
 
 ////////////////////////////////////////////////////////////////////
 
@@ -88,17 +86,14 @@ Screen screenNum = SCR_VOLT_CURR;
 #define INA219_SHUNT_SIZE (1 / (1 / 0.1 + 1 / 0.00075))  // External 100A 75mV shunt in parallel with on-board 0.1Ω shunt
 #define INA219_BAT_SHUNT_VOLT_OFFSET_MV 0.010
 #define INA219_BAT_CORR_FACTOR 1.4
-#define INA219_BAT_BUS_VOLTAGE_OFFSET 0.04
+#define INA219_BAT_BUS_VOLTAGE_OFFSET -0.04
+#define INA219_SOL_SHUNT_VOLT_OFFSET_MV 0
+#define INA219_SOL_CORR_FACTOR 1
+#define INA219_SOL_BUS_VOLTAGE_OFFSET 0
 
-INA219_WE batterySensor = INA219_WE();  // I2C pins A4 (SDA) and A5 (SCL), default address 0x40
-
-////////////////////////////////////////////////////////////////////
-
-// PV voltage / current calibration
-#define CALIB_PV_VOLT_0 10
-#define CALIB_PV_VOLT_25 800
-#define CALIB_PV_CURRENT_0 10
-#define CALIB_PV_CURRENT_60 700
+// I2C pins A4 (SDA) and A5 (SCL), address 0x40 and 0x41
+INA219_WE batterySensor = INA219_WE(0x40);
+INA219_WE solarSensor = INA219_WE(0x41);
 
 ////////////////////////////////////////////////////////////////////
 
@@ -444,6 +439,8 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 class DcSource {
+  INA219_WE sensor;
+
   float voltRecords[DC_SAMPLE_COUNT];
   float currentRecords[DC_SAMPLE_COUNT];
   uint8_t pos = 0;
@@ -453,8 +450,9 @@ public:
   float current;  // A
 
   void readSensor() {
-    voltRecords[pos] = readVoltSensor();
-    currentRecords[pos] = readCurrentSensor();
+    // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
+    voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
+    currentRecords[pos] = sensor.getCurrent_mA() / 1000;
 
     pos++;
 
@@ -464,8 +462,8 @@ public:
   }
 
 protected:
-  virtual float readVoltSensor() = 0;
-  virtual float readCurrentSensor() = 0;
+  DcSource(INA219_WE &sensor)
+    : sensor(sensor) {}
 
   void averageReadings() {
     volts = 0;
@@ -490,16 +488,10 @@ class Battery : public DcSource {
     BI_DISCH_VERY_CRITICAL
   } currentState;
 
-  float readVoltSensor() {
-    // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
-    return (batterySensor.getShuntVoltage_mV() + batterySensor.getBusVoltage_V() * 1000) / 1000;
-  }
-
-  float readCurrentSensor() {
-    return batterySensor.getCurrent_mA() / 1000;
-  }
-
 public:
+  Battery()
+    : DcSource(batterySensor) {}
+
   class BatteryEvents {
   public:
     Ts voltageOrCurrentBelowSafe;
@@ -515,7 +507,7 @@ public:
   void updateTs() {
     averageReadings();
 
-    volts -= INA219_BAT_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
+    volts += INA219_BAT_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
 
     // We are getting negative current when charging the battery. Inverse it.
     current *= -1;
@@ -577,25 +569,15 @@ public:
 class Solar : public DcSource {
   OngoingEventTs pvCurrentEnough, pvVoltsEnough;
 
-  float readVoltSensor() {
-    int volt = analogRead(PIN_PV_VOLT);
-    if (volt < CALIB_PV_VOLT_0) {
-      return 0;
-    }
-    return lerp(CALIB_PV_VOLT_0, CALIB_PV_VOLT_25, 0, 25, volt);
-  }
-
-  float readCurrentSensor() {
-    int current = analogRead(PIN_PV_CURRENT);
-    if (current < CALIB_PV_CURRENT_0) {
-      return 0;
-    }
-    return lerp(CALIB_PV_CURRENT_0, CALIB_PV_CURRENT_60, 0, 60, current);
-  }
-
 public:
+  Solar()
+    : DcSource(solarSensor) {}
+
   void updateTs() {
     averageReadings();
+
+    volts += INA219_SOL_BUS_VOLTAGE_OFFSET;
+
     pvCurrentEnough.updateTs(current >= prefs.solarMinCurrent);
     pvVoltsEnough.updateTs(volts >= 15 || current >= 5);
   }
@@ -1469,8 +1451,6 @@ void setup() {
   pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
   pinMode(PIN_BUTTON_MENU, INPUT_PULLUP);
   pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
-  pinMode(PIN_PV_VOLT, INPUT);
-  pinMode(PIN_PV_CURRENT, INPUT);
 
   digitalWrite(PIN_FAN, LOW);
   digitalWrite(PIN_AC_RELAY, HIGH);
@@ -1481,17 +1461,28 @@ void setup() {
 
   Wire.begin();
 
-  while (!batterySensor.init()) {
-    Serial.println(F("Battery sensor not ready"));
-    delay(100);
-  }
-  batterySensor.setADCMode(SAMPLE_MODE_128);
-  batterySensor.setMeasureMode(CONTINUOUS);
-  batterySensor.setPGain(PG_80);  // Max current = 80mV / 0.0007444Ω = 107A
-  batterySensor.setBusRange(BRNG_16);
-  batterySensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
+  auto initDcSensor = [](INA219_WE sensor, const __FlashStringHelper *name) {
+    while (!sensor.init()) {
+      Serial.print(name);
+      Serial.println(F(" sensor not ready"));
+      delay(100);
+    }
+    sensor.setADCMode(SAMPLE_MODE_128);
+    sensor.setMeasureMode(CONTINUOUS);
+    sensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
+  };
+
+  initDcSensor(batterySensor, F("Battery"));
+  batterySensor.setPGain(PG_80);       // Max current = 80mV / 0.0007444Ω = 107A
+  batterySensor.setBusRange(BRNG_16);  // Max voltage = 16V
   batterySensor.setShuntVoltOffset_mV(INA219_BAT_SHUNT_VOLT_OFFSET_MV);
   batterySensor.setCorrectionFactor(INA219_BAT_CORR_FACTOR);
+
+  initDcSensor(solarSensor, F("Solar"));
+  solarSensor.setPGain(PG_40);       // Max current = 40mV / 0.0007444Ω = 54A
+  solarSensor.setBusRange(BRNG_32);  // Max voltage = 32V
+  solarSensor.setShuntVoltOffset_mV(INA219_SOL_SHUNT_VOLT_OFFSET_MV);
+  solarSensor.setCorrectionFactor(INA219_SOL_CORR_FACTOR);
 
   acVoltageSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
 
