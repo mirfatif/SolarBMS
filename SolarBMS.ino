@@ -7,6 +7,7 @@
 #include <TimerOne_V2.h>
 #include <ZMPT101B.h>
 
+#define PIN_FAN 2
 #define PIN_IR_SENSOR 3
 #define PIN_AC_RELAY 4
 #define PIN_INV_RELAY 5
@@ -347,6 +348,9 @@ private:
   uint32_t ts;
 
 public:
+  Ts(uint32_t cs = 0)
+    : ts(cs) {}
+
   uint32_t get() {
     return ts;
   }
@@ -1433,11 +1437,31 @@ void updateDisplayMsg() {
 
 ////////////////////////////////////////////////////////////////////
 
+void handleFan() {
+  static Ts on, off(centis());
+
+  if (off.isOlderThanTs(on)) {
+    if (on.isOlderThanMin(5) || (on.isOlderThanMin(1) && rtc.getTemperature() < 35)) {
+      digitalWrite(PIN_FAN, LOW);
+      off.set();
+    }
+    return;
+  }
+
+  if (off.isOlderThanMin(10) || rtc.getTemperature() >= 40) {
+    digitalWrite(PIN_FAN, HIGH);
+    on.set();
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+
 void setup() {
   Serial.begin(9600);
   while (!Serial)
     ;
 
+  pinMode(PIN_FAN, OUTPUT);
   pinMode(PIN_IR_SENSOR, INPUT);
   pinMode(PIN_AC_RELAY, OUTPUT);
   pinMode(PIN_INV_RELAY, OUTPUT);
@@ -1448,6 +1472,7 @@ void setup() {
   pinMode(PIN_PV_VOLT, INPUT);
   pinMode(PIN_PV_CURRENT, INPUT);
 
+  digitalWrite(PIN_FAN, LOW);
   digitalWrite(PIN_AC_RELAY, HIGH);
 
   // Note: Hardware PWM on pins D9/D10 is disabled.
@@ -1521,6 +1546,7 @@ void loop() {
   handleButtonsPressed();
   handleHandWaved();
   updateDisplayMsg();
+  handleFan();
 
   downButtonPressed = menuButtonPressed = upButtonPressed = handWaved = false;
 

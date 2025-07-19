@@ -286,6 +286,7 @@
         <li>Wave hand to turn on the display, or rotate between informatory screens.</li>
       </ul>
     </li>
+    <li><strong>5V 0.5W Fan</strong> <sup><a href="#28">[28]</a></sup> – used for cooling</li>
     <li><strong>MP2307 Buck Converter</strong> <sup><a href="#21">[21]</a></sup> – converts 12V to 9V for Arduino Nano.</li>
     <li><strong>LM2596 Buck Converter</strong> <sup><a href="#14">[14]</a></sup> – converts 12V to 5V for other modules.</li>
   </ul>
@@ -369,6 +370,18 @@
       </ul>
     </li>
     <li>2 x <strong>1N5822 Schottky diode</strong> – for diode ORing. Power sources isolation is required because inverter relay is triggered from 2 sources in parallel: Arduino and a power adapter. Latter is used to bypass the protection system.</li>
+  </ul>
+
+  <b>For Fan</b>
+  <ul>
+    <li><strong>2N2222A transistor</strong> – drives the fan.</li>
+    <li><strong>220Ω-330Ω resistor</strong> – between the transistor (2N2222A) base and Arduino pin to protect high current draw.
+      <ul>
+        <li>For 130~200mA current draw from the transistor (5V - 0.7V / 13~20mA)</li>
+        <li>Fan current draw is less than 100mA.</li>
+      </ul>
+    </li>
+    <li><strong>1N4007 diode</strong> – for flyback protection.</li>
   </ul>
 
   <b>Others:</b>
@@ -673,7 +686,23 @@
     <li><code>OUT</code> → Arduino Nano D3</li>
   </ul>
 
-  <h3>11. MP2307 Buck Converter</h3>
+  <h3>11. Fan</h3>
+  <ul>
+    <li><strong>Transistor Driver:</strong>
+      <ul>
+        <li>Arduino D2 → 330Ω resistor → 2N2222A Base</li>
+        <li>2N2222A Emitter → GND</li>
+        <li>2N2222A Collector → Fan-</li>
+      </ul>
+    </li>
+    <li><strong>Protection:</strong>
+      <ul>
+        <li>1N4007 flyback diode across fan (reverse polarity: cathode to 5V, anode to GND terminal).</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>12. MP2307 Buck Converter</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
@@ -689,7 +718,7 @@
     </li>
   </ul>
 
-  <h3>12. LM2596 Buck Converter</h3>
+  <h3>13. LM2596 Buck Converter</h3>
   <ul>
     <li><strong>Input:</strong> Same as MP2307.</li>
     <li><strong>Output:</strong>
@@ -700,7 +729,7 @@
     </li>
   </ul>
 
-  <h3>13. Power Supply Summary</h3>
+  <h3>14. Power Supply Summary</h3>
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
@@ -829,6 +858,7 @@
     <li id="25"><a href="https://digilog.pk/products/ca3130-operational-amplifier-in-pakistan">https://digilog.pk/products/ca3130-operational-amplifier-in-pakistan</a></li>
     <li id="26"><a href="https://digilog.pk/products/lm7805-7805-voltage-regulator-5v-voltage-regulator">https://digilog.pk/products/lm7805-7805-voltage-regulator-5v-voltage-regulator</a></li>
     <li id="27"><a href="https://www.rcscomponents.kiev.ua/datasheets/hcpl-7840-000e-datasheet.pdf">https://www.rcscomponents.kiev.ua/datasheets/hcpl-7840-000e-datasheet.pdf</a></li>
+    <li id="28"><a href="https://digilog.pk/products/5v-raspberry-pi-cooling-fan-in-pakistan">https://digilog.pk/products/5v-raspberry-pi-cooling-fan-in-pakistan</a></li>
   </ol>
 
 </body>
