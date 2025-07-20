@@ -50,12 +50,13 @@
 
   <h2>Operational Logic</h2>
   <ol>
-    <li>During daytime, power is drawn from solar (according to solar on/off time settings and sunlight availability) to run the inverter and charge the battery.
+    <li>During daytime, power is drawn from PV array (according to solar on/off time settings and sunlight availability) to run the inverter and charge the battery.
       <ul>
         <li>You can configure time (in minutes, before configured sunlight time) in which load is shifted from grid to solar if sunlight is sufficient to bear the load. Otherwise, load is silently shifted back to grid.</li>
         <li>Similarly, at evening, load is kept on solar as long as sunlight is sufficient.</li>
       </ul>
     </li>
+    <li>If sunlight is not sufficient to produce the minimum required current e.g. due to morning / evening or clouds, load is silently shifted to grid.</li>
     <li>If the inverter load exceeds solar supply and the battery begins to discharge, switch to grid, even during daytime.</li>
     <li>At night:
       <ul>
@@ -63,7 +64,6 @@
         <li>If grid is unavailable, use the battery to run the inverter as long as the battery state remains within safe operating limits.</li>
       </ul>
     </li>
-    <li>If sunlight is not sufficient to produce the minimum required current e.g. due to morning / evening or clouds, load is silently shifted to grid.</li>
     <li>If USB mode is selected (instead of SUB), grid is always given priority. This can be useful in winters when not much power is needed during daytime. So inverter runs only during power outages.</li>
   </ol>
 
@@ -182,12 +182,13 @@
       </ul>
     </li>
 
-    <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> + 4 x <strong>6N137 Optocoupler</strong> <sup><a href="#30">[30]</a></sup> – used to measure PV voltage and current.
+    <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> + 3 x <strong>6N137 Optocoupler</strong> <sup><a href="#30">[30]</a></sup> – used to measure PV voltage and current.
       <ul>
         <li>Required because PWM charge controller does not have common GND across its input (PV array) and output (battery) sides.</li>
         <li>INA219:
           <ul>
-            <li>Pins: SCL is input-only (doesn't do clock-stretching), SDA is I/O
+            <li>Input pins (IN+ & IN-) bias current: 20μA</li>
+            <li>Output pins: SCL is input-only (doesn't do clock-stretching), SDA is I/O
               <ul>
                 <li>Both are open-drain, so need to be pulled-up.</li>
               </ul>
@@ -223,6 +224,12 @@
             <li>LED voltage drop (V<sub>F</sub>): 1.4V (@ I<sub>F</sub>: 10mA)</li>
             <li>Output current (I<sub>CL</sub>): 50mA</li>
             <li>Output voltage drop: 0.6V (@ I<sub>F</sub>: 5mA, I<sub>CL</sub>: 13mA)</li>
+          </ul>
+        </li>
+        <li>Better alternatives:
+          <ul>
+            <li>DC-DC isolated power converter (like B0505S) + INA219 + I<sup>2</sup>C digital isolator (like ADuM1250 / ISO1540)</li>
+            <li>Instead of digital isolation, do analog isolation. Use a galvanically-isolated sensor, like ACS758 (for current only), which is a hall-effect based linear current sensor. LV 25-P is a similar one for voltage sensing.</li>
           </ul>
         </li>
         <li>A more complex way to detect sunlight sufficiency is by using a <strong>BH1750 Light Sensor Module</strong> <sup><a href="#8">[8]</a></sup>.</li>
@@ -279,16 +286,30 @@
   <b>For PV Current / Voltage Sensing</b>
   <ul>
     <li><strong>LM78L05 5V Regulator</strong> <sup><a href="#29">[29]</a></sup> – converts PV 12V-25V to 5V for PV side circuit.</li>
+    <li><strong>TL431 Regulator</strong> <sup><a href="#32">[32]</a></sup> – cuts-off LM78L05 input if PV drops below 7V.</li>
+    <li><strong>2N3906 PNP BJT</strong> – provides feedback to TL431 (for hysteresis) and drives LM78L05.</li>
     <li><strong>Resistors:</strong>
       <ul>
+        <li>1 x 100kΩ</li>
+        <li>1 x 22kΩ</li>
+        <li>1 x 10kΩ</li>
+        <li>1 x 6.8kΩ</li>
         <li>4 x 4.7kΩ</li>
-        <li>4 x 1kΩ</li>
+        <li>1 x 2.2kΩ</li>
+        <li>3 x 1kΩ</li>
       </ul>
     </li>
     <li><strong>Capacitors:</strong>
       <ul>
         <li>5 x 0.1µF 50V Ceramic</li>
-        <li>2 x 100µF 25V Electrolytic</li>
+        <li>1 x 10µF 50V Ceramic</li>
+        <li>1 x 100µF 50V Electrolytic</li>
+      </ul>
+    </li>
+    <li><strong>Zener Diodes:</strong>
+      <ul>
+        <li>1N5361B 27V</li>
+        <li>1N4733A 5.1V</li>
       </ul>
     </li>
     <li><strong>Veroboard Dotted (60mm x 40mm)</strong> – circuit designing</li>
@@ -296,7 +317,7 @@
 
   <b>For Buzzer:</b>
   <ul>
-    <li><strong>2N3904 transistor</strong> – controls voltage supply (5-12V) to the buzzer to adjust the loudness.
+    <li><strong>2N3904 NPN BJT</strong> – controls voltage supply (5-12V) to the buzzer to adjust the loudness.
       <ul>
         <li>Collector-emitter voltage: 40V</li>
         <li>Max collector current: 200mA</li>
@@ -323,7 +344,7 @@
 
   <b>For Relay (inverter)</b>
   <ul>
-    <li><strong>2N3904 transistor</strong> – drives the relay.</li>
+    <li><strong>2N3904 NPN BJT</strong> – drives the relay.</li>
     <li><strong>470 Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
       <ul>
         <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
@@ -417,11 +438,76 @@
   <h3>2. INA219 + FL-2C Shunt + 6N137 (PV Array)</h3>
 
   <ul>
-    <li><strong>LM78L05 Power Supply:</strong>
+    <li><strong>Power Supply:</strong>
       <ul>
-        <li><code>OUT</code> → INA219 + 6N137 power input</li>
-        <li><code>GND</code> → PV-</li>
-        <li><code>IN</code> → PV+</li>
+        <li>UVLO:
+          <ul>
+            <li><strong>Voltage Divider:</strong>
+              <ul>
+                <li>PV+ → 22kΩ → Junction → 10Ω → PV-</li>
+                <li>Drops 8V to ~2.5V for TL431 reference.</li>
+              </ul>
+            </li>
+            <li><strong>TL431:</strong>
+              <ul>
+                <li><code>REF</code> →
+                  <ul>
+                    <li>Divider junction</li>
+                    <li>2N3906 feedback</li>
+                  </ul>
+                </li>
+                <li>Anode → PV-</li>
+                <li>Cathode →
+                  <ul>
+                    <li>6.8kΩ → PV+ (for minimum 1mV load)
+                      <ul>
+                        <li><math>(7V - 2.5V) ÷ 6.8kΩ = 0.66mA</math></li>
+                      </ul>
+                    </li>
+                    <li>2N3906 signal</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><strong>2N3906:</strong>
+              <ul>
+                <li>Emitter → PV+</li>
+                <li>Base → 2.2kΩ → TL431 cathode (≥2mA current)
+                  <ul>
+                    <li><math>(7V - 2.5V - 0.7V) ÷ 2.2kΩ = ~1.7mA</math></li>
+                  </ul>
+                </li>
+                <li>Collector →
+                  <ul>
+                    <li>LM78L05 input</li>
+                    <li>100kΩ → TL431 <code>REF</code></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>Hysteresis: ~1V:
+              <ul>
+                <li>Turn-on: <math>2.5V × (22kΩ + 10kΩ) / 10kΩ = 8V</math></li>
+                <li>Turn-off: <math>2.5V × (18kΩ + 10kΩ) / 10kΩ = 7V</math>
+                  <ul>
+                    <li><math>22kΩ || 100kΩ = 18kΩ</math></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><strong>LM78L05:</strong>
+          <ul>
+            <li><code>OUT</code> → INA219 + 6N137 power input
+              <ul>
+                <li>Power dissipation: <math>20mA × (~25V - 5V) = 400mW</math> (ALARMING !!! May go up to ~100°C)</li>
+              </ul>
+            </li>
+            <li><code>GND</code> → PV-</li>
+            <li><code>IN</code> → 2N3906 collector</li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><strong>Shunt Resistor:</strong> Place in series with the charge controller positive input.</li>
@@ -439,7 +525,7 @@
         <li>To change the I<sup>2</sup>C address from default (0x40) to 0x41, solder the <code>A0</code> points.</li>
       </ul>
     </li>
-    <li>4 x <strong>6N137:</strong>
+    <li>3 x <strong>6N137:</strong>
       <ul>
         <li>U1, U2:
           <ul>
@@ -485,8 +571,20 @@
 
   <b>Filtering:</b>
   <ul>
-    <li>Add <strong>0.1µF Ceramic Capacitor</strong> (high frequency decoupling) to all power inputs (INA219, 6N137).</li>
-    <li>Add <strong>100µF Electrolytic Capacitor</strong> (stability) to LM78L05 input and output.</li>
+    <li>Add 0.1µF Ceramic Capacitor (high frequency decoupling) to all power inputs (INA219, 6N137).</li>
+    <li>PV+ ... PV- (before UVLO):
+      <ul>
+        <li>100µF Electrolytic Capacitor (stability)</li>
+        <li>10µF Ceramic Capacitor</li>
+        <li>0.1µF Ceramic Capacitor</li>
+      </ul>
+    </li>
+  </ul>
+
+  <b>Protection:</b>
+  <ul>
+    <li>1N5361B 27V Zener Diode between PV+ and PV- (before UVLO, anode to PV-)</li>
+    <li>1N4733A 5.1V Zener Diode between LM78L05 <code>OUT</code> and <code>GND</code> (anode to GND)</li>
   </ul>
 
   <h3>3. ZMPT101B AC Voltage Sensor</h3>
@@ -709,6 +807,7 @@
     <li id="29"><a href="https://digilog.pk/products/lm78l05-78l05-voltage-regulator-5v-voltage-regulator-to-92">https://digilog.pk/products/lm78l05-78l05-voltage-regulator-5v-voltage-regulator-to-92</a></li>
     <li id="30"><a href="https://digilog.pk/products/6n137-high-speed-optocoupler">https://digilog.pk/products/6n137-high-speed-optocoupler</a></li>
     <li id="31"><a href="https://www.ti.com/lit/ds/symlink/ina219.pdf">https://www.ti.com/lit/ds/symlink/ina219.pdf</a></li>
+    <li id="32"><a href="https://digilog.pk/products/tl431-regulator-in-pakistan">https://digilog.pk/products/tl431-regulator-in-pakistan</a></li>
   </ol>
 
 </body>
