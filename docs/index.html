@@ -441,14 +441,14 @@
     </li>
     <li>4 x <strong>6N137:</strong>
       <ul>
-        <li>U1, U3:
+        <li>U1, U2:
           <ul>
             <li><code>LED Anode</code> → Arduino-side 5V rail</li>
             <li><code>VCC</code> → LM78L05 5V</li>
             <li><code>GND</code> → LM78L05 GND (PV-)</li>
           </ul>
         </li>
-        <li>U2, U4:
+        <li>U3:
           <ul>
             <li><code>LED Anode</code> → LM78L05 5V</li>
             <li><code>VCC</code> → Arduino-side 5V rail</li>
@@ -463,17 +463,11 @@
         </li>
         <li>U2:
           <ul>
-            <li><code>LED Cathode</code> → 1kΩ → INA219 SCL</li>
-            <li><code>V<sub>O</sub></code> → Arduino Nano A5 (SCL)</li>
-          </ul>
-        </li>
-        <li>U3:
-          <ul>
             <li><code>LED Cathode</code> → 1kΩ → Arduino Nano A4 (SDA)</li>
             <li><code>V<sub>O</sub></code> → INA219 SDA</li>
           </ul>
         </li>
-        <li>U4:
+        <li>U3:
           <ul>
             <li><code>LED Cathode</code> → 1kΩ → INA219 SDA</li>
             <li><code>V<sub>O</sub></code> → Arduino Nano A4 (SDA)</li>
