@@ -91,9 +91,11 @@ Screen screenNum = SCR_VOLT_CURR;
 #define INA219_SOL_CORR_FACTOR 1
 #define INA219_SOL_BUS_VOLTAGE_OFFSET 0
 
+#define SOLAR_SENSOR_ADDR 0x41
+
 // I2C pins A4 (SDA) and A5 (SCL), address 0x40 and 0x41
 INA219_WE batterySensor = INA219_WE(0x40);
-INA219_WE solarSensor = INA219_WE(0x41);
+INA219_WE solarSensor = INA219_WE(SOLAR_SENSOR_ADDR);
 
 ////////////////////////////////////////////////////////////////////
 
@@ -449,6 +451,47 @@ public:
   float volts;    // V
   float current;  // A
 
+  bool initSensor(const __FlashStringHelper *name,
+                  INA219_PGAIN pGain,
+                  INA219_BUS_RANGE busRange,
+                  float shuntVoltOffset,
+                  float correctionFactor,
+                  uint8_t tries = 0) {
+    uint8_t n = 0;
+
+    while (true) {
+      n++;
+
+      if (sensor.init()) {
+        break;
+      } else if (tries > 0 && n == tries) {
+        return false;
+      }
+
+      Serial.print(name);
+      Serial.println(F(" sensor not ready"));
+      delay(100);
+    }
+
+    sensor.setADCMode(SAMPLE_MODE_128);
+    sensor.setMeasureMode(CONTINUOUS);
+    sensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
+
+    sensor.setPGain(pGain);
+    sensor.setBusRange(busRange);
+    sensor.setShuntVoltOffset_mV(shuntVoltOffset);
+    sensor.setCorrectionFactor(correctionFactor);
+
+    delay(100);
+
+    for (uint8_t i = 0; i < DC_SAMPLE_COUNT; i++) {
+      readSensor();
+      delay(1000 / DC_SAMPLE_COUNT);
+    }
+
+    return true;
+  }
+
   void readSensor() {
     // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
     voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
@@ -569,17 +612,48 @@ public:
 class Solar : public DcSource {
   OngoingEventTs pvCurrentEnough, pvVoltsEnough;
 
+  bool isSolarSensorPresent() {
+    Wire.beginTransmission(SOLAR_SENSOR_ADDR);
+    return (Wire.endTransmission() == 0);
+  }
+
 public:
+  bool present = false;
+
   Solar()
     : DcSource(solarSensor) {}
 
+  // I²C bus may become stuck when one of the lines (SDA or SCL) is held permanently LOW, preventing any communication.
+  // INA219's SCL line is input-only (no clock-stretching), so only SDA can stuck. But when INA219 on PV-side is powered down,
+  // we are sure that Arduino-side SDA line of 6N137 opto-coupler is pulled HIGH by the pull-up resistor. It goes LOW only when
+  // the PV-side is powered up and INA219 pulls the SDA line LOW (by lighting the 6N137 LED). So there's no chance of SDA bus
+  // being stuck. We only check if INA219 responds at its address. No need to try bus recovery.
+  void readSensorIfPresent() {
+    if (!isSolarSensorPresent()) {
+      volts = current = 0;
+      present = false;
+    } else if (!present) {
+      present = initSensor(F("Solar"),
+                           PG_40,    // Max current = 40mV / 0.0007444Ω = 54A
+                           BRNG_32,  // Max voltage = 32V
+                           INA219_SOL_SHUNT_VOLT_OFFSET_MV,
+                           INA219_SOL_CORR_FACTOR,
+                           1);
+    }
+
+    if (present) {
+      readSensor();
+    }
+  }
+
   void updateTs() {
-    averageReadings();
+    if (present) {
+      averageReadings();
+      volts += INA219_SOL_BUS_VOLTAGE_OFFSET;
+    }
 
-    volts += INA219_SOL_BUS_VOLTAGE_OFFSET;
-
-    pvCurrentEnough.updateTs(current >= prefs.solarMinCurrent);
-    pvVoltsEnough.updateTs(volts >= 15 || current >= 5);
+    pvCurrentEnough.updateTs(present && current >= prefs.solarMinCurrent);
+    pvVoltsEnough.updateTs(present && (volts >= 15 || current >= 5));
   }
 
   // Should be called only when on inverter and battery is low or discharging.
@@ -1461,28 +1535,11 @@ void setup() {
 
   Wire.begin();
 
-  auto initDcSensor = [](INA219_WE sensor, const __FlashStringHelper *name) {
-    while (!sensor.init()) {
-      Serial.print(name);
-      Serial.println(F(" sensor not ready"));
-      delay(100);
-    }
-    sensor.setADCMode(SAMPLE_MODE_128);
-    sensor.setMeasureMode(CONTINUOUS);
-    sensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
-  };
-
-  initDcSensor(batterySensor, F("Battery"));
-  batterySensor.setPGain(PG_80);       // Max current = 80mV / 0.0007444Ω = 107A
-  batterySensor.setBusRange(BRNG_16);  // Max voltage = 16V
-  batterySensor.setShuntVoltOffset_mV(INA219_BAT_SHUNT_VOLT_OFFSET_MV);
-  batterySensor.setCorrectionFactor(INA219_BAT_CORR_FACTOR);
-
-  initDcSensor(solarSensor, F("Solar"));
-  solarSensor.setPGain(PG_40);       // Max current = 40mV / 0.0007444Ω = 54A
-  solarSensor.setBusRange(BRNG_32);  // Max voltage = 32V
-  solarSensor.setShuntVoltOffset_mV(INA219_SOL_SHUNT_VOLT_OFFSET_MV);
-  solarSensor.setCorrectionFactor(INA219_SOL_CORR_FACTOR);
+  battery.initSensor(F("Battery"),
+                     PG_80,    // Max current = 80mV / 0.0007444Ω = 107A
+                     BRNG_16,  // Max voltage = 16V
+                     INA219_BAT_SHUNT_VOLT_OFFSET_MV,
+                     INA219_BAT_CORR_FACTOR);
 
   acVoltageSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
 
@@ -1491,12 +1548,6 @@ void setup() {
   rtc.setClockMode(false);  // Set 24h
 
   loadPrefs();
-
-  for (uint8_t i = 0; i < DC_SAMPLE_COUNT; i++) {
-    battery.readSensor();
-    solar.readSensor();
-    delay(1000 / DC_SAMPLE_COUNT);
-  }
 }
 
 void loop() {
@@ -1517,7 +1568,7 @@ void loop() {
 
   // Take 10 samples per second
   battery.readSensor();
-  solar.readSensor();
+  solar.readSensorIfPresent();
 
   static Ts tsLoopCheck;
 
