@@ -47,10 +47,13 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 enum Screen {
-  SCR_VOLT_CURR = 1,  // Informatory
-  SCR_VOLT_PWR,       // Informatory
-  SCR_VOLT_TEMP,      // Informatory
-  SCR_PV_VOLT_CURR,   // Informatory
+  // Informatory
+  SCR_BTRY_VOLT_CURR = 1,
+  SCR_BTRY_VOLT_PWR,
+  SCR_PV_VOLT_CURR,
+  SCR_PV_VOLT_PWR,
+  SCR_CLK_TEMP,
+  // Settings
   SCR_BTRY_FULL_VOLT,
   SCR_BTRY_LOW_VOLT,
   SCR_BTRY_CRIT_VOLT,
@@ -78,7 +81,7 @@ enum Screen {
 
 MAX7219 led;  // Uses pins 10 (CLK), 11 (CS), 12 (DIN)
 bool ledOn = true;
-Screen screenNum = SCR_VOLT_CURR;
+Screen screenNum = SCR_BTRY_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -1106,13 +1109,13 @@ void handle2HzTimer() {
   static uint8_t state = 1;
 
   if (ledOn) {
-    if (!ts.screenChanged.isOlderThanSec(2) || screenNum > SCR_PV_VOLT_CURR) {
+    if (!ts.screenChanged.isOlderThanSec(2) || screenNum > SCR_PV_VOLT_PWR) {
       updateDisplay();
     } else if (inverterHaltReason != INV_NO_REASON && state <= 2) {
       led.Clear();
       led.DisplayChar(7, 'E', 0);
       led.DisplayChar(0, inverterHaltReason + '0', 0);
-    } else if (screenNum > SCR_VOLT_PWR) {
+    } else if (screenNum > SCR_BTRY_VOLT_PWR) {
       updateDisplay();
     } else if (blinkLeft && state == 1) {
       updateDisplay(false, true);
@@ -1231,7 +1234,7 @@ void handleButtonsPressed() {
 
   if (menuButtonPressed) {
     if (screenNum == SCR_SAVE) {
-      screenNum = SCR_VOLT_CURR;
+      screenNum = SCR_BTRY_VOLT_CURR;
       discardChangedPrefs();
     } else {
       jumpToNextScreen();
@@ -1248,10 +1251,11 @@ void handleButtonsPressed() {
   }
 
   switch (screenNum) {
-    case SCR_VOLT_CURR:
-    case SCR_VOLT_PWR:
-    case SCR_VOLT_TEMP:
+    case SCR_BTRY_VOLT_CURR:
+    case SCR_BTRY_VOLT_PWR:
     case SCR_PV_VOLT_CURR:
+    case SCR_PV_VOLT_PWR:
+    case SCR_CLK_TEMP:
       shutdownDisplay();
       break;
     case SCR_BTRY_FULL_VOLT:
@@ -1338,7 +1342,7 @@ void handleButtonsPressed() {
           && (chPrefs.windowToGridOnCurrentCrit != 60 || chPrefs.windowToGridDaytimeOnCurrentHigh != 1)
           && chPrefs.windowToGridDaytimeOnCurrentLow > chPrefs.windowToGridDaytimeOnCurrentHigh) {
         saveChangedPrefs();
-        screenNum = SCR_VOLT_CURR;
+        screenNum = SCR_BTRY_VOLT_CURR;
       }
       break;
   }
@@ -1348,9 +1352,9 @@ void handleButtonsPressed() {
 
 void handleHandWaved() {
   if (handWaved && !anyButtonPressed()) {
-    if (screenNum == SCR_PV_VOLT_CURR) {
-      screenNum = SCR_VOLT_CURR;
-    } else if (screenNum < SCR_PV_VOLT_CURR) {
+    if (screenNum == SCR_CLK_TEMP) {
+      screenNum = SCR_BTRY_VOLT_CURR;
+    } else if (screenNum < SCR_CLK_TEMP) {
       jumpToNextScreen();
     }
   }
@@ -1359,9 +1363,9 @@ void handleHandWaved() {
 ////////////////////////////////////////////////////////////////////
 
 void updateDisplayMsg() {
-  if (screenNum > SCR_PV_VOLT_CURR && ts.buttonPressed.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
+  if (screenNum > SCR_PV_VOLT_PWR && ts.buttonPressed.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println(F("No activity. Jumping to first screen..."));
-    screenNum = SCR_VOLT_CURR;
+    screenNum = SCR_BTRY_VOLT_CURR;
     discardChangedPrefs();
   }
 
@@ -1388,27 +1392,38 @@ void updateDisplayMsg() {
     dtostrf(round(src.current * 10) == 0 ? 0 : src.current, 0, 1, rightStr);
   };
 
-  float power;
+  auto formatVoltPower = [formatVolts](DcSource &src) {
+    formatVolts(src);
+    float power = src.volts * src.current;
+    if (abs(power) < 100) {
+      dtostrf(round(power * 10) == 0 ? 0 : power, 0, 1, rightStr);
+    } else {
+      dtostrf(round(power) == 0 ? 0 : power, 0, 0, rightStr);
+    }
+  };
+
+  auto formatClock = [notJustChangedScreen](bool onRight) {
+    if (onRight || notJustChangedScreen()) {
+      dtostrf(rtc.getMinute() * 0.01f + rtc.getHr(), 0, 2, onRight ? rightStr : leftStr);
+    }
+  };
 
   switch (screenNum) {
-    case SCR_VOLT_CURR:
+    case SCR_BTRY_VOLT_CURR:
       formatVoltCurrent(battery);
       break;
-    case SCR_VOLT_PWR:
-      power = battery.volts * battery.current;
-      formatVolts(battery);
-      if (abs(power) < 100) {
-        dtostrf(round(power * 10) == 0 ? 0 : power, 0, 1, rightStr);
-      } else {
-        dtostrf(round(power) == 0 ? 0 : power, 0, 0, rightStr);
-      }
-      break;
-    case SCR_VOLT_TEMP:
-      formatVolts(battery);
-      dtostrf(rtc.getTemperature(), 0, 1, rightStr);  // Temperature
+    case SCR_BTRY_VOLT_PWR:
+      formatVoltPower(battery);
       break;
     case SCR_PV_VOLT_CURR:
       formatVoltCurrent(solar);
+      break;
+    case SCR_PV_VOLT_PWR:
+      formatVoltPower(solar);
+      break;
+    case SCR_CLK_TEMP:
+      formatClock(false);
+      dtostrf(rtc.getTemperature(), 0, 1, rightStr);  // Temperature
       break;
     case SCR_BTRY_FULL_VOLT:
       dtostrf(0.1f * chPrefs.batteryFullChargeVolts, 0, 1, rightStr);
@@ -1459,7 +1474,7 @@ void updateDisplayMsg() {
       if (clk.updated) {
         dtostrf(clk.minutes * 0.01f + clk.hours, 0, 2, rightStr);
       } else {
-        dtostrf(rtc.getMinute() * 0.01f + rtc.getHr(), 0, 2, rightStr);
+        formatClock(true);
       }
       break;
     case SCR_PRE_SOLAR_TRY_TIME:
