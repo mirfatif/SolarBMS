@@ -79,7 +79,10 @@ enum Screen {
   SCR_SAVE
 };
 
-MAX7219 led;  // Uses pins 10 (CLK), 11 (CS), 12 (DIN)
+// Uses pins D10 (CLK/SCK), D11 (LOAD/CS), D12 (DIN/COPI) for bit-banging,
+// not hardware-SPI on D11 (COPI), D12 (CIPO), D13 (SCK).
+// CIPO is not required as no data is returned.
+MAX7219 led;
 bool ledOn = true;
 Screen screenNum = SCR_BTRY_VOLT_CURR;
 

@@ -29,6 +29,19 @@
       display: block;
       margin: auto;
     }
+
+    table {
+      border-top: 1px solid black;
+      border-left: 1px solid black;
+      border-spacing: 0;
+      text-align: center;
+    }
+
+    th,
+    td {
+      border-right: 1px solid black;
+      border-bottom: 1px solid black;
+    }
   </style>
 </head>
 
@@ -242,6 +255,8 @@
       <ul>
         <li>220V AC to 5V DC Converter</li>
         <li>AC 220V Optocoupler Isolation Module</li>
+        <li>Input current: 2mA</li>
+        <li>Output current: 2mA</li>
         <li><b>H11AA1 Optocoupler</b> <sup><a href="#15">[15]</a></sup>
           <ul>
             <li>Input LEDs forward voltage drop: 1.2-1.5V, forward current: 10mA (max 60mA).</li>
@@ -653,9 +668,9 @@
   <ul>
     <li><code>VCC</code> → 5V rail</li>
     <li><code>GND</code> → GND rail</li>
-    <li><code>DIN</code> → Arduino Nano D12 (MISO)</li>
-    <li><code>CS</code> → Arduino Nano D11 (MOSI)</li>
-    <li><code>CLK</code> → Arduino Nano D10 (SS)</li>
+    <li><code>DIN</code> → Arduino Nano D12 (MISO/CIPO)</li>
+    <li><code>CS</code> → Arduino Nano D11 (MOSI/COPI)</li>
+    <li><code>CLK</code> → Arduino Nano D10 (SS/CS)</li>
   </ul>
 
   <h3>8. 5–12V Active Buzzer</h3>
@@ -751,6 +766,115 @@
       </ul>
     </li>
   </ul>
+
+  <h2>Load Measurement</h2>
+  <table>
+    <tr>
+      <th>Components</th>
+      <th>Current (mA)</th>
+      <th>Pin</th>
+      <th>Mode</th>
+      <th colspan="2">Pin Source (+) / Sink (-)</br>Current (mA)</th>
+    </tr>
+    <tr>
+      <td>2N2222A - drives a fan</td>
+      <td>100</td>
+      <td>D2</td>
+      <td>Output</td>
+      <td colspan="2">10</td>
+    </tr>
+    <tr>
+      <td>IR obstacle sensor module</td>
+      <td>10-20</td>
+      <td>D3</td>
+      <td>Input</td>
+      <td colspan="2">~0</td>
+    </tr>
+    <tr>
+      <td>5V relay module (active-low)</td>
+      <td>70-100</td>
+      <td>D4</td>
+      <td>Output</td>
+      <td colspan="2">-5 ~ -10</td>
+    </tr>
+    <tr>
+      <td>2N3904 - drives a 5V relay</td>
+      <td>60</td>
+      <td>D5</td>
+      <td>Output</td>
+      <td colspan="2">6</td>
+    </tr>
+    <tr>
+      <td>2N3904 - drives a 12V buzzer</td>
+      <td>40</td>
+      <td>D6</td>
+      <td>Output</td>
+      <td colspan="2">4</td>
+    </tr>
+    <tr>
+      <td>Push button (pulled-up @ ~20kΩ)</td>
+      <td></td>
+      <td>D7-D9</td>
+      <td>Input</td>
+      <td colspan="2">-0.25 × 3 = -0.75</td>
+    </tr>
+    <tr>
+      <td>MAX7219 8-digit display module</td>
+      <td>50-100</td>
+      <td>D10-D12</td>
+      <td>SPI/Output</td>
+      <td colspan="2">±0.1 × 3 = ±0.3</td>
+    </tr>
+    <tr>
+      <td>ZMPT101B AC voltage sensor module</td>
+      <td>2</td>
+      <td>A1</td>
+      <td>Input</td>
+      <td colspan="2">~0</td>
+    </tr>
+    <tr>
+      <td>DS3231 clock module</td>
+      <td>0.5-1.5</td>
+      <td rowspan="3">A4-A5</td>
+      <td rowspan="3">I<sup>2</sup>C</td>
+      <td rowspan="3">-1.06 × 2 = -2.12<br>(pulled LOW)<sup>*</sup></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>INA219 module (battery)</td>
+      <td>0.7-1.2</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>INA219 module (solar) through a<br>3 x 6N137-based I2C isolator</td>
+      <td>5-10<br>(6N137 output side)</td>
+      <td>-5 × 2 = -10<br>(6N137 LED)</td>
+    </tr>
+  </table>
+
+  <ul>
+    <li>Total: 360~455mA</li>
+    <li>GPIO pins: 40~45mA</li>
+  </ul>
+
+  <b>PV-side:</b>
+  <ul>
+    <li>Total: 16~26mA
+      <ul>
+        <li>INA219: 0.7-1.2mA</li>
+        <li>6N137 (output side): 5-10mA × 2 = 10-20mA</li>
+        <li>6N137 LED: 5mA</li>
+      </ul>
+    </li>
+    <li>INA219 SDA/SCL pin sinks (when pulled LOW)<sup>*</sup>: ~7mA
+      <ul>
+        <li>1.06mA × 2 = 2.12mA (from pull-up resistor)</li>
+        <li>5mA (from 6N137 LED)</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p><sup>*</sup> Both lines (SDA/SCL) are pulled up externally (@ 4.7kΩ). When released, pins are in high-impedance, so sink almost nothing.</p>
 
   <h2 style="page-break-before: always;">Schematics</h2>
   <h3>Arduino Circuit:</h3>
