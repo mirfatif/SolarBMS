@@ -305,16 +305,14 @@
     <li><strong>LM78L05 5V Regulator</strong> <sup><a href="#29">[29]</a></sup> – converts PV 12V-25V to 5V for PV side circuit.</li>
     <li><strong>TL431 Regulator</strong> <sup><a href="#32">[32]</a></sup> – cuts-off LM78L05 input if PV drops below 7V.</li>
     <li><strong>2N3906 PNP BJT</strong> – provides feedback to TL431 (for hysteresis) and drives LM78L05.</li>
-    <li>2 x <strong>AO3400 N-MOSFET</strong> – 6N137 output inverter.</li>
-    <li>2 x <strong>AO3401 P-MOSFET</strong> – Nano / INA219 SDA buffer (to drive 6N137 LED).</li>
-    <li>2 x <strong>1N5818 Schottky</strong> – lets 6N137 output pull the Nano SDA bus low but not the other way.</li>
+    <li>2 x <strong>1N5818 Schottky Diode</strong> – separates the sending signal from the returning signal in the bi-directional paths of SDA.</li>
     <li><strong>Resistors:</strong>
       <ul>
         <li>1 x 100kΩ</li>
         <li>1 x 22kΩ</li>
         <li>1 x 10kΩ</li>
         <li>1 x 6.8kΩ</li>
-        <li>6 x 4.7kΩ</li>
+        <li>4 x 4.7kΩ</li>
         <li>1 x 2.2kΩ</li>
         <li>3 x 1kΩ</li>
       </ul>
@@ -539,101 +537,91 @@
             <li><code>Vin–</code> → Shunt's controller-side terminal</li>
             <li><code>GND</code> → LM78L05 GND (PV-)</li>
             <li><code>VCC</code> → LM78L05 5V</li>
-            <li><code>SDA</code> →
-              <ul>
-                <li>6N137 LED (via AO3401)</li>
-                <li>6N137 <code>V<sub>O</sub></code> (via 1N5818)</li>
-              </ul>
-            </li>
-            <li><code>SCL</code> → 6N137 <code>V<sub>O</sub></code></li>
+            <li><code>SDA</code>, <code>SCL</code> → 6N137 LED Cathode, <code>V<sub>O</sub></code></li>
           </ul>
         </li>
         <li>To change the I<sup>2</sup>C address from default (0x40) to 0x41, solder the <code>A0</code> points.</li>
       </ul>
     </li>
-    <li>Feedback Loop Protection / SDA Buffer (see <a href="#appendix-1">appendix 1</a> for details):
+    <li>Feedback Loop Protection: <sup><a href="#33">[33]</a></sup> <sup><a href="#34">[34]</a></sup> <sup><a href="#35">[35]</a></sup>
       <ul>
-        <li>2 x <strong>AO3400</strong> (N1 & N2):
-          <ul>
-            <li>Gate → 6N137 <code>V<sub>O</sub></code></li>
-            <li>Drain → 6N137 <code>LED Cathode</code></li>
-          </ul>
-        </li>
-        <li>N1:
-          <ul>
-            <li>Source → Arduino-side GND rail</li>
-            <li>Gate → 4.7kΩ → Arduino-side 5V rail</li>
-          </ul>
-        </li>
-        <li>N2:
-          <ul>
-            <li>Source → LM78L05 GND (PV-)</li>
-            <li>Gate → 4.7kΩ → LM78L05 5V</li>
-          </ul>
-        </li>
-        <li>2 x <strong>AO3401</strong> (P1 & P2):
-          <ul>
-            <li>Drain → 6N137 <code>LED Anode</code></li>
-          </ul>
-        </li>
-        <li>P1:
-          <ul>
-            <li>Source → Arduino-side 5V rail</li>
-            <li>Gate → Arduino Nano A4 (SDA)</li>
-          </ul>
-        </li>
-        <li>P2:
-          <ul>
-            <li>Source → LM78L05 5V</li>
-            <li>Gate → INA219 SDA</li>
-          </ul>
-        </li>
+        <li>2 x <strong>1N5818</strong> (D1 & D2)</li>
       </ul>
     </li>
     <li>3 x <strong>6N137:</strong>
       <ul>
-        <li>U1, U2:
+        <li>Output-Side Power:
           <ul>
-            <li><code>VCC</code> → LM78L05 5V</li>
-            <li><code>GND</code> → LM78L05 GND (PV-)</li>
+            <li>U1, U2:
+              <ul>
+                <li><code>VCC</code> → LM78L05 5V</li>
+                <li><code>GND</code> → LM78L05 GND (PV-)</li>
+              </ul>
+            </li>
+            <li>U3:
+              <ul>
+                <li><code>VCC</code> → Arduino-side 5V rail</li>
+                <li><code>GND</code> → Arduino-side GND rail</li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li>U1 (Nano → INA219: SCL):
           <ul>
-            <li><code>LED Anode</code> → 1kΩ → Arduino-side 5V rail</li>
-            <li><code>LED Cathode</code> → Arduino Nano A5 (SCL)</li>
+            <li>LED:
+              <ul>
+                <li>Anode → 1kΩ → Arduino-side 5V rail</li>
+                <li>Cathode → Arduino Nano A5 (SCL)</li>
+              </ul>
+            </li>
             <li><code>V<sub>O</sub></code> → INA219 SCL</li>
           </ul>
         </li>
         <li>U2 (Nano → INA219: SDA):
           <ul>
-            <li><code>LED Anode</code> → 1kΩ → P1 Drain</li>
-            <li><code>LED Cathode</code> → N1 Drain</li>
-            <li><code>V<sub>O</sub></code> →
+            <li>LED:
               <ul>
-                <li>[Cathode] 1N5818 [Anode] → Arduino Nano A4 (SDA)</li>
-                <li>N2 Gate</li>
+                <li>Anode →
+                  <ul>
+                    <li>1kΩ → Arduino-side 5V rail</li>
+                    <li>D1 Cathode</li>
+                  </ul>
+                </li>
+                <li>Cathode →
+                  <ul>
+                    <li>Arduino Nano A4 (SDA)</li>
+                    <li>D1 Anode</li>
+                  </ul>
+                </li>
               </ul>
             </li>
+            <li><code>V<sub>O</sub></code> → [Cathode] D2 [Anode] → INA219 SDA</li>
           </ul>
         </li>
         <li>U3 (INA219 → Nano: SDA):
           <ul>
-            <li><code>LED Anode</code> → 1kΩ → P2 Drain</li>
-            <li><code>LED Cathode</code> → N2 Drain</li>
-            <li><code>V<sub>O</sub></code> →
+            <li>LED:
               <ul>
-                <li>[Cathode] 1N5818 [Anode] → INA219 SDA</li>
-                <li>N1 Gate</li>
+                <li>Anode →
+                  <ul>
+                    <li>1kΩ → LM78L05 5V</li>
+                    <li>D2 Cathode</li>
+                  </ul>
+                </li>
+                <li>Cathode →
+                  <ul>
+                    <li>INA219 SDA</li>
+                    <li>D2 Anode</li>
+                  </ul>
+                </li>
               </ul>
             </li>
-            <li><code>VCC</code> → Arduino-side 5V rail</li>
-            <li><code>GND</code> → Arduino-side GND rail</li>
+            <li><code>V<sub>O</sub></code> → [Cathode] D1 [Anode] → Arduino Nano A4 (SDA)</li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><strong>I<sup>2</sup>C Pull-Ups</strong>:
+    <li>4 x <strong>4.7kΩ</strong> (I<sup>2</sup>C Pull-Ups):
       <ul>
         <li>Arduino Nano A4, A5 (SDA/SCL) → 4.7kΩ → Arduino-side 5V rail</li>
         <li>INA219 SCL/SDA → 4.7kΩ → LM78L05 5V</li>
@@ -822,7 +810,7 @@
     </li>
   </ul>
 
-  <h2>Load Measurement</h2>
+  <h2>Load Calculation</h2>
   <table>
     <tr>
       <th>Components</th>
@@ -892,7 +880,7 @@
       <td>0.5-1.5</td>
       <td rowspan="3">A4-A5</td>
       <td rowspan="3">I<sup>2</sup>C</td>
-      <td rowspan="3">-1.06 × 2 = -2.12<br>(pulled LOW)<sup>*</sup></td>
+      <td rowspan="3">-1.06 × 2 = -2.12<br>(pulled LOW)<sup>**</sup></td>
       <td></td>
     </tr>
     <tr>
@@ -902,7 +890,7 @@
     </tr>
     <tr>
       <td>INA219 module (solar) through a<br>3 x 6N137-based I2C isolator</td>
-      <td>5-10<br>(6N137 output side)</td>
+      <td>5-10<br>(6N137 output<br>power supply)<br>5 (<code>V<sub>O</sub></code> pulled low)<sup>*</sup></td>
       <td>-5 × 2 = -10<br>(6N137 LED)</td>
     </tr>
   </table>
@@ -917,11 +905,11 @@
     <li>Total: 16~26mA
       <ul>
         <li>INA219: 0.7-1.2mA</li>
-        <li>6N137 (output side): 5-10mA × 2 = 10-20mA</li>
-        <li>6N137 LED: 5mA</li>
+        <li>6N137 (output power supply): 5-10mA × 2 = 10-20mA</li>
+        <li>6N137 LED (or when <code>V<sub>O</sub></code> is pulled low)<sup>*</sup>: 5mA</li>
       </ul>
     </li>
-    <li>INA219 SDA/SCL pin sinks (when pulled LOW)<sup>*</sup>: ~7mA
+    <li>INA219 SDA/SCL pin sinks (when pulled LOW)<sup>**</sup>: ~7mA
       <ul>
         <li>1.06mA × 2 = 2.12mA (from pull-up resistor)</li>
         <li>5mA (from 6N137 LED)</li>
@@ -929,7 +917,10 @@
     </li>
   </ul>
 
-  <p><sup>*</sup> Both lines (SDA/SCL) are pulled up externally (@ 4.7kΩ). When released, pins are in high-impedance, so sink almost nothing.</p>
+  <ul>
+    <li><sup>*</sup> SDA line's 6N137 <code>V<sub>O</sub></code> are pulled up (@ 1kΩ) to let the opposite direction's 6N137 LED turn on only when former's <code>V<sub>O</sub></code> is not pulled down.</li>
+    <li><sup>**</sup> Both lines (SDA/SCL) are pulled up externally (@ 4.7kΩ). When released, pins are in high-impedance, so sink almost nothing.</li>
+  </ul>
 
   <h2 style="page-break-before: always;">Schematics</h2>
   <h3>Arduino Circuit:</h3>
@@ -954,43 +945,6 @@
 
   <h2>Finally:</h2>
   <a href="image.jpg"><img src="image.jpg" width="500" /></a>
-
-  <h2 style="page-break-before: always;" id="appendix-1">Appendix 1: I<sup>2</sup>C Isolation Feedback Challenge</h2>
-  <p>Say U1 is the 6N137 IC for INA219 -> Nano SDA bus. And U2 is the 6N137 IC for Nano -> INA219 SDA bus. U1.VO and U2.LED.C both are connected to the Nano.SDA for Nano's request and transmission respectively.</p>
-
-  <h3>Normal operation:</h3>
-  <p>When INA219 pulls the SDA line LOW -> U1.LED turns on -> U1.VO is pulled LOW -> Nano.SDA is pulled LOW. Expected.</p>
-
-  <h3>Problem:</h3>
-  <p>At the same time, U2.LED.C also gets pulled LOW -> U2.LED turns on -> U2.VO pulled LOW. Due to propagation delays, this may give a false positive to INA219 that the SDA line was pulled LOW by the Nano, and not due to the cyclic feedback.</p>
-
-  <h3>Solution:</h3>
-  <p>Firstly, don't connect U1.VO and Nano.SDA directly. Instead: U1.VO -> [Cathode] 1N5818 [Anode] -> Nano.SDA</p>
-  <p><b>Result</b>: Only U1.VO can pull the Nano.SDA down, not the vice versa.</p>
-  <p>Secondly, use MOSFETs Si2302 (N) and Si2301 (P) this way:</p>
-  <ul>
-    <li>N gate -> U1.VO</li>
-    <li>N collector -> U2.LED.C</li>
-    <li>P gate -> Nano.SDA</li>
-    <li>P collector -> U2.LED.A</li>
-  </ul>
-  <p><b>Result</b>: U2.LED turns on only if N-gate is HIGH and P-gate is LOW i.e. U1.VO is HIGH and Nano.SDA is LOW. When U1.VO is LOW -> it pulls the Nano.SDA LOW. So U2.LED won't turn on.</p>
-  <p>No feedback loop.</p>
-
-  <h3>Resistors:</h3>
-  <ul>
-    <li>4.7kΩ pull‑up on Nano.SDA.</li>
-    <li>4.7kΩ pull‑up on U1.VO (the one on Nano.SDA won't work when Nano pulls its SDA bus LOW).</li>
-    <li>680Ω series resistor with U2.LED.A (for ~5mA).</li>
-  </ul>
-
-  <h3>Logic:</h3>
-  <p>Our requirements, both fulfilled:</p>
-  <ul>
-    <li>When U1.VO is LOW, Nano.SDA must be LOW, but U2.LED must not turn on.</li>
-    <li>When Nano.SDA is LOW, U2.LED must turn on.</li>
-  </ul>
-  <p>None of the 74HC-series IC is able to provide us this logic. Tried (2 channels of) 74HC157.</p>
 
   <h2>Links</h2>
   <ol>
@@ -1026,6 +980,9 @@
     <li id="30"><a href="https://digilog.pk/products/6n137-high-speed-optocoupler">https://digilog.pk/products/6n137-high-speed-optocoupler</a></li>
     <li id="31"><a href="https://www.ti.com/lit/ds/symlink/ina219.pdf">https://www.ti.com/lit/ds/symlink/ina219.pdf</a></li>
     <li id="32"><a href="https://digilog.pk/products/tl431-regulator-in-pakistan">https://digilog.pk/products/tl431-regulator-in-pakistan</a></li>
+    <li id="33"><a href="https://www.analog.com/en/resources/app-notes/an-913.html">https://www.analog.com/en/resources/app-notes/an-913.html</a></li>
+    <li id="34"><a href="https://toshiba.semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/design-development/innovationcentre/whitepapers/TCM0646_Toshiba_Isolated_I2C_Communications_Using_Optoisolators.pdf">https://toshiba.semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/design-development/innovationcentre/whitepapers/TCM0646_Toshiba_Isolated_I2C_Communications_Using_Optoisolators.pdf</a></li>
+    <li id="35"><a href="https://www.vishay.com/docs/84901/opticalisolatorfoti2cvussystem.pdf">https://www.vishay.com/docs/84901/opticalisolatorfoti2cvussystem.pdf</a></li>
   </ol>
 
 </body>
