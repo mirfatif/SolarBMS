@@ -80,6 +80,8 @@
     <li>If USB mode is selected (instead of SUB), grid is always given priority. This can be useful in winters when not much power is needed during daytime. So inverter runs only during power outages.</li>
   </ol>
 
+  <p>Also see <a href="#flowchart">flowchart</a>.</p>
+
   <h2>Battery Protection Rules</h2>
   <ul>
     <li>
@@ -812,7 +814,7 @@
 
   <h2>Load Calculation</h2>
   <table>
-    <tr>
+    <tr style="background: grey; color: white;">
       <th>Components</th>
       <th>Current (mA)</th>
       <th>Pin</th>
@@ -923,13 +925,15 @@
   </ul>
 
   <h2 style="page-break-before: always;">Schematics</h2>
-  <h3>Arduino Circuit:</h3>
+  <p>TODO</p>
+  <!--h3>Arduino Circuit:</h3>
   <a href="circuit.svg"><img src="circuit.svg" width="1000" /></a>
 
   <h3 style="page-break-before: always;">Solar and AC (Grid + Inverter) Circuit:</h3>
-  <a href="changeover.svg"><img src="changeover.svg" width="700" /></a>
+  <a href="changeover.svg"><img src="changeover.svg" width="700" /></a-->
 
-  <h2>Flowchart:</h2>
+  <h2 id="flowchart">Flowchart:</h2>
+  <p>Actual checks and details are a bit complex but a simplified version is:</p>
   <a href="flowchart.svg"><img src="flowchart.svg" width="600" /></a>
 
   <h2 style="page-break-before: always;">Code:</h2>
