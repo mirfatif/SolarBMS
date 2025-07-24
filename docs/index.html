@@ -321,9 +321,9 @@
     </li>
     <li><strong>Capacitors:</strong>
       <ul>
-        <li>5 x 0.1µF 50V Ceramic</li>
-        <li>1 x 10µF 50V Ceramic</li>
-        <li>1 x 100µF 50V Electrolytic</li>
+        <li>6 x 0.1µF 50V Ceramic</li>
+        <li>2 x 10µF 50V Ceramic</li>
+        <li>2 x 100µF 50V Electrolytic</li>
       </ul>
     </li>
     <li><strong>Zener Diodes:</strong>
@@ -634,7 +634,7 @@
   <b>Filtering:</b>
   <ul>
     <li>Add 0.1µF Ceramic Capacitor (high frequency decoupling) to all power inputs (INA219, 6N137).</li>
-    <li>PV+ ... PV- (before UVLO):
+    <li><u>PV+ (shunt controller-side line) ... PV- (before UVLO)</u> and <u>shunt PV-side line ... PV-</u>:
       <ul>
         <li>100µF Electrolytic Capacitor (stability)</li>
         <li>10µF Ceramic Capacitor</li>
