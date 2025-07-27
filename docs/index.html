@@ -178,32 +178,28 @@
   <h2>Hardware Components</h2>
   <ul>
     <li><strong>Arduino Nano</strong> <sup><a href="#1">[1]</a></sup> – main controller for sensor reading and decision-making.</li>
-    <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> – used to measure battery voltage and current (charging and discharging).
-      <ul>
-        <li>Supply voltage: 3V-5.5V</li>
-        <li>Input quiescent current: 1mA</li>
-        <li>Default I<sup>2</sup>C Address: 0x40</li>
-        <li>Recommended configuration is to sense high-side current i.e. shunt is connected to the positive terminal of battery, and negative terminal is shared with circuit GND.</li>
-        <li>Max bus voltage (across Vin- and GND): 0V – 26V (makes sense only in case of high-side sensing)</li>
-        <li>Max measurable current:
-          <ul>
-            <li>With on-board R100 (0.1 Ω) SMD shunt: 3.2 A</li>
-            <li>With 100A 75mV (= 0.00075 Ω) shunt: 436A (= 0.32767V / 0.00075Ω, theoretically)</li>
-          </ul>
-        </li>
-        <li>When sensing high-side, bus voltage + shunt voltage gives the battery voltage.
-          <ul>
-            <li>Alternatively, use <strong>0–25V DC Voltage Sensor Module</strong> <sup><a href="#5">[5]</a></sup></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
 
     <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> + 3 x <strong>6N137 Optocoupler</strong> <sup><a href="#30">[30]</a></sup> – used to measure PV voltage and current.
       <ul>
         <li>Required because PWM charge controller does not have common GND across its input (PV array) and output (battery) sides.</li>
-        <li>INA219:
+        <li><strong>INA219</strong>:
           <ul>
+            <li>Supply voltage: 3V-5.5V</li>
+            <li>Input quiescent current: 1mA</li>
+            <li>Default I<sup>2</sup>C Address: 0x40</li>
+            <li>Recommended configuration: Sense high-side i.e. shunt is connected to the positive terminal of battery, and negative terminal is shared with circuit GND.</li>
+            <li>When sensing high-side, bus voltage + shunt voltage gives the battery voltage.
+              <ul>
+                <li>Alternatively, use <strong>0–25V DC Voltage Sensor Module</strong> <sup><a href="#5">[5]</a></sup></li>
+              </ul>
+            </li>
+            <li>Max bus voltage (across Vin- and GND): 0V – 26V (makes sense only in case of high-side sensing)</li>
+            <li>Max measurable current:
+              <ul>
+                <li>With on-board R100 (0.1 Ω) SMD shunt: 3.2 A</li>
+                <li>With 100A 75mV (= 0.00075 Ω) shunt: 436A (= 0.32767V / 0.00075Ω, theoretically)</li>
+              </ul>
+            </li>
             <li>Input pins (IN+ & IN-) bias current: 20μA</li>
             <li>Output pins: SCL is input-only (doesn't do clock-stretching), SDA is I/O
               <ul>
@@ -225,10 +221,31 @@
                 </li>
               </ul>
             </li>
-            <li>Remaining details are same as that of battery sensor.</li>
+            <li><strong>HF Noise Filter:</strong><br>INA219 has a good CMRR (≥120 dB) up to its own bandwidth (~5.5 kHz). Above that, better to attenuate the HF noise. Use recommended values under "Filtering and Input Considerations" <sup><a href="#31">[31]</a></sup> section in the datasheet:
+              <ul>
+                <li>10Ω in-series with the input pins.</li>
+                <li>0.1µF across the input pins.</li>
+              </ul>
+            </li>
+            <li><strong>Should remove the on-board SMD shunt?</strong>
+              <ul>
+                <li>If 0.00075 Ω shunt is placed in parallel with the onboard 0.1 Ω SMD resistor, it becomes 0.0007444 Ω. At 50A:
+                  <ul>
+                    <li>Voltage drop: 37.2 mV</li>
+                    <li>Current and power dissipation are within limits (so no need to remove the on-board SMD shunt):
+                      <ul>
+                        <li>External shunt: 49.6 A (1.85 W dissipation)</li>
+                        <li>Internal shunt: 372 mA (13.8 mW dissipation)</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li>But since we've put 10Ω resistors in-series with the input terminals (part of the RC filter), it complicates the filter effect as well as calibration. Better remove it.</li>
+              </ul>
+            </li>
           </ul>
         </li>
-        <li>6N137:
+        <li><strong>6N137</strong>:
           <ul>
             <li>Input HIGH -> Output LOW (leave V<sub>E</sub> unconnected)
               <ul>
@@ -250,6 +267,12 @@
           </ul>
         </li>
         <li>A more complex way to detect sunlight sufficiency is by using a <strong>BH1750 Light Sensor Module</strong> <sup><a href="#8">[8]</a></sup>.</li>
+      </ul>
+    </li>
+
+    <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> – used to measure battery voltage and current (charging and discharging).
+      <ul>
+        <li>Same specs as in PV sensor details.</li>
       </ul>
     </li>
 
@@ -277,7 +300,7 @@
         <li>Max current: 60mA</li>
       </ul>
     </li>
-    <li><strong>8-Digit Display MAX7219 Module</strong> <sup><a href="#11">[11]</a></sup> – show battery (dis)charge current / voltage / power, and configurable values.</li>
+    <li><strong>8-Digit Display MAX7219 Module</strong> <sup><a href="#11">[11]</a></sup> – shows information and configurable values.</li>
     <li><strong>5-12V Active Buzzer</strong> <sup><a href="#12">[12]</a></sup> – for alarms.
       <ul>
         <li>Max current: 40mA (at 12V)</li>
@@ -307,7 +330,7 @@
     <li><strong>LM78L05 5V Regulator</strong> <sup><a href="#29">[29]</a></sup> – converts PV 12V-25V to 5V for PV side circuit.</li>
     <li><strong>TL431 Regulator</strong> <sup><a href="#32">[32]</a></sup> – cuts-off LM78L05 input if PV drops below 7V.</li>
     <li><strong>2N3906 PNP BJT</strong> – provides feedback to TL431 (for hysteresis) and drives LM78L05.</li>
-    <li>2 x <strong>1N5818 Schottky Diode</strong> – separates the sending signal from the returning signal in the bi-directional paths of SDA.</li>
+    <li>2 x <strong>1N5818 Schottky Diode</strong> – separates the sending signal from the returning signal in the bi-directional paths of isolated SDA.</li>
     <li><strong>Resistors:</strong>
       <ul>
         <li>1 x 100kΩ</li>
@@ -317,13 +340,14 @@
         <li>4 x 4.7kΩ</li>
         <li>1 x 2.2kΩ</li>
         <li>3 x 1kΩ</li>
+        <li>1 x 33Ω</li>
+        <li>2 x 10Ω</li>
       </ul>
     </li>
     <li><strong>Capacitors:</strong>
       <ul>
         <li>6 x 0.1µF 50V Ceramic</li>
-        <li>2 x 10µF 50V Ceramic</li>
-        <li>2 x 100µF 50V Electrolytic</li>
+        <li>1 x 10µF 50V Electrolytic</li>
       </ul>
     </li>
     <li><strong>Zener Diodes:</strong>
@@ -333,6 +357,12 @@
       </ul>
     </li>
     <li><strong>Veroboard Dotted (60mm x 40mm)</strong> – circuit designing</li>
+  </ul>
+
+  <b>For Battery Current / Voltage Sensing</b>
+  <ul>
+    <li>2 x <strong>10Ω resistor</strong></li>
+    <li>1 x <strong>0.1µF 50V ceramic capacitor</strong></li>
   </ul>
 
   <b>For Buzzer:</b>
@@ -391,6 +421,25 @@
     <li><strong>1N4007 diode</strong> – for flyback protection.</li>
   </ul>
 
+  <b>For Battery Power Supply (LC Filter):</b>
+  <ul>
+    <li><strong>Inductor (DIP):</strong>
+      <ul>
+        <li>Inductance: 100µH</li>
+        <li>Current: ≥1.5A</li>
+        <li>DCR: ~0.1 Ω</li>
+        <li>SRF: >10MHz</li>
+      </ul>
+    </li>
+    <li><strong>Capacitors:</strong>
+      <ul>
+        <li>0.1µF 50V Ceramic</li>
+        <li>10µF 50V Ceramic</li>
+        <li>100µF 25V Electrolytic (low-ESR polymer/aluminum)</li>
+      </ul>
+    </li>
+  </ul>
+
   <b>Others:</b>
   <ul>
     <li><strong>3 Pin T-Block Connector</strong> – AC mains connections:
@@ -407,12 +456,13 @@
         <li>2 x FL-2C Shunt Resistor</li>
       </ol>
     </li>
-    <li><strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.
+    <li>2 x <strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.
       <ul>
-        <li>High-frequency electrical noise from the inverter may cause excessive RMS current in fuse, even though DC measurement appears low (multimeter shows average DC). This high RMS may cause localized heating in fuse due to skin effect. To avoid this:
+        <li>High-frequency electrical noise (HF EMI/RFI) from the inverter may cause excessive RMS current in the fuse, even though DC measurement appears low (multimeter shows average DC). This high RMS may cause localized heating in fuse due to HF current ripple/pulses. To avoid this:
           <ul>
+            <li>Do LC or RC filtering.</li>
             <li>Use a slow-blow fuse.</li>
-            <li>Or run dedicated pairs of wires (positive and negative) from the battery to the inverter and Arduino circuit.</li>
+            <li>Or run dedicated pairs of wires (positive and negative) from the battery to the Arduino circuit (do not share with inverter leads).</li>
             <li>Or at least use a long wire for Arduino circuit power supply.</li>
           </ul>
         </li>
@@ -429,42 +479,32 @@
 
   <h2>Connections</h2>
 
-  <h3>1. INA219 Current Sensor & FL-2C Shunt (Battery)</h3>
-  <ul>
-    <li><strong>Shunt Resistor:</strong> Place between the battery positive terminal and the load.</li>
-    <li><strong>INA219:</strong>
-      <ul>
-        <li><code>Vin+</code> → Shunt's battery-side terminal (charging would give negative current value)</li>
-        <li><code>Vin–</code> → Shunt's load-side terminal (also connected to +ve terminals of inverter and solar charge controller)</li>
-        <li><code>GND</code> → GND rail</li>
-        <li><code>VCC</code> → 5V rail</li>
-        <li><code>SDA</code> → Arduino Nano A4 (SDA)</li>
-        <li><code>SCL</code> → Arduino Nano A5 (SCL)</li>
-      </ul>
-    </li>
-    <li><strong>Should remove the on-board SMD shunt?</strong> If 0.00075 Ω shunt is placed in parallel with the onboard 0.1 Ω SMD resistor, it becomes 0.0007444 Ω. At 50A:
-      <ul>
-        <li>Voltage drop: 37.2 mV</li>
-        <li>Current and power dissipation are within limits (so no need to remove the on-board SMD shunt):
-          <ul>
-            <li>External shunt: 49.6 A (1.85 W dissipation)</li>
-            <li>Internal shunt: 372 mA (13.8 mW dissipation)</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-
-  <h3>2. INA219 + FL-2C Shunt + 6N137 (PV Array)</h3>
+  <h3>1. INA219 + FL-2C Shunt + 6N137 (PV Array)</h3>
 
   <ul>
     <li><strong>Power Supply:</strong>
       <ul>
+        <li>Fuse:
+          <ul>
+            <li>PV- → Fuse → PVF- (PV through fuse)</li>
+          </ul>
+        </li>
+        <li>HF Noise Filter:
+          <ul>
+            <li>PV+ → 33Ω → PVF+ (PV filtered)
+              <ul>
+                <li>@ 20mA: Voltage drop: 0.66V, Power loss: 13.2mW</li>
+              </ul>
+            </li>
+            <li>PVF+ → 10µF 50V electrolytic → PVF-</li>
+            <li>PVF+ → 0.1µF 50V ceramic → PVF-</li>
+          </ul>
+        </li>
         <li>UVLO:
           <ul>
             <li><strong>Voltage Divider:</strong>
               <ul>
-                <li>PV+ → 22kΩ → Junction → 10Ω → PV-</li>
+                <li>PVF+ → 22kΩ → Junction → 10Ω → PVF-</li>
                 <li>Drops 8V to ~2.5V for TL431 reference.</li>
               </ul>
             </li>
@@ -476,10 +516,10 @@
                     <li>2N3906 feedback</li>
                   </ul>
                 </li>
-                <li>Anode → PV-</li>
+                <li>Anode → PVF-</li>
                 <li>Cathode →
                   <ul>
-                    <li>6.8kΩ → PV+ (for minimum 1mV load)
+                    <li>6.8kΩ → PVF+ (for minimum 1mV load)
                       <ul>
                         <li><math>(7V - 2.5V) ÷ 6.8kΩ = 0.66mA</math></li>
                       </ul>
@@ -491,7 +531,7 @@
             </li>
             <li><strong>2N3906:</strong>
               <ul>
-                <li>Emitter → PV+</li>
+                <li>Emitter → PVF+</li>
                 <li>Base → 2.2kΩ → TL431 cathode (≥2mA current)
                   <ul>
                     <li><math>(7V - 2.5V - 0.7V) ÷ 2.2kΩ = ~1.7mA</math></li>
@@ -524,7 +564,7 @@
                 <li>Power dissipation: <math>20mA × (~25V - 5V) = 400mW</math> (ALARMING !!! May go up to ~100°C)</li>
               </ul>
             </li>
-            <li><code>GND</code> → PV-</li>
+            <li><code>GND</code> → PVF-</li>
             <li><code>IN</code> → 2N3906 collector</li>
           </ul>
         </li>
@@ -535,9 +575,9 @@
       <ul>
         <li>Connections:
           <ul>
-            <li><code>Vin+</code> → Shunt's PV-side terminal</li>
-            <li><code>Vin–</code> → Shunt's controller-side terminal</li>
-            <li><code>GND</code> → LM78L05 GND (PV-)</li>
+            <li><code>Vin+</code> → 10Ω → Shunt's PV-side terminal</li>
+            <li><code>Vin–</code> → 10Ω → Shunt's controller-side terminal</li>
+            <li><code>GND</code> → LM78L05 GND (PVF-)</li>
             <li><code>VCC</code> → LM78L05 5V</li>
             <li><code>SDA</code>, <code>SCL</code> → 6N137 LED Cathode, <code>V<sub>O</sub></code></li>
           </ul>
@@ -557,7 +597,7 @@
             <li>U1, U2:
               <ul>
                 <li><code>VCC</code> → LM78L05 5V</li>
-                <li><code>GND</code> → LM78L05 GND (PV-)</li>
+                <li><code>GND</code> → LM78L05 GND (PVF-)</li>
               </ul>
             </li>
             <li>U3:
@@ -633,20 +673,50 @@
 
   <b>Filtering:</b>
   <ul>
-    <li>Add 0.1µF Ceramic Capacitor (high frequency decoupling) to all power inputs (INA219, 6N137).</li>
-    <li><u>PV+ (shunt controller-side line) ... PV- (before UVLO)</u> and <u>shunt PV-side line ... PV-</u>:
+    <li>Add 0.1µF ceramic capacitors (high frequency decoupling) to all power inputs (INA219, 6N137).</li>
+    <li>INA219 HF Noise Filter:
       <ul>
-        <li>100µF Electrolytic Capacitor (stability)</li>
-        <li>10µF Ceramic Capacitor</li>
-        <li>0.1µF Ceramic Capacitor</li>
+        <li><code>Vin+</code> → 0.1µF ceramic → <code>Vin-</code>
+          <ul>
+            <li>Works in combination with 10Ω in-series with <code>Vin+</code> and <code>Vin-</code>.</li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
 
   <b>Protection:</b>
   <ul>
-    <li>1N5361B 27V Zener Diode between PV+ and PV- (before UVLO, anode to PV-)</li>
+    <li>1N5361B 27V Zener Diode between PV+ and PVF- (before UVLO, anode to PVF-)</li>
     <li>1N4733A 5.1V Zener Diode between LM78L05 <code>OUT</code> and <code>GND</code> (anode to GND)</li>
+  </ul>
+
+  <h3>2. INA219 Current Sensor & FL-2C Shunt (Battery)</h3>
+  <ul>
+    <li><strong>Shunt Resistor:</strong> Place between the battery positive terminal and the load.</li>
+    <li>Connections:
+      <ul>
+        <li><code>Vin+</code> → 10Ω → Shunt's battery-side terminal
+          <ul>
+            <li>Charging gives negative current value.</li>
+          </ul>
+        </li>
+        <li><code>Vin–</code> → 10Ω → Shunt's load-side terminal
+          <ul>
+            <li>Also connected to +ve terminals of inverter and solar charge controller.</li>
+          </ul>
+        </li>
+        <li><code>GND</code> → GND rail</li>
+        <li><code>VCC</code> → 5V rail</li>
+        <li><code>SDA</code> → Arduino Nano A4 (SDA)</li>
+        <li><code>SCL</code> → Arduino Nano A5 (SCL)</li>
+      </ul>
+    </li>
+    <li>HF Noise filter:
+      <ul>
+        <li>Same as on PV-side sensor.</li>
+      </ul>
+    </li>
   </ul>
 
   <h3>3. ZMPT101B AC Voltage Sensor</h3>
@@ -725,7 +795,7 @@
         <li>Arduino Nano D6 (PWM frequency: ~976 Hz) → 1 kΩ resistor → 2N3904 Base</li>
         <li>2N3904 Emitter → GND</li>
         <li>2N3904 Collector → Buzzer negative terminal</li>
-        <li>Buzzer positive terminal → 12V+ battery</li>
+        <li>Buzzer positive terminal → BAT_F+</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
@@ -772,8 +842,8 @@
   <ul>
     <li><strong>Input:</strong>
       <ul>
-        <li><code>IN+</code> → Shunt's load-side terminal (other side is connected to battery 12V+)</li>
-        <li><code>IN-</code> → Battery 12V-</li>
+        <li><code>IN+</code> → BAT_F+</li>
+        <li><code>IN-</code> → BAT_F-</li>
       </ul>
     </li>
     <li><strong>Output:</strong>
@@ -795,19 +865,49 @@
     </li>
   </ul>
 
-  <h3>14. Power Supply Summary</h3>
+  <h3>14. Power Supply</h3>
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
-        <li>Powers MP2307 (converted to 9V for Arduino).</li>
-        <li>Powers LM2596 (converted to 5V for modules).</li>
-        <li>Directly feeds buzzer (12V).</li>
-        <li>Also connected to inverter and solar charge controller (+ve side through shunt resistor).</li>
+        <li>Fuse:
+          <ul>
+            <li>Battery 12V- → Fuse → BAT_F- (battery through fuse)</li>
+          </ul>
+        </li>
+        <li>HF Noise Filter:
+          <ul>
+            <li>Shunt's load-side terminal → 100µH inductor → BAT_F+ (battery filtered)
+              <ul>
+                <li>Shunt's other side is connected to battery 12V+</li>
+              </ul>
+            </li>
+            <li>BAT_F+ → 100µF 25V electrolytic → BAT_F-</li>
+            <li>BAT_F+ → 10µF 50V ceramic → BAT_F-</li>
+            <li>BAT_F+ → 0.1µF 50V ceramic → BAT_F-</li>
+          </ul>
+        </li>
+        <li>Connections:
+          <ul>
+            <li>Powers MP2307 (converted to 9V for Arduino).
+              <ul>
+                <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe.</li>
+              </ul>
+            </li>
+            <li>Powers LM2596 (converted to 5V for modules).
+              <ul>
+                <li>For accurate ADC readings, make sure that the output voltages match the Nano's on-board AMS1117 regulator output.</li>
+              </ul>
+            </li>
+            <li>Directly feeds buzzer (12V).</li>
+            <li>Also connected to inverter and solar charge controller (+ve side through shunt resistor).</li>
+          </ul>
+        </li>
       </ul>
     </li>
-    <li><strong>220V AC:</strong>
+    <li><strong>220V AC:</strong><br>Feeds:
       <ul>
-        <li>Feeds ZMPT101B AC voltage sensor and relay module (for changeover coil).</li>
+        <li>ZMPT101B AC voltage sensor</li>
+        <li>Relay module (for changeover coil)</li>
       </ul>
     </li>
   </ul>

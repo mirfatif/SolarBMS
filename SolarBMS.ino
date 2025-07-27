@@ -88,8 +88,8 @@ Screen screenNum = SCR_BTRY_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
 
-#define DC_SAMPLE_COUNT 10                               // Keep this many samples and take their average
-#define INA219_SHUNT_SIZE (1 / (1 / 0.1 + 1 / 0.00075))  // External 100A 75mV shunt in parallel with on-board 0.1Ω shunt
+#define DC_SAMPLE_COUNT 10         // Keep this many samples and take their average
+#define INA219_SHUNT_SIZE 0.00075  // External 75mV / 100A shunt, on-board 0.1Ω shunt removed
 #define INA219_BAT_SHUNT_VOLT_OFFSET_MV 0.010
 #define INA219_BAT_CORR_FACTOR 1.4
 #define INA219_BAT_BUS_VOLTAGE_OFFSET -0.04
@@ -640,7 +640,7 @@ public:
       present = false;
     } else if (!present) {
       present = initSensor(F("Solar"),
-                           PG_40,    // Max current = 40mV / 0.0007444Ω = 54A
+                           PG_40,    // Max current = 40mV / 0.00075Ω = 54A
                            BRNG_32,  // Max voltage = 32V
                            INA219_SOL_SHUNT_VOLT_OFFSET_MV,
                            INA219_SOL_CORR_FACTOR,
@@ -1554,7 +1554,7 @@ void setup() {
   Wire.begin();
 
   battery.initSensor(F("Battery"),
-                     PG_80,    // Max current = 80mV / 0.0007444Ω = 107A
+                     PG_80,    // Max current = 80mV / 0.00075Ω = 107A
                      BRNG_16,  // Max voltage = 16V
                      INA219_BAT_SHUNT_VOLT_OFFSET_MV,
                      INA219_BAT_CORR_FACTOR);
