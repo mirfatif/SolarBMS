@@ -6,7 +6,7 @@
    width="820"
    height="820"
    id="svg187"
-   sodipodi:docname="Solar Battery Management System - Circuit.svg"
+   sodipodi:docname="arduino.svg"
    inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
    inkscape:export-filename="Solar Battery Management System - Circuit.png"
    inkscape:export-xdpi="120"
@@ -49,14 +49,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.47686591"
-     inkscape:cx="346.00922"
-     inkscape:cy="444.56942"
-     inkscape:window-width="1235"
-     inkscape:window-height="761"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="238.64854"
+     inkscape:cy="537.40115"
+     inkscape:window-width="1920"
+     inkscape:window-height="1022"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="svg187"
      inkscape:export-bgcolor="#ffffffff" />
   <text
@@ -196,26 +196,26 @@
      dominant-baseline="middle"
      id="text15">Relay</text>
   <text
-     x="559.9906"
-     y="120"
+     x="574.93188"
+     y="127.73278"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="baseline"
      id="text16">NC</text>
   <text
-     x="559.9906"
-     y="140"
+     x="574.80084"
+     y="147.33958"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="baseline"
      id="text17">NO</text>
   <text
      x="87.856018"
-     y="571.57349"
+     y="567.57349"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text18">-</text>
   <text
      x="648.25305"
-     y="350.51593"
+     y="326.51593"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text18-2">-</text>
@@ -233,13 +233,13 @@
      id="text18-2-0-4">-</text>
   <text
      x="137.85603"
-     y="571.57349"
+     y="567.57349"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text19">+</text>
   <text
      x="606.55408"
-     y="351.34698"
+     y="327.34698"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text19-48">+</text>
@@ -250,391 +250,329 @@
      dominant-baseline="middle"
      id="text19-48-0">+</text>
   <text
+     x="542.79059"
+     y="1027.1936"
+     style="font-size:14.414px;font-family:Arial;text-anchor:start;stroke-width:1;stroke-dasharray:none"
+     dominant-baseline="middle"
+     id="text18-2-0-43"
+     transform="scale(1.3103616,0.76314813)">-</text>
+  <text
+     x="711.2334"
+     y="775.37115"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text19-48-0-1">+</text>
+  <text
+     x="455.08945"
+     y="662.03015"
+     style="font-size:14.414px;font-family:Arial;text-anchor:start;stroke-width:1;stroke-dasharray:none"
+     dominant-baseline="middle"
+     id="text18-2-0-43-4"
+     transform="scale(1.3103616,0.76314813)">-</text>
+  <text
+     x="596.26727"
+     y="496.7406"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text19-48-0-1-9">+</text>
+  <text
      x="456.3877"
      y="185.19826"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text19-48-0-9">+</text>
-  <text
-     x="47.635441"
-     y="611.66345"
-     style="font-size:11px;font-family:Arial;text-anchor:start"
-     dominant-baseline="middle"
-     id="text20">GND</text>
   <line
      x1="169.75023"
-     y1="561.57349"
+     y1="557.57349"
      x2="219.75024"
-     y2="561.57349"
+     y2="557.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line20" />
   <line
      x1="259.75024"
-     y1="561.57349"
+     y1="557.57349"
      x2="309.75024"
-     y2="561.57349"
+     y2="557.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line21" />
   <rect
      x="219.75024"
-     y="553.57349"
+     y="549.57349"
      width="40"
      height="16"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect21" />
   <text
      x="239.75024"
-     y="547.57349"
+     y="543.57349"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text21">FL-2C Shunt 100A 75mV</text>
   <text
      x="87.856018"
-     y="541.57349"
+     y="537.57349"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text22">12V Battery</text>
   <line
      x1="167.85603"
-     y1="561.57349"
+     y1="557.57349"
      x2="121.85603"
-     y2="561.57349"
+     y2="557.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line22" />
   <line
      x1="121.85603"
-     y1="551.57349"
+     y1="547.57349"
      x2="121.85603"
-     y2="571.57349"
+     y2="567.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line23" />
   <line
      x1="115.85603"
-     y1="556.57349"
+     y1="552.57349"
      x2="115.85603"
-     y2="566.57349"
+     y2="562.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line24" />
   <line
      x1="109.85603"
-     y1="551.57349"
+     y1="547.57349"
      x2="109.85603"
-     y2="571.57349"
+     y2="567.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line25" />
   <line
      x1="103.85603"
-     y1="556.57349"
+     y1="552.57349"
      x2="103.85603"
-     y2="566.57349"
+     y2="562.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line26" />
   <line
      x1="103.85603"
-     y1="561.57349"
+     y1="557.57349"
      x2="57.856014"
-     y2="561.57349"
+     y2="557.57349"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line27" />
-  <line
-     x1="57.635441"
-     y1="561.66345"
-     x2="57.635441"
-     y2="589.66345"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line28" />
-  <line
-     x1="49.635441"
-     y1="589.66345"
-     x2="65.635445"
-     y2="589.66345"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line29" />
-  <line
-     x1="52.635441"
-     y1="595.66345"
-     x2="62.635441"
-     y2="595.66345"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line30" />
-  <line
-     x1="55.635441"
-     y1="601.66345"
-     x2="59.635441"
-     y2="601.66345"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line31" />
-  <text
-     x="441"
-     y="442"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="middle"
-     id="text31">0–25V DC Voltage Sensor Module</text>
-  <rect
-     x="391"
-     y="452"
-     width="100"
-     height="40"
-     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
-     id="rect31" />
-  <line
-     x1="376"
-     y1="462"
-     x2="391"
-     y2="462"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line32" />
-  <text
-     x="395"
-     y="462"
-     style="font-size:11px;font-family:Arial;text-anchor:start"
-     dominant-baseline="middle"
-     id="text32">VCC</text>
-  <line
-     x1="491"
-     y1="462"
-     x2="506"
-     y2="462"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line33" />
-  <text
-     x="487"
-     y="462"
-     style="font-size:11px;font-family:Arial;text-anchor:end"
-     dominant-baseline="middle"
-     id="text33">S</text>
-  <line
-     x1="491"
-     y1="472"
-     x2="506"
-     y2="472"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line34" />
-  <text
-     x="487"
-     y="472"
-     style="font-size:11px;font-family:Arial;text-anchor:end"
-     dominant-baseline="middle"
-     id="text34">+</text>
-  <line
-     x1="376"
-     y1="482"
-     x2="391"
-     y2="482"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line35" />
-  <text
-     x="395"
-     y="482"
-     style="font-size:11px;font-family:Arial;text-anchor:start"
-     dominant-baseline="middle"
-     id="text35">GND</text>
-  <line
-     x1="491"
-     y1="482"
-     x2="506"
-     y2="482"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line36" />
-  <text
-     x="487"
-     y="482"
-     style="font-size:11px;font-family:Arial;text-anchor:end"
-     dominant-baseline="middle"
-     id="text36">–</text>
   <text
      x="185.51488"
-     y="440.79816"
+     y="436.79816"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text37">Inverter</text>
   <rect
      x="135.51488"
-     y="450.79816"
+     y="446.79816"
      width="100"
      height="40"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect37" />
   <line
      x1="125.51487"
-     y1="460.79816"
+     y1="456.79816"
      x2="135.51488"
-     y2="460.79816"
+     y2="456.79816"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line37" />
   <text
      x="139.51488"
-     y="460.79816"
+     y="456.79816"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text38">+12V</text>
   <line
      x1="125.51487"
-     y1="480.79816"
+     y1="476.79816"
      x2="135.51488"
-     y2="480.79816"
+     y2="476.79816"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line38" />
   <text
      x="139.51488"
-     y="480.79816"
+     y="476.79816"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text39">-12V</text>
   <text
      x="185.51488"
-     y="350.79816"
+     y="346.79816"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text40">Solar Charge Controller</text>
   <rect
      x="135.51488"
-     y="360.79816"
+     y="356.79816"
      width="100"
      height="40"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect40" />
   <line
      x1="125.51487"
-     y1="370.79816"
+     y1="366.79816"
      x2="135.51488"
-     y2="370.79816"
+     y2="366.79816"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line40" />
   <text
-     x="139.51488"
-     y="370.79816"
+     x="205.51488"
+     y="366.79816"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text41">+12V</text>
   <line
      x1="125.51487"
-     y1="390.79816"
+     y1="386.79816"
      x2="135.51488"
-     y2="390.79816"
+     y2="386.79816"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line41" />
   <text
-     x="139.51488"
-     y="390.79816"
+     x="206.75232"
+     y="386.88654"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text42">-12V</text>
   <text
-     x="441"
-     y="542"
+     x="139.02588"
+     y="366.9292"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text41-9">+25V</text>
+  <text
+     x="139.02588"
+     y="386.9292"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text42-5">-25V</text>
+  <text
+     x="530.37714"
+     y="647.00464"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text43">INA219 DC Current Sensor Module</text>
   <rect
-     x="391"
-     y="552"
+     x="480.37714"
+     y="657.00464"
      width="100"
      height="50"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect43" />
   <line
-     x1="491"
-     y1="562"
-     x2="506"
-     y2="562"
+     x1="580.37714"
+     y1="667.00464"
+     x2="595.37714"
+     y2="667.00464"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line43" />
   <text
-     x="487"
-     y="562"
+     x="576.37714"
+     y="667.00464"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text44">VCC</text>
+  <text
+     x="602.96039"
+     y="516.12622"
+     style="font-size:9.33333px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text44-2">C</text>
+  <text
+     x="603.07544"
+     y="525.83765"
+     style="font-size:9.33333px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text44-2-0">D</text>
   <line
-     x1="376"
-     y1="572"
-     x2="391"
-     y2="572"
+     x1="465.37714"
+     y1="677.00464"
+     x2="480.37714"
+     y2="677.00464"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line44" />
   <text
-     x="395"
-     y="572"
+     x="484.37714"
+     y="677.00464"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text45">Vin+</text>
   <line
-     x1="491"
-     y1="572"
-     x2="506"
-     y2="572"
+     x1="580.37714"
+     y1="677.00464"
+     x2="595.37714"
+     y2="677.00464"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line45" />
   <text
-     x="487"
-     y="572"
+     x="576.37714"
+     y="677.00464"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text46">GND</text>
   <line
-     x1="376"
-     y1="582"
-     x2="391"
-     y2="582"
+     x1="465.37714"
+     y1="687.00464"
+     x2="480.37714"
+     y2="687.00464"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line46" />
   <text
-     x="395"
-     y="582"
+     x="484.37714"
+     y="687.00464"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text47">Vin-</text>
   <line
-     x1="491"
-     y1="582"
-     x2="506"
-     y2="582"
+     x1="580.37714"
+     y1="687.00464"
+     x2="595.37714"
+     y2="687.00464"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line47" />
   <text
-     x="487"
-     y="582"
+     x="576.37714"
+     y="687.00464"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text48">SCL</text>
   <line
-     x1="491"
-     y1="592"
-     x2="506"
-     y2="592"
+     x1="580.37714"
+     y1="697.00464"
+     x2="595.37714"
+     y2="697.00464"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line48" />
   <text
-     x="487"
-     y="592"
+     x="576.37714"
+     y="697.00464"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text49">SDA</text>
   <line
      x1="606"
-     y1="446"
+     y1="418"
      x2="611"
-     y2="446"
+     y2="418"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line49" />
   <line
      x1="651"
-     y1="446"
+     y1="418"
      x2="656"
-     y2="446"
+     y2="418"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line50" />
   <rect
      x="611"
-     y="438"
+     y="410"
      width="40"
      height="16"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect50" />
   <text
      x="631"
-     y="432"
+     y="404"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text50">1 kΩ</text>
@@ -646,54 +584,54 @@
      id="text51">5V Power Adapter</text>
   <text
      x="616"
-     y="390"
+     y="366"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text53">Buzzer</text>
   <line
      x1="596"
-     y1="360"
+     y1="336"
      x2="611"
-     y2="360"
+     y2="336"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line53" />
   <line
      x1="651"
-     y1="360"
+     y1="336"
      x2="666"
-     y2="360"
+     y2="336"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line54" />
   <line
      x1="611"
-     y1="360"
+     y1="336"
      x2="617"
-     y2="360"
+     y2="336"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line55" />
   <line
      x1="617"
-     y1="360"
+     y1="336"
      x2="617"
-     y2="366"
+     y2="342"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line56" />
   <line
      x1="645"
-     y1="360"
+     y1="336"
      x2="651"
-     y2="360"
+     y2="336"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line57" />
   <line
      x1="645"
-     y1="360"
+     y1="336"
      x2="645"
-     y2="366"
+     y2="342"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line58" />
   <path
-     d="m 631,360 a 20,20 0 0 0 -20,20 h 40 a 20,20 0 0 0 -20,-20 z"
+     d="m 631,336 a 20,20 0 0 0 -20,20 h 40 a 20,20 0 0 0 -20,-20 z"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path58" />
   <text
@@ -863,85 +801,85 @@
      id="line76" />
   <text
      x="710"
-     y="356"
+     y="332"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text76">2N3904</text>
   <line
      x1="770"
-     y1="396"
+     y1="372"
      x2="770"
-     y2="389"
+     y2="365"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line77" />
   <line
      x1="770.52423"
-     y1="363.3396"
+     y1="339.3396"
      x2="770.52423"
-     y2="356.3396"
+     y2="332.3396"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line77-7" />
   <line
      x1="730"
-     y1="376"
+     y1="352"
      x2="756"
-     y2="376"
+     y2="352"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line79" />
   <line
      x1="755.5"
-     y1="384"
+     y1="360"
      x2="755.5"
-     y2="368"
+     y2="344"
      style="stroke:#000000;stroke-width:3;stroke-linecap:square"
      id="line80" />
   <line
      x1="770"
-     y1="389"
+     y1="365"
      x2="755.5"
-     y2="380"
+     y2="356"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line81" />
   <line
      x1="755.5"
-     y1="372"
+     y1="348"
      x2="770"
-     y2="363"
+     y2="339"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line82" />
   <circle
      cx="760"
-     cy="376"
+     cy="352"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="ellipse82"
      r="16" />
   <path
-     d="m 762,369 4,2 1,-7 -6,4 2,1"
+     d="m 762,345 4,2 1,-7 -6,4 2,1"
      style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path82" />
   <line
      x1="726"
-     y1="446"
+     y1="418"
      x2="737"
-     y2="446"
+     y2="418"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line83" />
   <path
-     d="m 737,446 v 10 l 17,-10 -17,-10 v 10"
+     d="m 737,418 v 10 l 17,-10 -17,-10 v 10"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path83" />
   <line
      x1="755"
-     y1="446"
+     y1="418"
      x2="766"
-     y2="446"
+     y2="418"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line84" />
   <line
      x1="755"
-     y1="456"
+     y1="428"
      x2="755"
-     y2="436"
+     y2="408"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line85" />
   <text
@@ -953,7 +891,7 @@
      id="text85" />
   <text
      x="746"
-     y="433"
+     y="405"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text86">1N4007</text>
@@ -1016,61 +954,61 @@
      style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path92" />
   <line
-     x1="621.69733"
-     y1="81.965645"
-     x2="642.69733"
-     y2="81.965645"
+     x1="629.69733"
+     y1="75.965645"
+     x2="650.69733"
+     y2="75.965645"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line93" />
   <line
-     x1="620.6474"
+     x1="624.6474"
      y1="144.0199"
-     x2="641.6474"
+     x2="645.6474"
      y2="144.0199"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line93-3" />
   <line
-     x1="650.69733"
-     y1="81.965645"
-     x2="671.69733"
-     y2="81.965645"
+     x1="658.69733"
+     y1="75.965645"
+     x2="679.69733"
+     y2="75.965645"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line94" />
   <line
-     x1="642.69733"
-     y1="67.965652"
-     x2="642.69733"
-     y2="95.965645"
+     x1="650.69733"
+     y1="61.965652"
+     x2="650.69733"
+     y2="89.965645"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line95" />
   <line
-     x1="650.69733"
-     y1="67.965652"
-     x2="650.69733"
-     y2="95.965645"
+     x1="658.69733"
+     y1="61.965652"
+     x2="658.69733"
+     y2="89.965645"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line96" />
   <text
-     x="646.69733"
-     y="61.965645"
+     x="654.69733"
+     y="55.965645"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text96">100 µF</text>
   <path
-     d="m 641.58396,144.09703 v 10 l 17,-10 -17,-10 v 10"
+     d="m 645.58396,144.09703 v 10 l 17,-10 -17,-10 v 10"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path97" />
   <line
-     x1="659.58392"
+     x1="663.58392"
      y1="144.09703"
-     x2="670.58392"
+     x2="674.58392"
      y2="144.09703"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line98" />
   <line
-     x1="659.58392"
+     x1="663.58392"
      y1="154.09703"
-     x2="659.58392"
+     x2="663.58392"
      y2="134.09703"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line99" />
@@ -1082,8 +1020,8 @@
      transform="rotate(0, 730, 97)"
      id="text99" />
   <text
-     x="650.58392"
-     y="131.09703"
+     x="654.58392"
+     y="125.09703"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text100">1N4007</text>
@@ -1147,8 +1085,8 @@
      transform="rotate(0, 640, 97)"
      id="text104" />
   <text
-     x="746.15588"
-     y="131.05075"
+     x="752.15588"
+     y="125.05075"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text105">1N5822</text>
@@ -1157,28 +1095,28 @@
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path105" />
   <line
-     x1="728.15588"
-     y1="82.050728"
-     x2="739.15588"
-     y2="82.050728"
+     x1="726.15588"
+     y1="76.050728"
+     x2="737.15588"
+     y2="76.050728"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line105" />
   <path
-     d="m 739.15588,82.050727 v 10 l 17,-10 -17,-10 v 10"
+     d="m 737.15588,76.050727 v 10 l 17,-10 -17,-10 v 10"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path106" />
   <line
-     x1="757.15588"
-     y1="82.050728"
-     x2="768.15588"
-     y2="82.050728"
+     x1="755.15588"
+     y1="76.050728"
+     x2="766.15588"
+     y2="76.050728"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line106" />
   <line
-     x1="757.15588"
-     y1="92.050728"
-     x2="757.15588"
-     y2="72.050728"
+     x1="755.15588"
+     y1="86.050728"
+     x2="755.15588"
+     y2="66.050728"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line107" />
   <text
@@ -1189,77 +1127,77 @@
      transform="rotate(0, 640, 27)"
      id="text107" />
   <text
-     x="748.15588"
-     y="69.050728"
+     x="752.15588"
+     y="55.050728"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
      id="text108">1N5822</text>
   <path
-     d="m 757.15588,92.050727 h 4 v -4 m -4,-16 h -4 v 4"
+     d="m 755.15588,86.050727 h 4 v -4 m -4,-16 h -4 v 4"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path108" />
   <text
      x="442"
-     y="352"
+     y="332"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text123">LM2596 Buck Converter</text>
   <rect
      x="392"
-     y="362"
+     y="342"
      width="100"
      height="40"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect123" />
   <line
      x1="382"
-     y1="372"
+     y1="352"
      x2="392"
-     y2="372"
+     y2="352"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line123" />
   <text
      x="396"
-     y="372"
+     y="352"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text124">IN+</text>
   <line
      x1="492"
-     y1="372"
+     y1="352"
      x2="502"
-     y2="372"
+     y2="352"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line124" />
   <text
      x="488"
-     y="372"
+     y="352"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text125">OUT+</text>
   <line
      x1="382"
-     y1="392"
+     y1="372"
      x2="392"
-     y2="392"
+     y2="372"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line125" />
   <text
      x="396"
-     y="392"
+     y="372"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text126">IN-</text>
   <line
      x1="492"
-     y1="392"
+     y1="372"
      x2="502"
-     y2="392"
+     y2="372"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line126" />
   <text
      x="488"
-     y="392"
+     y="372"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text127">OUT-</text>
@@ -1954,82 +1892,102 @@
      id="text187">D13</text>
   <circle
      cx="57.670662"
-     cy="561.38812"
+     cy="557.38812"
      style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2"
      id="ellipse187"
      r="2" />
   <circle
      cx="170.14311"
-     cy="561.82703"
+     cy="557.82703"
      style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2"
      id="ellipse187-7"
+     r="2" />
+  <circle
+     cx="311.25"
+     cy="557.375"
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2"
+     id="ellipse187-7-2"
      r="2" />
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="323.2962"
-     y="564.3703"
+     x="312.17505"
+     y="570.06244"
      id="text188"><tspan
        sodipodi:role="line"
        id="tspan187"
-       x="323.2962"
-       y="564.3703"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
+       x="312.17505"
+       y="570.06244"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SHT</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="114.05071"
-     y="372.99493"
+     x="259.95804"
+     y="369.41196"
      id="text188-6"><tspan
        sodipodi:role="line"
        id="tspan187-9"
-       x="114.05071"
-       y="372.99493"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
+       x="259.95804"
+       y="369.41196"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SHT</tspan></text>
+  <line
+     x1="236.20451"
+     y1="366.7565"
+     x2="246.2045"
+     y2="366.7565"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line40-8" />
+  <line
+     x1="236.20451"
+     y1="386.7565"
+     x2="246.2045"
+     y2="386.7565"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line41-7" />
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="113.21581"
-     y="463.1405"
+     x="113.97312"
+     y="459.60388"
      id="text188-37"><tspan
        sodipodi:role="line"
        id="tspan187-4"
-       x="113.21581"
-       y="463.1405"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
+       x="113.97312"
+       y="459.60388"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SHT</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="42.346104"
-     y="563.93903"
+     x="57.548901"
+     y="570.89917"
      id="text188-3"><tspan
        sodipodi:role="line"
        id="tspan187-6"
-       x="42.346104"
-       y="563.93903"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="57.548901"
+       y="570.89917"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BAT-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="178.86801"
-     y="82.413643"
+     x="179.6544"
+     y="52.727623"
      id="text188-3-18-4-3"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-0"
-       x="178.86801"
-       y="82.413643"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="179.6544"
+       y="52.727623"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">9V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="240.65463"
+     x="242.52357"
      y="92.20298"
      id="text188-3-18-4-7"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-8"
-       x="240.65463"
+       x="242.52357"
        y="92.20298"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2040,29 +1998,18 @@
        id="tspan187-6-56"
        x="196.8418"
        y="294.15063"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="518.37073"
-     y="574.03168"
+     x="607.74786"
+     y="679.03632"
      id="text188-3-3-4"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-3"
-       x="518.37073"
-       y="574.03168"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="519.04883"
-     y="484.63788"
-     id="text188-3-3-1"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-4"
-       x="519.04883"
-       y="484.63788"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="607.74786"
+       y="679.03632"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2073,7 +2020,7 @@
        id="tspan187-6-9"
        x="126.54913"
        y="294.20535"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2084,617 +2031,1243 @@
        id="tspan187-6-2"
        x="57.899696"
        y="292.69989"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="179.22441"
+     x="183.22441"
      y="62.268852"
      id="text188-3-70"><tspan
        sodipodi:role="line"
        id="tspan187-6-93"
-       x="179.22441"
+       x="183.22441"
        y="62.268852"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="239.75591"
-     y="191.09358"
+     x="239.23164"
+     y="191.61784"
      id="text188-3-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-0"
-       x="239.75591"
-       y="191.09358"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="239.23164"
+       y="191.61784"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="240.09225"
+     x="238.48544"
      y="102.92541"
      id="text188-3-62"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6"
-       x="240.09225"
+       x="238.48544"
        y="102.92541"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="445.74652"
-     y="176.74095"
+     x="453.74652"
+     y="168.74095"
      id="text188-3-62-6"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2"
-       x="445.74652"
-       y="176.74095"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">024</tspan></text>
+       x="453.74652"
+       y="168.74095"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="609.75159"
-     y="84.833611"
+     x="623.75159"
+     y="86.833611"
      id="text188-3-62-6-2"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-15"
-       x="609.75159"
-       y="84.833611"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">024</tspan></text>
+       x="623.75159"
+       y="86.833611"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="683.86005"
-     y="146.43785"
+     x="685.86005"
+     y="154.43785"
      id="text188-3-62-6-2-5"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-15-8"
-       x="683.86005"
-       y="146.43785"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">024</tspan></text>
+       x="685.86005"
+       y="154.43785"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="778.50476"
-     y="146.28516"
+     x="774.50476"
+     y="138.28516"
      id="text188-3-62-6-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-2"
-       x="778.50476"
-       y="146.28516"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">024</tspan></text>
+       x="774.50476"
+       y="138.28516"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="778.98407"
-     y="84.688614"
+     x="774.98407"
+     y="70.688614"
      id="text188-3-62-6-6"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-1"
-       x="778.98407"
-       y="84.688614"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">024</tspan></text>
+       x="774.98407"
+       y="70.688614"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="583.62921"
-     y="176.42137"
+     x="575.76025"
+     y="168.45413"
      id="text188-3-62-6-9"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-0"
-       x="583.62921"
-       y="176.42137"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">025</tspan></text>
+       x="575.76025"
+       y="168.45413"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="707.89514"
-     y="261.16229"
+     x="702.45599"
+     y="261.22781"
      id="text188-3-62-6-9-99"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-0-3"
-       x="707.89514"
-       y="261.16229"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">025</tspan></text>
+       x="702.45599"
+       y="261.22781"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="614.45306"
-     y="292.50006"
+     x="614.40674"
+     y="291.4343"
      id="text188-3-62-6-9-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-0-4"
-       x="614.45306"
-       y="292.50006"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">025</tspan></text>
+       x="614.40674"
+       y="291.4343"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
      x="684.73694"
-     y="84.567924"
+     y="86.567924"
      id="text188-3-62-6-9-9"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-0-1"
        x="684.73694"
-       y="84.567924"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">025</tspan></text>
+       y="86.567924"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC-</tspan></text>
+  <line
+     x1="449.99133"
+     y1="764.2038"
+     x2="470.99133"
+     y2="764.2038"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line93-0" />
+  <line
+     x1="478.99133"
+     y1="764.2038"
+     x2="499.99133"
+     y2="764.2038"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line94-6" />
+  <line
+     x1="470.99133"
+     y1="750.2038"
+     x2="470.99133"
+     y2="778.20386"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line95-2" />
+  <line
+     x1="478.99133"
+     y1="750.2038"
+     x2="478.99133"
+     y2="778.20386"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line96-6" />
+  <text
+     x="474.99133"
+     y="744.2038"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text96-1">0.1µF</text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="582.92731"
-     y="126.55832"
+     x="444.04559"
+     y="775.07184"
+     id="text188-3-62-6-2-8"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-15-7"
+       x="444.04559"
+       y="775.07184"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BS_IN+</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="505.03094"
+     y="774.80615"
+     id="text188-3-62-6-9-9-9"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-0-1-2"
+       x="505.03094"
+       y="774.80615"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BS_IN-</tspan></text>
+  <line
+     x1="348.20386"
+     y1="583.68018"
+     x2="369.20386"
+     y2="583.68018"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line93-0-0" />
+  <line
+     x1="377.20386"
+     y1="583.68018"
+     x2="398.20386"
+     y2="583.68018"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line94-6-6" />
+  <line
+     x1="369.20386"
+     y1="569.68018"
+     x2="369.20386"
+     y2="597.68024"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line95-2-2" />
+  <line
+     x1="377.20386"
+     y1="569.68018"
+     x2="377.20386"
+     y2="597.68024"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line96-6-6" />
+  <text
+     x="373.20386"
+     y="563.68018"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text96-1-1">0.1µF</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="350.25812"
+     y="594.54822"
+     id="text188-3-62-6-2-8-8"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-15-7-7"
+       x="350.25812"
+       y="594.54822"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="393.24347"
+     y="594.28253"
+     id="text188-3-62-6-9-9-9-9"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-0-1-2-2"
+       x="393.24347"
+       y="594.28253"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <line
+     x1="418.29788"
+     y1="584.13232"
+     x2="439.29788"
+     y2="584.13232"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line93-0-02" />
+  <line
+     x1="447.29785"
+     y1="584.13232"
+     x2="468.29785"
+     y2="584.13232"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line94-6-3" />
+  <line
+     x1="439.29788"
+     y1="570.13232"
+     x2="439.29788"
+     y2="598.13232"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line95-2-7" />
+  <line
+     x1="447.29785"
+     y1="570.13232"
+     x2="447.29785"
+     y2="598.13232"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line96-6-5" />
+  <text
+     x="443.29788"
+     y="564.13232"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text96-1-9">10µF</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="420.35214"
+     y="595.00031"
+     id="text188-3-62-6-2-8-2"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-15-7-2"
+       x="420.35214"
+       y="595.00031"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="463.33746"
+     y="594.73462"
+     id="text188-3-62-6-9-9-9-8"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-0-1-2-9"
+       x="463.33746"
+       y="594.73462"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <line
+     x1="487.99771"
+     y1="584.01654"
+     x2="508.99768"
+     y2="584.01654"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line93-0-7" />
+  <line
+     x1="516.99768"
+     y1="584.01654"
+     x2="537.99768"
+     y2="584.01654"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line94-6-36" />
+  <line
+     x1="508.99768"
+     y1="570.01654"
+     x2="508.99768"
+     y2="598.0166"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line95-2-1" />
+  <line
+     x1="516.99768"
+     y1="570.01654"
+     x2="516.99768"
+     y2="598.0166"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line96-6-2" />
+  <text
+     x="512.99768"
+     y="564.0166"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text96-1-93">100µF</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="490.05197"
+     y="594.88458"
+     id="text188-3-62-6-2-8-1"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-15-7-9"
+       x="490.05197"
+       y="594.88458"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="533.03729"
+     y="594.6189"
+     id="text188-3-62-6-9-9-9-4"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-2-0-1-2-7"
+       x="533.03729"
+       y="594.6189"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="573.62683"
+     y="115.54894"
      id="text188-3-62-6-1"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-3"
-       x="582.92731"
-       y="126.55832"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">027</tspan></text>
+       x="573.62683"
+       y="115.54894"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IRC_NC</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="715.57593"
-     y="84.821884"
+     x="723.57593"
+     y="70.821884"
      id="text188-3-62-6-1-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-3-0"
-       x="715.57593"
-       y="84.821884"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="723.57593"
+       y="70.821884"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="713.27972"
-     y="146.51044"
+     x="721.27972"
+     y="138.51044"
      id="text188-3-62-6-1-62"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-3-67"
-       x="713.27972"
-       y="146.51044"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">028</tspan></text>
+       x="721.27972"
+       y="138.51044"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IR_TB</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="707.95654"
-     y="245.22813"
+     x="707.30121"
+     y="245.35919"
      id="text188-3-62-6-1-62-5"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-3-67-4"
-       x="707.95654"
-       y="245.22813"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">028</tspan></text>
+       x="707.30121"
+       y="245.35919"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IR_TB</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="493.86322"
-     y="61.980743"
+     x="488.8147"
+     y="62.24287"
      id="text188-3-62-6-1-6"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-3-6"
-       x="493.86322"
-       y="61.980743"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">027</tspan></text>
+       x="488.8147"
+       y="62.24287"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IRC_NC</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="445.978"
-     y="136.22379"
+     x="453.978"
+     y="128.22379"
      id="text188-3-62-6-10"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-34"
-       x="445.978"
-       y="136.22379"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">026</tspan></text>
+       x="453.978"
+       y="128.22379"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IRC_COM</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="493.50009"
-     y="47.165421"
+     x="485.36902"
+     y="46.903294"
      id="text188-3-62-6-10-8"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-34-0"
-       x="493.50009"
-       y="47.165421"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">026</tspan></text>
+       x="485.36902"
+       y="46.903294"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IRC_COM</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="444.95081"
+     x="448.42654"
      y="261.69724"
      id="text188-3-62-6-3"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-9"
-       x="444.95081"
+       x="448.42654"
        y="261.69724"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">029</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D5</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="561.11127"
-     y="261.69757"
+     x="560.00848"
+     y="261.76309"
      id="text188-3-62-6-3-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-9-4"
-       x="561.11127"
-       y="261.69757"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">028</tspan></text>
+       x="560.00848"
+       y="261.76309"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IR_TB</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="614.57343"
-     y="232.04005"
+     x="614.75879"
+     y="233.33752"
      id="text188-3-62-6-3-9"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-9-6"
-       x="614.57343"
-       y="232.04005"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="614.75879"
+       y="233.33752"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="519.4248"
+     x="522.75128"
      y="261.57385"
      id="text188-3-62-6-96"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-93"
-       x="519.4248"
+       x="522.75128"
        y="261.57385"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">028</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">IR_TB</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="26.156445"
+     x="28.156445"
      y="122.07731"
      id="text188-3-62-6-96-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-93-4"
-       x="26.156445"
+       x="28.156445"
        y="122.07731"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">029</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D5</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
      x="679.72339"
-     y="362.73877"
+     y="338.73877"
      id="text188-3-62-9"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3"
        x="679.72339"
-       y="362.73877"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">021</tspan></text>
+       y="338.73877"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BUZ-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="714.86078"
-     y="449.4516"
+     x="713.55011"
+     y="421.4516"
      id="text188-3-62-9-2"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-4"
-       x="714.86078"
-       y="449.4516"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">021</tspan></text>
+       x="713.55011"
+       y="421.4516"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BUZ-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
      x="770.86365"
-     y="407.07001"
+     y="383.07001"
      id="text188-3-62-9-8"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-0"
        x="770.86365"
-       y="407.07001"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">021</tspan></text>
+       y="383.07001"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BUZ-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
      x="770.76367"
-     y="350.82214"
+     y="326.82214"
      id="text188-3-62-9-1"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05"
        x="770.76367"
-       y="350.82214"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       y="326.82214"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="717.44983"
-     y="378.5943"
+     x="710.63452"
+     y="354.33218"
      id="text188-3-62-9-1-1"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0"
-       x="717.44983"
-       y="378.5943"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">022</tspan></text>
+       x="710.63452"
+       y="354.33218"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BUZ_TB</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="670.41437"
-     y="448.87457"
+     x="674.77014"
+     y="420.59656"
      id="text188-3-62-9-1-1-5"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-0"
-       x="670.41437"
-       y="448.87457"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">022</tspan></text>
+       x="674.77014"
+       y="420.59656"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BUZ_TB</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="592.76984"
-     y="448.72107"
+     x="596.83282"
+     y="420.85214"
      id="text188-3-62-9-1-1-4"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-6"
-       x="592.76984"
-       y="448.72107"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">023</tspan></text>
+       x="596.83282"
+       y="420.85214"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D6</tspan></text>
+  <line
+     x1="696.09503"
+     y1="724.08002"
+     x2="701.09503"
+     y2="724.08002"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line49-6" />
+  <line
+     x1="741.09503"
+     y1="724.08002"
+     x2="746.09503"
+     y2="724.08002"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line50-8" />
+  <rect
+     x="701.09503"
+     y="716.08002"
+     width="40"
+     height="16"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="rect50-9" />
+  <text
+     x="721.09503"
+     y="710.08002"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text50-2">330 Ω</text>
+  <text
+     x="701.57495"
+     y="584.04193"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text76-6">2N2222A</text>
+  <line
+     x1="763.57495"
+     y1="626.04193"
+     x2="763.57495"
+     y2="619.04193"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line77-6" />
+  <line
+     x1="764.09918"
+     y1="593.38153"
+     x2="764.09918"
+     y2="586.38153"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line77-7-4" />
+  <line
+     x1="723.57495"
+     y1="606.04193"
+     x2="749.57495"
+     y2="606.04193"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line79-9" />
+  <line
+     x1="749.07495"
+     y1="614.04193"
+     x2="749.07495"
+     y2="598.04193"
+     style="stroke:#000000;stroke-width:3;stroke-linecap:square"
+     id="line80-5" />
+  <line
+     x1="763.57495"
+     y1="619.04193"
+     x2="749.07495"
+     y2="610.04193"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line81-0" />
+  <line
+     x1="749.07495"
+     y1="602.04193"
+     x2="763.57495"
+     y2="593.04193"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line82-4" />
+  <circle
+     cx="753.57495"
+     cy="606.04193"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse82-8"
+     r="16" />
+  <path
+     d="m 755.57496,599.04192 4,2 1,-7 -6,4 2,1"
+     style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="path82-7" />
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="25.483749"
+     x="764.4386"
+     y="637.11194"
+     id="text188-3-62-9-8-1"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-0-7"
+       x="764.4386"
+       y="637.11194"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">FAN-</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="757.72723"
+     y="787.19629"
+     id="text188-3-62-9-8-1-5"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-0-7-9"
+       x="757.72723"
+       y="787.19629"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">FAN-</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="764.33862"
+     y="580.86407"
+     id="text188-3-62-9-1-2"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-7"
+       x="764.33862"
+       y="580.86407"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="704.20947"
+     y="608.37415"
+     id="text188-3-62-9-1-1-2"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-2"
+       x="704.20947"
+       y="608.37415"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">FAN_TB</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="764.86517"
+     y="726.67657"
+     id="text188-3-62-9-1-1-5-6"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-0-1"
+       x="764.86517"
+       y="726.67657"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">FAN_TB</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="686.92786"
+     y="726.93219"
+     id="text188-3-62-9-1-1-4-0"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-6-61"
+       x="686.92786"
+       y="726.93219"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D2</tspan></text>
+  <line
+     x1="542.06458"
+     y1="746.59741"
+     x2="547.06458"
+     y2="746.59741"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line49-3" />
+  <line
+     x1="587.06458"
+     y1="746.59741"
+     x2="592.06458"
+     y2="746.59741"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line50-6" />
+  <rect
+     x="547.06458"
+     y="738.59741"
+     width="40"
+     height="16"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="rect50-7" />
+  <rect
+     x="490.21503"
+     y="-609.53699"
+     width="40"
+     height="16"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="rect50-7-5"
+     transform="rotate(90)" />
+  <text
+     x="567.06458"
+     y="732.59741"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text50-5">10 Ω</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="608.935"
+     y="749.22382"
+     id="text188-3-62-9-1-1-5-3"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-0-5"
+       x="608.935"
+       y="749.22382"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BS_IN+</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="529.73328"
+     y="749.29401"
+     id="text188-3-62-9-1-1-4-6"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-6-2"
+       x="529.73328"
+       y="749.29401"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BAT+</tspan></text>
+  <line
+     x1="542.1969"
+     y1="792.94122"
+     x2="547.1969"
+     y2="792.94122"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line49-9" />
+  <line
+     x1="587.1969"
+     y1="792.94122"
+     x2="592.19696"
+     y2="792.94122"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line50-1" />
+  <rect
+     x="547.1969"
+     y="784.94122"
+     width="40"
+     height="16"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="rect50-2" />
+  <text
+     x="567.1969"
+     y="778.94122"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text50-7">10 Ω</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="608.67413"
+     y="795.50793"
+     id="text188-3-62-9-1-1-5-0"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-0-9"
+       x="608.67413"
+       y="795.50793"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BS_IN-</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="529.13733"
+     y="795.76349"
+     id="text188-3-62-9-1-1-4-3"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-6-6"
+       x="529.13733"
+       y="795.76349"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SHT</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="27.483749"
      y="132.49141"
      id="text188-3-62-9-1-1-4-5"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-6-8"
-       x="25.483749"
+       x="27.483749"
        y="132.49141"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">023</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D6</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="113.76765"
-     y="393.42218"
+     x="260.3735"
+     y="389.59897"
      id="text188-3-23"><tspan
        sodipodi:role="line"
        id="tspan187-6-75"
-       x="113.76765"
-       y="393.42218"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="260.3735"
+       y="389.59897"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BAT-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="113.37386"
-     y="483.69464"
+     x="112.74886"
+     y="479.44464"
      id="text188-3-92"><tspan
        sodipodi:role="line"
        id="tspan187-6-28"
-       x="113.37386"
-       y="483.69464"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="112.74886"
+       y="479.44464"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BAT-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="362.93494"
-     y="574.5108"
+     x="448.31207"
+     y="679.51544"
      id="text188-3-97"><tspan
        sodipodi:role="line"
        id="tspan187-6-3"
-       x="362.93494"
-       y="574.5108"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">006</tspan></text>
+       x="448.31207"
+       y="679.51544"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BS_IN+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="362.67361"
-     y="585.23737"
-     id="text188-3-97-7"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-3-3"
-       x="362.67361"
-       y="585.23737"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="170.61511"
-     y="575.40729"
+     x="172.02933"
+     y="571.58405"
      id="text188-3-97-7-5"><tspan
        sodipodi:role="line"
        id="tspan187-6-3-3-6"
-       x="170.61511"
-       y="575.40729"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">006</tspan></text>
+       x="172.02933"
+       y="571.58405"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BAT+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="364.05072"
-     y="485.0802"
-     id="text188-3-61"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-29"
-       x="364.05072"
-       y="485.0802"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="370.18918"
-     y="394.84705"
+     x="369.20618"
+     y="374.84705"
      id="text188-3-31"><tspan
        sodipodi:role="line"
        id="tspan187-6-94"
-       x="370.18918"
-       y="394.84705"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="369.20618"
+       y="374.84705"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="513.50995"
-     y="394.52576"
+     x="355.62292"
+     y="528.02081"
+     id="text188-3-31-5"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-94-3"
+       x="355.62292"
+       y="528.02081"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BAT-</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="462.82922"
+     y="527.41235"
+     id="text188-3-31-5-2"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-94-3-7"
+       x="462.82922"
+       y="527.41235"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SHT</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="432.8381"
+     y="527.82422"
+     id="text188-3-31-5-5"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-94-3-6"
+       x="432.8381"
+       y="527.82422"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="513.90314"
+     y="374.59128"
      id="text188-3-31-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-94-5"
-       x="513.50995"
-       y="394.52576"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="513.90314"
+       y="374.59128"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="581.80835"
-     y="362.93988"
+     x="582.85687"
+     y="338.93988"
      id="text188-3-610"><tspan
        sodipodi:role="line"
        id="tspan187-6-63"
-       x="581.80835"
-       y="362.93988"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
+       x="582.85687"
+       y="338.93988"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="778.10852"
-     y="448.59808"
+     x="778.76379"
+     y="420.59808"
      id="text188-3-610-28"><tspan
        sodipodi:role="line"
        id="tspan187-6-63-4"
-       x="778.10852"
-       y="448.59808"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
+       x="778.76379"
+       y="420.59808"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
      x="370.72989"
-     y="374.29382"
+     y="354.62149"
      id="text188-3-610-2"><tspan
        sodipodi:role="line"
        id="tspan187-6-63-0"
        x="370.72989"
-       y="374.29382"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">001</tspan></text>
+       y="354.62149"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="364.28662"
-     y="464.21381"
-     id="text188-3-610-2-6"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-63-0-1"
-       x="364.28662"
-       y="464.21381"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">006</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="513.76904"
-     y="374.30402"
+     x="511.27884"
+     y="354.56613"
      id="text188-3-18-4"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7"
-       x="513.76904"
-       y="374.30402"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="511.27884"
+       y="354.56613"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
+  <text
+     x="441.94608"
+     y="420.68051"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="middle"
+     id="text123-8">MP2307 Buck Converter</text>
+  <rect
+     x="391.94608"
+     y="430.68051"
+     width="100"
+     height="40"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="rect123-4" />
+  <line
+     x1="381.94608"
+     y1="440.68051"
+     x2="391.94608"
+     y2="440.68051"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line123-5" />
+  <text
+     x="395.94608"
+     y="440.68051"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text124-0">IN+</text>
+  <line
+     x1="491.94608"
+     y1="440.68051"
+     x2="501.94608"
+     y2="440.68051"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line124-3" />
+  <text
+     x="487.94608"
+     y="440.68051"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text125-6">OUT+</text>
+  <line
+     x1="381.94608"
+     y1="460.68051"
+     x2="391.94608"
+     y2="460.68051"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line125-1" />
+  <text
+     x="395.94608"
+     y="460.68051"
+     style="font-size:11px;font-family:Arial;text-anchor:start"
+     dominant-baseline="middle"
+     id="text126-0">IN-</text>
+  <line
+     x1="491.94608"
+     y1="460.68051"
+     x2="501.94608"
+     y2="460.68051"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line126-6" />
+  <text
+     x="487.94608"
+     y="460.68051"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text127-3">OUT-</text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="517.93414"
-     y="564.29382"
+     x="369.15225"
+     y="463.52756"
+     id="text188-3-31-2"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-94-0"
+       x="369.15225"
+       y="463.52756"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="513.84918"
+     y="463.27179"
+     id="text188-3-31-6-6"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-94-5-1"
+       x="513.84918"
+       y="463.27179"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="370.67596"
+     y="443.302"
+     id="text188-3-610-2-5"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-63-0-5"
+       x="370.67596"
+       y="443.302"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="511.22488"
+     y="443.24664"
+     id="text188-3-18-4-47"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-7-7-6"
+       x="511.22488"
+       y="443.24664"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">9V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="604.62445"
+     y="669.6261"
      id="text188-3-18-4-5"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-2"
-       x="517.93414"
-       y="564.29382"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="604.62445"
+       y="669.6261"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="760.78223"
-     y="589.13892"
+     x="753.88293"
+     y="775.99701"
+     id="text188-3-18-4-5-4"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-7-7-2-90"
+       x="753.88293"
+       y="775.99701"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="383.2262"
+     y="693.13892"
      id="text188-3-3-4-5"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-3-6"
-       x="760.78223"
-       y="589.13892"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="383.2262"
+       y="693.13892"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="760.60779"
-     y="569.17804"
+     x="379.60779"
+     y="673.17804"
      id="text188-3-18-4-5-2"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-2-9"
-       x="760.60779"
-       y="569.17804"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="379.60779"
+       y="673.17804"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="518.74945"
-     y="474.27423"
-     id="text188-3-18-4-54"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-7-7-7"
-       x="518.74945"
-       y="474.27423"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="239.53584"
-     y="181.17723"
+     x="243.14265"
+     y="182.65297"
      id="text188-3-18-4-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-88"
-       x="239.53584"
-       y="181.17723"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="243.14265"
+       y="182.65297"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
   <text
      x="462.01779"
      y="30.335194"
@@ -2730,36 +3303,25 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="26.415039"
-     y="92.896469"
-     id="text188-3-3-0-8-4-9-9-1"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0-6-1"
-       x="26.415039"
-       y="92.896469"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">009</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="517.93414"
-     y="584.04102"
+     x="607.31128"
+     y="689.04565"
      id="text188-3-3-0-8-4-9-9-9"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8"
-       x="517.93414"
-       y="584.04102"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">010</tspan></text>
+       x="607.31128"
+       y="689.04565"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SCL</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="179.52138"
+     x="181.52138"
      y="112.49297"
      id="text188-3-3-0-8-4-9-9-9-0"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4"
-       x="179.52138"
+       x="181.52138"
        y="112.49297"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">010</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SCL</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2770,40 +3332,40 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-5"
        x="240.47379"
        y="72.271698"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">010</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SCL</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="26.151917"
+     x="28.151917"
      y="112.59901"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-5"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-9"
-       x="26.151917"
+       x="28.151917"
        y="112.59901"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">013</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D4</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="518.73499"
-     y="463.75003"
-     id="text188-3-3-0-8-4-9-9-9-0-6-74-53"><tspan
+     x="27.910307"
+     y="92.582733"
+     id="text188-3-3-0-8-4-9-9-9-0-6-74-5-9"><tspan
        sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8"
-       x="518.73499"
-       y="463.75003"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">014</tspan></text>
+       id="tspan187-6-56-6-7-8-0-6-8-4-2-1-9-1"
+       x="27.910307"
+       y="92.582733"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D2</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="178.92905"
-     y="162.25978"
-     id="text188-3-3-0-8-4-9-9-9-0-6-74-53-3"><tspan
+     x="27.808594"
+     y="102.75"
+     id="text188-3-3-0-8-4-9-9-9-0-6-74-5-9-4"><tspan
        sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-1"
-       x="178.92905"
-       y="162.25978"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">014</tspan></text>
+       id="tspan187-6-56-6-7-8-0-6-8-4-2-1-9-1-4"
+       x="27.808594"
+       y="102.75"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D3</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2814,18 +3376,18 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-1-2"
        x="179.08321"
        y="152.43445"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">030</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">A1</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="760.71545"
-     y="579.48785"
+     x="379.71545"
+     y="683.48785"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-53-3-1-7"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-1-2-0"
-       x="760.71545"
-       y="579.48785"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">030</tspan></text>
+       x="379.71545"
+       y="683.48785"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">A1</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2836,7 +3398,7 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-6"
        x="240.21072"
        y="222.87088"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">015</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D10</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2847,18 +3409,18 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-6-8"
        x="25.890783"
        y="172.26033"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">015</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D10</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="239.99712"
-     y="213.10915"
+     x="241.37329"
+     y="212.71596"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-53-33"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-3"
-       x="239.99712"
-       y="213.10915"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">016</tspan></text>
+       x="241.37329"
+       y="212.71596"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D11</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2869,18 +3431,18 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-3-7"
        x="25.862295"
        y="181.67679"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">016</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D11</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="240.37584"
-     y="202.69209"
+     x="240.5069"
+     y="202.16783"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-53-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0"
-       x="240.37584"
-       y="202.69209"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">017</tspan></text>
+       x="240.5069"
+       y="202.16783"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D12</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2891,40 +3453,84 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-4"
        x="26.12475"
        y="192.90852"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">017</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D12</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="517.99713"
-     y="594.48273"
+     x="607.37427"
+     y="699.48737"
      id="text188-3-3-0-8-4-9-9-81"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-0"
-       x="517.99713"
-       y="594.48273"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">011</tspan></text>
+       x="607.37427"
+       y="699.48737"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SDA</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="179.56917"
+     x="640.57812"
+     y="507.55603"
+     id="text188-3-3-4-9"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-56-3-7"
+       x="640.57812"
+       y="507.55603"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="637.45471"
+     y="498.14581"
+     id="text188-3-18-4-5-7"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-7-7-2-6"
+       x="637.45471"
+       y="498.14581"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="640.14154"
+     y="517.56537"
+     id="text188-3-3-0-8-4-9-9-9-7"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-56-6-7-8-0-6-8-3"
+       x="640.14154"
+       y="517.56537"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SCL</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="640.20453"
+     y="528.00708"
+     id="text188-3-3-0-8-4-9-9-81-65"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-56-6-7-8-0-6-0-6"
+       x="640.20453"
+       y="528.00708"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SDA</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="181.56917"
      y="122.17724"
      id="text188-3-3-0-8-4-9-9-81-4"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-0-4"
-       x="179.56917"
+       x="181.56917"
        y="122.17724"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">011</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SDA</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="240.6507"
-     y="81.983284"
+     x="239.47112"
+     y="81.917755"
      id="text188-3-3-0-8-4-9-9-81-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-0-3"
-       x="240.6507"
-       y="81.983284"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">011</tspan></text>
+       x="239.47112"
+       y="81.917755"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">SDA</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2935,18 +3541,18 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-3"
        x="30.453918"
        y="293.45251"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">018</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D7</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="25.283905"
+     x="27.283905"
      y="142.00513"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-53-6-0-94"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-3-6"
-       x="25.283905"
+       x="27.283905"
        y="142.00513"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">018</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D7</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2957,18 +3563,18 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-3-2"
        x="102.63927"
        y="293.63788"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">019</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D8</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="25.20723"
+     x="27.20723"
      y="152.53957"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-53-6-0-9-2"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-3-2-2"
-       x="25.20723"
+       x="27.20723"
        y="152.53957"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">019</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D8</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
@@ -2979,18 +3585,18 @@
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-3-0"
        x="173.3418"
        y="294.75"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">020</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D9</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="26.079666"
+     x="28.079666"
      y="162.01213"
      id="text188-3-3-0-8-4-9-9-9-0-6-74-53-6-0-4-7"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-0-3-0-7"
-       x="26.079666"
+       x="28.079666"
        y="162.01213"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">020</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D9</tspan></text>
   <text
      x="95.425339"
      y="668.01147"
@@ -3077,520 +3683,231 @@
      d="m 116.77444,678.52813 m -8,0 a 4,4 0 1 1 8,0 4,4 0 1 0 8,0"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="path60" />
-  <line
-     x1="704.77441"
-     y1="714.52808"
-     x2="725.77441"
-     y2="714.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line108" />
-  <line
-     x1="733.77441"
-     y1="714.52808"
-     x2="754.77441"
-     y2="714.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line109" />
-  <line
-     x1="725.77441"
-     y1="700.52808"
-     x2="725.77441"
-     y2="728.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line110" />
-  <line
-     x1="733.77441"
-     y1="700.52808"
-     x2="733.77441"
-     y2="728.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line111" />
-  <text
-     x="729.77441"
-     y="694.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="baseline"
-     id="text111">100 nF</text>
-  <line
-     x1="448.77444"
-     y1="752.52808"
-     x2="453.77444"
-     y2="752.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line112" />
-  <line
-     x1="493.77444"
-     y1="752.52808"
-     x2="498.77444"
-     y2="752.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line113" />
-  <rect
-     x="453.77444"
-     y="744.52808"
-     width="40"
-     height="16"
-     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
-     id="rect113" />
-  <text
-     x="473.77444"
-     y="738.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="baseline"
-     id="text113">22 kΩ</text>
-  <line
-     x1="448.77444"
-     y1="672.52808"
-     x2="453.77444"
-     y2="672.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line114" />
-  <line
-     x1="493.77444"
-     y1="672.52808"
-     x2="498.77444"
-     y2="672.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line115" />
-  <rect
-     x="453.77444"
-     y="664.52808"
-     width="40"
-     height="16"
-     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
-     id="rect115" />
-  <text
-     x="473.77444"
-     y="658.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="baseline"
-     id="text115">22 kΩ</text>
-  <text
-     x="596.77441"
-     y="684.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="middle"
-     id="text116">H11AA1 Optocoupler</text>
-  <rect
-     x="546.77441"
-     y="694.52808"
-     width="100"
-     height="40"
-     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
-     id="rect116" />
-  <line
-     x1="536.77441"
-     y1="704.52808"
-     x2="546.77441"
-     y2="704.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line116" />
-  <text
-     x="550.77441"
-     y="704.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:start"
-     dominant-baseline="middle"
-     id="text117">A/C - 1</text>
-  <line
-     x1="646.77441"
-     y1="704.52808"
-     x2="656.77441"
-     y2="704.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line117" />
-  <text
-     x="642.77441"
-     y="704.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:end"
-     dominant-baseline="middle"
-     id="text118">6 - B</text>
-  <line
-     x1="536.77441"
-     y1="714.52808"
-     x2="546.77441"
-     y2="714.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line118" />
-  <text
-     x="550.77441"
-     y="714.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:start"
-     dominant-baseline="middle"
-     id="text119">C/A - 2</text>
-  <line
-     x1="646.77441"
-     y1="714.52808"
-     x2="656.77441"
-     y2="714.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line119" />
-  <text
-     x="642.77441"
-     y="714.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:end"
-     dominant-baseline="middle"
-     id="text120">5 - C</text>
-  <line
-     x1="536.77441"
-     y1="724.52808"
-     x2="546.77441"
-     y2="724.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line120" />
-  <text
-     x="550.77441"
-     y="724.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:start"
-     dominant-baseline="middle"
-     id="text121">NC - 3</text>
-  <line
-     x1="646.77441"
-     y1="724.52808"
-     x2="656.77441"
-     y2="724.52808"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line121" />
-  <text
-     x="642.77441"
-     y="724.52808"
-     style="font-size:11px;font-family:Arial;text-anchor:end"
-     dominant-baseline="middle"
-     id="text122">4 - E</text>
   <text
      x="300.77441"
-     y="684.52808"
+     y="734.52808"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text139">5V Relay Module</text>
   <rect
      x="250.77443"
-     y="694.52808"
+     y="744.52808"
      width="100"
      height="40"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect139" />
   <line
      x1="240.77443"
-     y1="704.52808"
+     y1="754.52808"
      x2="250.77443"
-     y2="704.52808"
+     y2="754.52808"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line139" />
   <text
      x="254.77443"
-     y="704.52808"
+     y="754.52808"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text140">NO</text>
   <line
      x1="350.77444"
-     y1="704.52808"
+     y1="754.52808"
      x2="360.77444"
-     y2="704.52808"
+     y2="754.52808"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line140" />
   <text
      x="346.77444"
-     y="704.52808"
+     y="754.52808"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text141">IN</text>
   <line
      x1="240.77443"
-     y1="714.52808"
+     y1="764.52808"
      x2="250.77443"
-     y2="714.52808"
+     y2="764.52808"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line141" />
   <text
      x="254.77443"
-     y="714.52808"
+     y="764.52808"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text142">COM</text>
   <line
      x1="350.77444"
-     y1="714.52808"
+     y1="764.52808"
      x2="360.77444"
-     y2="714.52808"
+     y2="764.52808"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line142" />
   <text
      x="346.77444"
-     y="714.52808"
+     y="764.52808"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text143">GND</text>
   <line
      x1="240.77443"
-     y1="724.52808"
+     y1="774.52808"
      x2="250.77443"
-     y2="724.52808"
+     y2="774.52808"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line143" />
   <text
      x="254.77443"
-     y="724.52808"
+     y="774.52808"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text144">NC</text>
   <line
      x1="350.77444"
-     y1="724.52808"
+     y1="774.52808"
      x2="360.77444"
-     y2="724.52808"
+     y2="774.52808"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line144" />
   <text
      x="346.77444"
-     y="724.52808"
+     y="774.52808"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text145">VCC</text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="370.43896"
-     y="717.61151"
+     x="372.57004"
+     y="767.54596"
      id="text188-3-7"><tspan
        sodipodi:role="line"
        id="tspan187-6-5"
-       x="370.43896"
-       y="717.61151"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
+       x="372.57004"
+       y="767.54596"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="63.0578"
-     y="681.78009"
+     x="57.0578"
+     y="681.40936"
      id="text188-3-3-9"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-2"
-       x="63.0578"
-       y="681.78009"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">003</tspan></text>
+       x="57.0578"
+       y="681.40936"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">MAIN_N</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="83.27372"
+     x="77.27372"
      y="736.09979"
      id="text188-3-3-9-1"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-2-4"
-       x="83.27372"
+       x="77.27372"
        y="736.09979"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">003</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">MAIN_N</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="437.67319"
-     y="755.01227"
-     id="text188-3-3-9-6"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-2-1"
-       x="437.67319"
-       y="755.01227"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">003</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="605.4458"
-     y="589.5011"
+     x="219.92157"
+     y="693.5011"
      id="text188-3-3-9-6-9"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-2-1-3"
-       x="605.4458"
-       y="589.5011"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">003</tspan></text>
+       x="219.92157"
+       y="693.5011"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">MAIN_N</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="605.52716"
-     y="569.56464"
+     x="220.52716"
+     y="673.56464"
      id="text188-3-3-9-6-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-2-1-0"
-       x="605.52716"
-       y="569.56464"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">004</tspan></text>
+       x="220.52716"
+       y="673.56464"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">MAIN_L</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="667.67383"
-     y="717.22919"
-     id="text188-3-9"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-20"
-       x="667.67383"
-       y="717.22919"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="692.83612"
-     y="716.94873"
-     id="text188-3-78"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-4"
-       x="692.83612"
-       y="716.94873"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">000</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="370.82007"
-     y="727.18109"
+     x="368.95114"
+     y="777.18109"
      id="text188-3-18-4-4"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-4"
-       x="370.82007"
-       y="727.18109"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">002</tspan></text>
+       x="368.95114"
+       y="777.18109"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="169.98784"
+     x="175.98784"
      y="680.73566"
      id="text188-3-3-0"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6"
-       x="169.98784"
+       x="175.98784"
        y="680.73566"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">004</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">MAIN_L</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="438.72397"
-     y="674.53717"
-     id="text188-3-3-0-8"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7"
-       x="438.72397"
-       y="674.53717"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">004</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="228.62093"
-     y="717.44324"
+     x="222.89896"
+     y="767.07251"
      id="text188-3-3-0-2"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-72"
-       x="228.62093"
-       y="717.44324"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">004</tspan></text>
+       x="222.89896"
+       y="767.07251"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">MAIN_L</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="511.36761"
-     y="674.15698"
-     id="text188-3-3-0-8-4"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8"
-       x="511.36761"
-       y="674.15698"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">007</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="523.47278"
-     y="706.15424"
-     id="text188-3-3-0-8-4-2"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-9"
-       x="523.47278"
-       y="706.15424"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">007</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="523.40918"
-     y="717.17505"
-     id="text188-3-3-0-8-4-9"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0"
-       x="523.40918"
-       y="717.17505"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">008</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="510.6723"
-     y="755.46075"
-     id="text188-3-3-0-8-4-9-8"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0-5"
-       x="510.6723"
-       y="755.46075"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">008</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="667.12134"
-     y="727.16663"
-     id="text188-3-3-0-8-4-9-9"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0-6"
-       x="667.12134"
-       y="727.16663"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">009</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="765.69629"
-     y="716.74152"
-     id="text188-3-3-0-8-4-9-9-8"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-56-6-7-8-0-6-5"
-       x="765.69629"
-       y="716.74152"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">009</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="228.62093"
-     y="706.82196"
+     x="221.78683"
+     y="756.91461"
      id="text188-3-3-0-8-4-9-9-9-0-6"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2"
-       x="228.62093"
-       y="706.82196"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">012</tspan></text>
+       x="221.78683"
+       y="756.91461"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">AC_REL</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="83.239777"
+     x="76.846581"
      y="751.07758"
      id="text188-3-3-0-8-4-9-9-9-0-6-7"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-8"
-       x="83.239777"
+       x="76.846581"
        y="751.07758"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">012</tspan></text>
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">AC_REL</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="371.1506"
-     y="707.42462"
+     x="369.1506"
+     y="757.42462"
      id="text188-3-3-0-8-4-9-9-9-0-6-74"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-8-4-2-1"
-       x="371.1506"
-       y="707.42462"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">013</tspan></text>
+       x="369.1506"
+       y="757.42462"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D4</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="609.01263"
-     y="146.84448"
+     x="621.01263"
+     y="154.84448"
      id="text188-3-62-6-9-91"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-0-0"
-       x="609.01263"
-       y="146.84448"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">025</tspan></text>
+       x="621.01263"
+       y="154.84448"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">INV_RC-</tspan></text>
   <line
      x1="721.49268"
      y1="258.63464"
@@ -3617,13 +3934,99 @@
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="ellipse5-0-6"
      r="3" />
+  <line
+     x1="605.61523"
+     y1="505.41925"
+     x2="622.61511"
+     y2="505.41925"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line4-9-5" />
+  <circle
+     cx="625.61511"
+     cy="505.41925"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse4-5-1-6"
+     r="3" />
+  <line
+     x1="605.61523"
+     y1="495.41925"
+     x2="622.61511"
+     y2="495.41925"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line5-9-9" />
+  <circle
+     cx="625.61511"
+     cy="495.41925"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse5-0-6-3"
+     r="3" />
+  <line
+     x1="605.55829"
+     y1="525.37134"
+     x2="622.55817"
+     y2="525.37134"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line4-9-5-7" />
+  <circle
+     cx="625.55817"
+     cy="525.37134"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse4-5-1-6-4"
+     r="3" />
+  <line
+     x1="605.55829"
+     y1="515.37134"
+     x2="622.55817"
+     y2="515.37134"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line5-9-9-5" />
+  <circle
+     cx="625.55817"
+     cy="515.37134"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse5-0-6-3-2"
+     r="3" />
+  <rect
+     x="769.61542"
+     y="-724.27087"
+     width="19.00061"
+     height="16.000614"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:1.99939;stroke-dasharray:none"
+     id="rect50-7-5-4"
+     transform="rotate(90)" />
+  <line
+     x1="720.66864"
+     y1="784.05713"
+     x2="737.66852"
+     y2="784.05713"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line4-9-5-74" />
+  <circle
+     cx="740.66852"
+     cy="784.05713"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse4-5-1-6-43"
+     r="3" />
+  <line
+     x1="720.66864"
+     y1="774.05713"
+     x2="737.66852"
+     y2="774.05713"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line5-9-9-0" />
+  <circle
+     cx="740.66852"
+     cy="774.05713"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="ellipse5-0-6-3-7"
+     r="3" />
   <rect
      style="fill:none;fill-opacity:1;stroke:#808080;stroke-width:3;stroke-dasharray:none;stroke-opacity:1"
      id="rect189"
      width="307.82501"
      height="292.99683"
      x="27.733049"
-     y="336.15979" />
+     y="320.15979" />
   <rect
      style="fill:none;fill-opacity:1;stroke:#808080;stroke-width:3;stroke-dasharray:none;stroke-opacity:1"
      id="rect189-3"
@@ -3632,83 +4035,176 @@
      x="27.74966"
      y="644.26862" />
   <text
-     x="683.25793"
-     y="546.7196"
+     x="304.25793"
+     y="650.7196"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text1-3">ZMPT101B AC Voltage Sensor Module</text>
   <rect
-     x="633.25793"
-     y="556.7196"
+     x="254.25793"
+     y="660.7196"
      width="100"
      height="40"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect1-6" />
   <line
-     x1="618.25793"
-     y1="566.7196"
-     x2="633.25793"
-     y2="566.7196"
+     x1="239.25793"
+     y1="670.7196"
+     x2="254.25793"
+     y2="670.7196"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line1" />
   <text
-     x="637.25793"
-     y="566.7196"
+     x="258.25793"
+     y="670.7196"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text2">L</text>
   <line
-     x1="733.25793"
-     y1="566.7196"
-     x2="748.25793"
-     y2="566.7196"
+     x1="354.25793"
+     y1="670.7196"
+     x2="369.25793"
+     y2="670.7196"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line2" />
   <text
-     x="729.25793"
-     y="566.7196"
+     x="350.25793"
+     y="670.7196"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text3-7">VCC</text>
   <line
-     x1="733.25793"
-     y1="576.7196"
-     x2="748.25793"
-     y2="576.7196"
+     x1="354.25793"
+     y1="680.7196"
+     x2="369.25793"
+     y2="680.7196"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line3" />
   <text
-     x="729.25793"
-     y="576.7196"
+     x="350.25793"
+     y="680.7196"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text4">OUT</text>
   <line
-     x1="618.25793"
-     y1="586.7196"
-     x2="633.25793"
-     y2="586.7196"
+     x1="239.25793"
+     y1="690.7196"
+     x2="254.25793"
+     y2="690.7196"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line4-5" />
   <text
-     x="637.25793"
-     y="586.7196"
+     x="258.25793"
+     y="690.7196"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text5">N</text>
   <line
-     x1="733.25793"
-     y1="586.7196"
-     x2="748.25793"
-     y2="586.7196"
+     x1="354.25793"
+     y1="690.7196"
+     x2="369.25793"
+     y2="690.7196"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line5-3" />
   <text
-     x="729.25793"
-     y="586.7196"
+     x="350.25793"
+     y="690.7196"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text6">GND</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="785.03918"
+     y="521.01581"
+     id="text188-3-3-4-5-8"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-56-3-6-8"
+       x="785.03918"
+       y="521.01581"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="781.77435"
+     y="510.77765"
+     id="text188-3-18-4-5-2-5"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-7-7-2-9-0"
+       x="781.77435"
+       y="510.77765"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="781.44006"
+     y="531.34052"
+     id="text188-3-3-0-8-4-9-9-9-0-6-74-53-3-1-7-9"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-56-6-7-8-0-6-8-4-2-1-8-1-2-0-6"
+       x="781.44006"
+       y="531.34052"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">D3</tspan></text>
+  <text
+     x="745.96002"
+     y="474.17706"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="middle"
+     id="text1-3-1"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       x="745.96002"
+       y="474.17706">IR Proximity</tspan><tspan
+       sodipodi:role="line"
+       id="tspan2"
+       x="745.96002"
+       y="487.92706">Sensor Module</tspan></text>
+  <rect
+     x="703.65112"
+     y="498.04584"
+     width="53.046787"
+     height="40.000301"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-dasharray:none"
+     id="rect1-6-1" />
+  <line
+     x1="756.4245"
+     y1="508.31921"
+     x2="771.4245"
+     y2="508.31921"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line2-8" />
+  <text
+     x="752.4245"
+     y="508.31921"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text3-7-4">VCC</text>
+  <line
+     x1="756.4245"
+     y1="518.31921"
+     x2="771.4245"
+     y2="518.31921"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line3-8" />
+  <text
+     x="751.18707"
+     y="529.80969"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text4-1">OUT</text>
+  <line
+     x1="756.4245"
+     y1="528.31921"
+     x2="771.4245"
+     y2="528.31921"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line5-3-0" />
+  <text
+     x="751.62903"
+     y="519.21521"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text6-4">GND</text>
   <rect
      style="fill:none;stroke:#808080;stroke-width:3"
      id="rect2"
@@ -3723,4 +4219,140 @@
      height="79.686974"
      x="672.09668"
      y="218.09065" />
+  <rect
+     x="517.17419"
+     y="-414.43039"
+     width="16"
+     height="40"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
+     id="rect1-3"
+     transform="rotate(90)" />
+  <line
+     x1="419.43039"
+     y1="525.17419"
+     x2="369.43039"
+     y2="525.17419"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line1-6" />
+  <text
+     x="414.00061"
+     y="508.77753"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text1-7">1A Fuse</text>
+  <text
+     x="764.18298"
+     y="755.73096"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text1-7-7">Fan Header</text>
+  <text
+     x="668.05127"
+     y="480.44122"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text1-7-7-0">PV INA219 Header</text>
+  <line
+     x1="525.88086"
+     y1="524.81433"
+     x2="524.88086"
+     y2="524.81433"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line1-2" />
+  <line
+     x1="476.88086"
+     y1="524.81433"
+     x2="475.88086"
+     y2="524.81433"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line2-9" />
+  <path
+     d="m 524.88086,524.81432 a 6,8 0 1 1 -12,0 m 0,0 a 6.000001,8.0000013 0 1 1 -12,0 m 0,0 a 6,8 0 1 1 -12,0 m 0,0 a 6,8 0 1 1 -12,0"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="path2" />
+  <text
+     x="519.00281"
+     y="518.32654"
+     style="font-size:11px;font-family:Arial;text-anchor:end"
+     dominant-baseline="middle"
+     id="text2-1">100 mH</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="537.11475"
+     y="527.53198"
+     id="text188-3-31-5-0"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-94-3-9"
+       x="537.11475"
+       y="527.53198"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="448.02609"
+     y="689.63885"
+     id="text188-3-62-9-1-1-5-0-3"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-05-0-0-9-6"
+       x="448.02609"
+       y="689.63885"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">BS_IN-</tspan></text>
+  <line
+     x1="711.19598"
+     y1="667.90625"
+     x2="722.19598"
+     y2="667.90625"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line83-4" />
+  <path
+     d="m 722.19598,667.90625 v 10 l 17,-10 -17,-10 v 10"
+     style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="path83-7" />
+  <line
+     x1="740.19598"
+     y1="667.90625"
+     x2="751.19598"
+     y2="667.90625"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line84-8" />
+  <line
+     x1="740.19598"
+     y1="677.90625"
+     x2="740.19598"
+     y2="657.90625"
+     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
+     id="line85-4" />
+  <text
+     x="731.19598"
+     y="654.90625"
+     style="font-size:11px;font-family:Arial;text-anchor:middle"
+     dominant-baseline="baseline"
+     id="text86-5">1N4007</text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="698.74609"
+     y="671.35785"
+     id="text188-3-62-9-2-0"
+     inkscape:transform-center-x="151.24774"
+     inkscape:transform-center-y="143.09222"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-6-3-4-3"
+       x="698.74609"
+       y="671.35785"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">FAN-</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
+     x="763.95978"
+     y="670.50433"
+     id="text188-3-610-28-6"><tspan
+       sodipodi:role="line"
+       id="tspan187-6-63-4-1"
+       x="763.95978"
+       y="670.50433"
+       style="font-size:8px;fill:#ff0000;fill-opacity:1">12V</tspan></text>
 </svg>

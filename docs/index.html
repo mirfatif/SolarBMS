@@ -128,7 +128,7 @@
   <ul>
     <li>Use push buttons to jump to the next screen (center) and to change the configurable values (left and right).</li>
     <li>First 5 screens are informatory. On these screens, setting buttons turn off the display.</li>
-    <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared obstacle detector) to turn the display back on.</li>
+    <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared proximity detector) to turn the display back on.</li>
     <li>When display is on, waving hand before IR sensor rotates the display between informatory screens.</li>
     <li>On SAVE screen (last), setting buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
@@ -313,7 +313,7 @@
         <li>Right (UP): Increase a configurable value (setting).</li>
       </ul>
     </li>
-    <li><strong>IR Obstacle Sensor</strong> <sup><a href="#22">[22]</a></sup>:
+    <li><strong>IR Proximity Sensor</strong> <sup><a href="#22">[22]</a></sup>:
       <ul>
         <li>Wave hand to turn on the display, or rotate between informatory screens.</li>
       </ul>
@@ -504,7 +504,7 @@
           <ul>
             <li><strong>Voltage Divider:</strong>
               <ul>
-                <li>PVF+ → 22kΩ → Junction → 10Ω → PVF-</li>
+                <li>PVF+ → 22kΩ → Junction → 10kΩ → PVF-</li>
                 <li>Drops 8V to ~2.5V for TL431 reference.</li>
               </ul>
             </li>
@@ -815,7 +815,7 @@
     </li>
   </ul>
 
-  <h3>10. IR Obstacle Sensor</h3>
+  <h3>10. IR Proximity Sensor</h3>
   <ul>
     <li><code>VCC</code> → 5V rail</li>
     <li><code>GND</code> → GND rail</li>
@@ -826,7 +826,7 @@
   <ul>
     <li><strong>Transistor Driver:</strong>
       <ul>
-        <li>Arduino D2 → 330Ω resistor → 2N2222A Base</li>
+        <li>2N2222A Base → 330Ω → Arduino D2</li>
         <li>2N2222A Emitter → GND</li>
         <li>2N2222A Collector → Fan-</li>
       </ul>
@@ -929,7 +929,7 @@
       <td colspan="2">10</td>
     </tr>
     <tr>
-      <td>IR obstacle sensor module</td>
+      <td>IR proximity sensor module</td>
       <td>10-20</td>
       <td>D3</td>
       <td>Input</td>
@@ -1025,12 +1025,73 @@
   </ul>
 
   <h2 style="page-break-before: always;">Schematics</h2>
-  <p>TODO</p>
-  <!--h3>Arduino Circuit:</h3>
-  <a href="circuit.svg"><img src="circuit.svg" width="1000" /></a>
+  <h3>Arduino Circuit:</h3>
+  <a href="arduino_circuit.svg"><img src="arduino_circuit.svg" width="1000" /></a>
+
+  <h3>PV-Side Circuit:</h3>
+  <a href="pv_circuit.svg"><img src="pv_circuit.svg" width="1000" /></a>
 
   <h3 style="page-break-before: always;">Solar and AC (Grid + Inverter) Circuit:</h3>
-  <a href="changeover.svg"><img src="changeover.svg" width="700" /></a-->
+  <p>This circuit works independent of Arduino control. But Arduino control depends on this circuit.</p>
+  <ul>
+    <li>Problem: Inverter is part of a UPS i.e. inverter + charger. But we usually charge the battery only on solar power. And UPS starts charging the battery if utility grid is present.
+      <ul>
+        <li>Solution: Use an <b>220V AC changeover relay</b> to move the mains ↔ inverter switching out of the inverter. Relay is active when on mains, connecting house supply to the mains. When inactive, it connects the supply to the inverter output.</li>
+      </ul>
+    </li>
+    <li>Problem: Since the UPS no more gets the grid supply, it's always running (with its fan) taking ~20W from battery. We need to manually switch it on and off.
+      <ul>
+        <li>Solution: Put a <b>5V relay</b> inside the inverter, in- series with the manual switch. Relay is powered using an adapter which is powered by the mains grid. So as long as utility grid is present, relay is active and keeps the inverter turned off.</li>
+      </ul>
+    </li>
+    <li>Problem: Switching to the mains from the inverter is quick. But switching to inverter takes 2-3 seconds because inverter needs time to start.
+      <ul>
+        <li>Relay actuate time should not be more than a hundred milliseconds. Even better alternative: use an Automatic Transfer Switch instead of a relay.</li>
+        <li>Solution: None so far. Probably there is a way (electronically) inside the inverter circuit to:
+          <ul>
+            <li>Put the inverter on standby instead of completely turning off.</li>
+            <li>Disable the battery charging while still feeding grid supply.</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <b>Switches:</b>
+  <ul>
+    <li><b>SW1:</b>
+      <ul>
+        <li>OFF: On inverter</li>
+        <li>ON:
+          <ul>
+            <li>Grid not available: On inverter</li>
+            <li>Grid available:
+              <ul>
+                <li>On grid</li>
+                <li><b>SW2:</b>
+                  <ul>
+                    <li>ON: Inverter off</li>
+                    <li>OFF:
+                      <ul>
+                        <li>Inverter on</li>
+                        <li><b>SW3:</b>
+                          <ul>
+                            <li>ON: UPS (charger) gets grid supply</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <a href="changeover_circuit.svg"><img src="changeover_circuit.svg" width="700" /></a>
 
   <h2 id="flowchart">Flowchart:</h2>
   <p>Actual checks and details are a bit complex but a simplified version is:</p>
