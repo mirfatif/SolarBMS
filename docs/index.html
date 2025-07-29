@@ -25,9 +25,21 @@
       text-decoration: none;
     }
 
-    img {
+    .image-container {
+      /* center inline children */
+      text-align: center;
+    }
+
+    .image-container a {
+      /* shrink-wrap to the image */
+      display: inline-block;
+    }
+
+    .image-container img {
+      /* remove any inline descender space */
       display: block;
-      margin: auto;
+      max-width: 100%;
+      height: auto;
     }
 
     table {
@@ -41,6 +53,11 @@
     td {
       border-right: 1px solid black;
       border-bottom: 1px solid black;
+    }
+
+    p.cell {
+      margin: 0;
+      margin-top: 3%;
     }
   </style>
 </head>
@@ -179,10 +196,10 @@
   <ul>
     <li><strong>Arduino Nano</strong> <sup><a href="#1">[1]</a></sup> – main controller for sensor reading and decision-making.</li>
 
-    <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> + 3 x <strong>6N137 Optocoupler</strong> <sup><a href="#30">[30]</a></sup> – used to measure PV voltage and current.
+    <li><strong>INA219</strong> <sup><a href="#2">[2]</a> <a href="#3">[3]</a></sup> + <strong>FL-2C Shunt Resistor 100A 75mV</strong> <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup> + <strong>ADuM1250</strong> <sup><a href="#36">[36]</a></sup> + <strong>B0505S</strong> <sup><a href="#37">[37]</a></sup> – used to measure PV voltage and current.
       <ul>
-        <li>Required because PWM charge controller does not have common GND across its input (PV array) and output (battery) sides.</li>
-        <li><strong>INA219</strong>:
+        <li>Isolation is required because PWM charge controller does not have common GND across its input (PV array) and output (battery) sides.</li>
+        <li><strong>INA219 Bi-Direction DC Current Sensor Module</strong>:
           <ul>
             <li>Supply voltage: 3V-5.5V</li>
             <li>Input quiescent current: 1mA</li>
@@ -245,25 +262,44 @@
             </li>
           </ul>
         </li>
-        <li><strong>6N137</strong>:
+        <li><strong>ADuM1250 Bi-Direction I<sup>2</sup>C Digital Isolator</strong>:
           <ul>
-            <li>Input HIGH -> Output LOW (leave V<sub>E</sub> unconnected)
-              <ul>
-                <li>Output is an open-collector Schottky-clamped transistor. So needs to be pulled-up. Recommended: 330Ω-4kΩ</li>
-              </ul>
-            </li>
-            <li>Supply voltage: 4.5V-5.5V</li>
-            <li>Supply current: 5~10mA (@ V<sub>CC</sub>: 5V, I<sub>F</sub>: 5mA)</li>
-            <li>LED input current (I<sub>F</sub>): 5mA-15mA</li>
-            <li>LED voltage drop (V<sub>F</sub>): 1.4V (@ I<sub>F</sub>: 10mA)</li>
-            <li>Output current (I<sub>CL</sub>): 50mA</li>
-            <li>Output voltage drop: 0.6V (@ I<sub>F</sub>: 5mA, I<sub>CL</sub>: 13mA)</li>
+            <li>Supply voltage: 3V-5.5V</li>
+            <li>Supply current: 2.8mA + 2.7mA</li>
+            <li>Both input and output are open-drain interfaces, so need to be pulled-up.</li>
+            <li>Bidirectional channels, so support clock-stretching.</li>
+            <li>Output current: 30mA sink</li>
+            <li>Speed: 1Mbps</li>
           </ul>
         </li>
-        <li>Better alternatives:
+        <li><strong>B0505S-1W DC-DC Isolated Power Converter</strong>:
           <ul>
-            <li>DC-DC isolated power converter (like B0505S) + INA219 + I<sup>2</sup>C digital isolator (like ADuM1250 / ISO1540)</li>
-            <li>Instead of digital isolation, do analog isolation. Use a galvanically-isolated sensor, like ACS758 (for current only), which is a hall-effect based linear current sensor. LV 25-P is a similar one for voltage sensing.</li>
+            <li>Input voltage: 4.5V-5.5V</li>
+            <li>Supply current: ~5mA</li>
+            <li>Output voltage: 5V</li>
+            <li>Output current: 200mA</li>
+            <li>Efficiency: ~85%</li>
+          </ul>
+        </li>
+        <li>Alternatives:
+          <ul>
+            <li>ADuM1250 alternatives:
+              <ul>
+                <li>ISO1540</li>
+                <li>6N137-based custom isolator</li>
+              </ul>
+            </li>
+            <li>B0505S alternative: Power from PV-array using LM78L05 with UVLO (TL431 + 2N3906).</li>
+            <li>Instead of digital isolation, do analog isolation.
+              <ul>
+                <li>Use a galvanically-isolated sensor, like ACS758 (for current only), which is a hall-effect based linear current sensor.
+                  <ul>
+                    <li>LV 25-P is a similar one for voltage sensing.</li>
+                  </ul>
+                </li>
+                <li>Use an isolated amplifier like HCPL-7840 with a precision rail-to-rail op-amp like MCP6002 / MCP602.</li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li>A more complex way to detect sunlight sufficiency is by using a <strong>BH1750 Light Sensor Module</strong> <sup><a href="#8">[8]</a></sup>.</li>
@@ -327,33 +363,16 @@
 
   <b>For PV Current / Voltage Sensing</b>
   <ul>
-    <li><strong>LM78L05 5V Regulator</strong> <sup><a href="#29">[29]</a></sup> – converts PV 12V-25V to 5V for PV side circuit.</li>
-    <li><strong>TL431 Regulator</strong> <sup><a href="#32">[32]</a></sup> – cuts-off LM78L05 input if PV drops below 7V.</li>
-    <li><strong>2N3906 PNP BJT</strong> – provides feedback to TL431 (for hysteresis) and drives LM78L05.</li>
-    <li>2 x <strong>1N5818 Schottky Diode</strong> – separates the sending signal from the returning signal in the bi-directional paths of isolated SDA.</li>
     <li><strong>Resistors:</strong>
       <ul>
-        <li>1 x 100kΩ</li>
-        <li>1 x 22kΩ</li>
-        <li>1 x 10kΩ</li>
-        <li>1 x 6.8kΩ</li>
         <li>4 x 4.7kΩ</li>
-        <li>1 x 2.2kΩ</li>
-        <li>3 x 1kΩ</li>
-        <li>1 x 33Ω</li>
         <li>2 x 10Ω</li>
       </ul>
     </li>
     <li><strong>Capacitors:</strong>
       <ul>
-        <li>6 x 0.1µF 50V Ceramic</li>
-        <li>1 x 10µF 50V Electrolytic</li>
-      </ul>
-    </li>
-    <li><strong>Zener Diodes:</strong>
-      <ul>
-        <li>1N5361B 27V</li>
-        <li>1N4733A 5.1V</li>
+        <li>2 x 0.1µF 50V Ceramic</li>
+        <li>2 x 10µF 25V Electrolytic</li>
       </ul>
     </li>
     <li><strong>Veroboard Dotted (60mm x 40mm)</strong> – circuit designing</li>
@@ -470,6 +489,7 @@
     </li>
     <li><strong>DC Power Jack</strong> (male + female) – to make a detachable connection to Relay (inverter).</li>
     <li><strong>Veroboard Dotted</strong> (145mm x 65mm) – circuit designing.</li>
+    <li><strong>2.54mm Pitch Male Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
     <li><strong>2.54mm Pitch Female Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
     <li><strong>Plastic Enclosure Box</strong> (160mm x 96mm x 50mm) – enclose the circuit.</li>
     <li>4 x <strong>Plastic PCB Circuit Board Spacer</strong> – between veroboard and the box bottom.</li>
@@ -479,93 +499,32 @@
 
   <h2>Connections</h2>
 
-  <h3>1. INA219 + FL-2C Shunt + 6N137 (PV Array)</h3>
+  <h3>1. INA219 + FL-2C Shunt + ADuM1250 + B0505S (PV Array)</h3>
 
   <ul>
     <li><strong>Power Supply:</strong>
       <ul>
         <li>Fuse:
           <ul>
-            <li>PV- → Fuse → PVF- (PV through fuse)</li>
+            <li>PV- → Fuse → GND_ISO rail</li>
           </ul>
         </li>
-        <li>HF Noise Filter:
+        <li><strong>B0505S:</strong>
           <ul>
-            <li>PV+ → 33Ω → PVF+ (PV filtered)
+            <li>Connections:
               <ul>
-                <li>@ 20mA: Voltage drop: 0.66V, Power loss: 13.2mW</li>
+                <li><code>GND</code> → GND rail</li>
+                <li><code>V<sub>IN</sub></code> → 5V rail</li>
+                <li><code>0V</code> → GND_ISO rail</li>
+                <li><code>+V<sub>O</sub></code> → 5V_ISO rail</li>
               </ul>
             </li>
-            <li>PVF+ → 10µF 50V electrolytic → PVF-</li>
-            <li>PVF+ → 0.1µF 50V ceramic → PVF-</li>
-          </ul>
-        </li>
-        <li>UVLO:
-          <ul>
-            <li><strong>Voltage Divider:</strong>
+            <li>Filters (for stabilizing):
               <ul>
-                <li>PVF+ → 22kΩ → Junction → 10kΩ → PVF-</li>
-                <li>Drops 8V to ~2.5V for TL431 reference.</li>
+                <li><code>V<sub>IN</sub></code> → 10µF Electrolytic → <code>GND</code></li>
+                <li><code>+V<sub>O</sub></code> → 10µF Electrolytic → <code>0V</code></li>
               </ul>
             </li>
-            <li><strong>TL431:</strong>
-              <ul>
-                <li><code>REF</code> →
-                  <ul>
-                    <li>Divider junction</li>
-                    <li>2N3906 feedback</li>
-                  </ul>
-                </li>
-                <li>Anode → PVF-</li>
-                <li>Cathode →
-                  <ul>
-                    <li>6.8kΩ → PVF+ (for minimum 1mV load)
-                      <ul>
-                        <li><math>(7V - 2.5V) ÷ 6.8kΩ = 0.66mA</math></li>
-                      </ul>
-                    </li>
-                    <li>2N3906 signal</li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li><strong>2N3906:</strong>
-              <ul>
-                <li>Emitter → PVF+</li>
-                <li>Base → 2.2kΩ → TL431 cathode (≥2mA current)
-                  <ul>
-                    <li><math>(7V - 2.5V - 0.7V) ÷ 2.2kΩ = ~1.7mA</math></li>
-                  </ul>
-                </li>
-                <li>Collector →
-                  <ul>
-                    <li>LM78L05 input</li>
-                    <li>100kΩ → TL431 <code>REF</code></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li>Hysteresis: ~1V:
-              <ul>
-                <li>Turn-on: <math>2.5V × (22kΩ + 10kΩ) / 10kΩ = 8V</math></li>
-                <li>Turn-off: <math>2.5V × (18kΩ + 10kΩ) / 10kΩ = 7V</math>
-                  <ul>
-                    <li><math>22kΩ || 100kΩ = 18kΩ</math></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li><strong>LM78L05:</strong>
-          <ul>
-            <li><code>OUT</code> → INA219 + 6N137 power input
-              <ul>
-                <li>Power dissipation: <math>20mA × (~25V - 5V) = 400mW</math> (ALARMING !!! May go up to ~100°C)</li>
-              </ul>
-            </li>
-            <li><code>GND</code> → PVF-</li>
-            <li><code>IN</code> → 2N3906 collector</li>
           </ul>
         </li>
       </ul>
@@ -577,118 +536,46 @@
           <ul>
             <li><code>Vin+</code> → 10Ω → Shunt's PV-side terminal</li>
             <li><code>Vin–</code> → 10Ω → Shunt's controller-side terminal</li>
-            <li><code>GND</code> → LM78L05 GND (PVF-)</li>
-            <li><code>VCC</code> → LM78L05 5V</li>
-            <li><code>SDA</code>, <code>SCL</code> → 6N137 LED Cathode, <code>V<sub>O</sub></code></li>
+            <li><code>GND</code> → GND_ISO rail</li>
+            <li><code>VCC</code> → 5V_ISO rail</li>
+            <li><code>SDA</code>, <code>SCL</code> → ADuM1250</li>
+          </ul>
+        </li>
+        <li>Filters (for PWM controller noise):
+          <ul>
+            <li><code>VCC</code> → 0.1µF Ceramic → <code>GND</code></li>
+            <li><code>Vin+</code> → 0.1µF ceramic → <code>Vin-</code>
+              <ul>
+                <li>Works in combination with 10Ω in-series with <code>Vin+</code> and <code>Vin-</code>.</li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li>To change the I<sup>2</sup>C address from default (0x40) to 0x41, solder the <code>A0</code> points.</li>
       </ul>
     </li>
-    <li>Feedback Loop Protection: <sup><a href="#33">[33]</a></sup> <sup><a href="#34">[34]</a></sup> <sup><a href="#35">[35]</a></sup>
+    <li><strong>ADuM1250:</strong>
       <ul>
-        <li>2 x <strong>1N5818</strong> (D1 & D2)</li>
-      </ul>
-    </li>
-    <li>3 x <strong>6N137:</strong>
-      <ul>
-        <li>Output-Side Power:
+        <li>Connections:
           <ul>
-            <li>U1, U2:
-              <ul>
-                <li><code>VCC</code> → LM78L05 5V</li>
-                <li><code>GND</code> → LM78L05 GND (PVF-)</li>
-              </ul>
-            </li>
-            <li>U3:
-              <ul>
-                <li><code>VCC</code> → Arduino-side 5V rail</li>
-                <li><code>GND</code> → Arduino-side GND rail</li>
-              </ul>
-            </li>
+            <li><code>V<sub>DD1</sub></code> → 5V rail</li>
+            <li><code>SDA<sub>1</sub></code> → Arduino Nano A4 (SDA)</li>
+            <li><code>SCL<sub>1</sub></code> → Arduino Nano A5 (SCL)</li>
+            <li><code>GND<sub>1</sub></code> → GND rail</li>
+            <li><code>V<sub>DD2</sub></code> → 5V_ISO rail</li>
+            <li><code>SDA<sub>2</sub></code> → INA219 <code>SDA</code></li>
+            <li><code>SCL<sub>2</sub></code> → INA219 <code>SDA</code></li>
+            <li><code>GND<sub>2</sub></code> → GND_ISO rail</li>
           </ul>
         </li>
-        <li>U1 (Nano → INA219: SCL):
+        <li>4 x Pull-Ups:
           <ul>
-            <li>LED:
-              <ul>
-                <li>Anode → 1kΩ → Arduino-side 5V rail</li>
-                <li>Cathode → Arduino Nano A5 (SCL)</li>
-              </ul>
-            </li>
-            <li><code>V<sub>O</sub></code> → INA219 SCL</li>
-          </ul>
-        </li>
-        <li>U2 (Nano → INA219: SDA):
-          <ul>
-            <li>LED:
-              <ul>
-                <li>Anode →
-                  <ul>
-                    <li>1kΩ → Arduino-side 5V rail</li>
-                    <li>D1 Cathode</li>
-                  </ul>
-                </li>
-                <li>Cathode →
-                  <ul>
-                    <li>Arduino Nano A4 (SDA)</li>
-                    <li>D1 Anode</li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li><code>V<sub>O</sub></code> → [Cathode] D2 [Anode] → INA219 SDA</li>
-          </ul>
-        </li>
-        <li>U3 (INA219 → Nano: SDA):
-          <ul>
-            <li>LED:
-              <ul>
-                <li>Anode →
-                  <ul>
-                    <li>1kΩ → LM78L05 5V</li>
-                    <li>D2 Cathode</li>
-                  </ul>
-                </li>
-                <li>Cathode →
-                  <ul>
-                    <li>INA219 SDA</li>
-                    <li>D2 Anode</li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li><code>V<sub>O</sub></code> → [Cathode] D1 [Anode] → Arduino Nano A4 (SDA)</li>
+            <li><code>SDA<sub>1</sub></code> & <code>SCL<sub>1</sub></code> → 4.7kΩ → 5V rail</li>
+            <li><code>SDA<sub>2</sub></code> & <code>SCL<sub>2</sub></code> → 4.7kΩ → 5V_ISO rail</li>
           </ul>
         </li>
       </ul>
     </li>
-    <li>4 x <strong>4.7kΩ</strong> (I<sup>2</sup>C Pull-Ups):
-      <ul>
-        <li>Arduino Nano A4, A5 (SDA/SCL) → 4.7kΩ → Arduino-side 5V rail</li>
-        <li>INA219 SCL/SDA → 4.7kΩ → LM78L05 5V</li>
-      </ul>
-    </li>
-  </ul>
-
-  <b>Filtering:</b>
-  <ul>
-    <li>Add 0.1µF ceramic capacitors (high frequency decoupling) to all power inputs (INA219, 6N137).</li>
-    <li>INA219 HF Noise Filter:
-      <ul>
-        <li><code>Vin+</code> → 0.1µF ceramic → <code>Vin-</code>
-          <ul>
-            <li>Works in combination with 10Ω in-series with <code>Vin+</code> and <code>Vin-</code>.</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-
-  <b>Protection:</b>
-  <ul>
-    <li>1N5361B 27V Zener Diode between PV+ and PVF- (before UVLO, anode to PVF-)</li>
-    <li>1N4733A 5.1V Zener Diode between LM78L05 <code>OUT</code> and <code>GND</code> (anode to GND)</li>
   </ul>
 
   <h3>2. INA219 Current Sensor & FL-2C Shunt (Battery)</h3>
@@ -919,117 +806,132 @@
       <th>Current (mA)</th>
       <th>Pin</th>
       <th>Mode</th>
-      <th colspan="2">Pin Source (+) / Sink (-)</br>Current (mA)</th>
+      <th>Pin Source (+) / Sink (-)</br>Current (mA)</th>
     </tr>
     <tr>
       <td>2N2222A - drives a fan</td>
       <td>100</td>
       <td>D2</td>
       <td>Output</td>
-      <td colspan="2">10</td>
+      <td>10</td>
     </tr>
     <tr>
       <td>IR proximity sensor module</td>
       <td>10-20</td>
       <td>D3</td>
       <td>Input</td>
-      <td colspan="2">~0</td>
+      <td>~0</td>
     </tr>
     <tr>
       <td>5V relay module (active-low)</td>
       <td>70-100</td>
       <td>D4</td>
       <td>Output</td>
-      <td colspan="2">-5 ~ -10</td>
+      <td>-5 ~ -10</td>
     </tr>
     <tr>
       <td>2N3904 - drives a 5V relay</td>
       <td>60</td>
       <td>D5</td>
       <td>Output</td>
-      <td colspan="2">6</td>
+      <td>6</td>
     </tr>
     <tr>
       <td>2N3904 - drives a 12V buzzer</td>
       <td>40</td>
       <td>D6</td>
       <td>Output</td>
-      <td colspan="2">4</td>
+      <td>4</td>
     </tr>
     <tr>
       <td>Push button (pulled-up @ ~20kΩ)</td>
       <td></td>
       <td>D7-D9</td>
       <td>Input</td>
-      <td colspan="2">-0.25 × 3 = -0.75</td>
+      <td>-0.25 × 3 = -0.75</td>
     </tr>
     <tr>
       <td>MAX7219 8-digit display module</td>
       <td>50-100</td>
       <td>D10-D12</td>
       <td>SPI/Output</td>
-      <td colspan="2">±0.1 × 3 = ±0.3</td>
+      <td>±0.1 × 3 = ±0.3</td>
     </tr>
     <tr>
       <td>ZMPT101B AC voltage sensor module</td>
       <td>2</td>
       <td>A1</td>
       <td>Input</td>
-      <td colspan="2">~0</td>
+      <td>~0</td>
     </tr>
     <tr>
       <td>DS3231 clock module</td>
       <td>0.5-1.5</td>
       <td rowspan="3">A4-A5</td>
       <td rowspan="3">I<sup>2</sup>C</td>
-      <td rowspan="3">-1.06 × 2 = -2.12<br>(pulled LOW)<sup>**</sup></td>
-      <td></td>
+      <td rowspan="3">-2.13<br>(Nano pulled LOW)<sup>*</sup></td>
     </tr>
     <tr>
       <td>INA219 module (battery)</td>
       <td>0.7-1.2</td>
-      <td></td>
     </tr>
     <tr>
-      <td>INA219 module (solar) through a<br>3 x 6N137-based I2C isolator</td>
-      <td>5-10<br>(6N137 output<br>power supply)<br>5 (<code>V<sub>O</sub></code> pulled low)<sup>*</sup></td>
-      <td>-5 × 2 = -10<br>(6N137 LED)</td>
+      <td>INA219 module (solar) through a<br>ADuM1250 I2C isolator</td>
+      <td>5 (B0505S)<p class="cell">2.8 (ADuM1250_1)</p>
+        <p class="cell">2.7 × 125% = 3.38<br>(ADuM1250_2)</p>
+        <p class="cell">0.7-1.2 × 125% = 0.88-1.5<br>(INA219)</p>
+        <p class="cell">2.13 × 125% = 2.65<br>(INA219 pulled LOW)<sup>*</sup></p>
+      </td>
     </tr>
   </table>
 
   <ul>
-    <li>Total: 360~455mA</li>
-    <li>GPIO pins: 40~45mA</li>
+    <li>Total: 350~440mA</li>
+    <li>GPIO pins: 30~35mA</li>
   </ul>
 
   <b>PV-side:</b>
   <ul>
-    <li>Total: 16~26mA
+    <li>B0505S: 5.5-6mA
       <ul>
+        <li>ADuM1250: 2.7mA</li>
         <li>INA219: 0.7-1.2mA</li>
-        <li>6N137 (output power supply): 5-10mA × 2 = 10-20mA</li>
-        <li>6N137 LED (or when <code>V<sub>O</sub></code> is pulled low)<sup>*</sup>: 5mA</li>
+        <li>SDA/SCL lines pulled low: 2.13mA <sup>*</sup></li>
       </ul>
     </li>
-    <li>INA219 SDA/SCL pin sinks (when pulled LOW)<sup>**</sup>: ~7mA
-      <ul>
-        <li>1.06mA × 2 = 2.12mA (from pull-up resistor)</li>
-        <li>5mA (from 6N137 LED)</li>
-      </ul>
-    </li>
+    <li>INA219 SDA/SCL pin sinks (when pulled LOW): ~1.06mA <sup>*</sup></li>
   </ul>
 
+  <sup>*</sup>
+  <b>I<sup>2</sup>C Pul-Up Resistors:</b>
   <ul>
-    <li><sup>*</sup> SDA line's 6N137 <code>V<sub>O</sub></code> are pulled up (@ 1kΩ) to let the opposite direction's 6N137 LED turn on only when former's <code>V<sub>O</sub></code> is not pulled down.</li>
-    <li><sup>**</sup> Both lines (SDA/SCL) are pulled up externally (@ 4.7kΩ). When released, pins are in high-impedance, so sink almost nothing.</li>
+    <li>Internal pull-up resistors of both Nano and INA219 are very weak (≥10kΩ). Both lines (SDA/SCL) are pulled up externally (@ 4.7kΩ).</li>
+    <li>When pulled down (by either side):
+      <ul>
+        <li>Max current per line: <math>5V / 4.7kΩ = 1.065mA</math></li>
+        <li>And both lines: <math>2 × 1.065 = 2.13mA</math></li>
+      </ul>
+    </li>
+    <li>When released, pins are in high-impedance, so sink almost nothing.</li>
   </ul>
 
   <h2 style="page-break-before: always;">Schematics</h2>
+
+  <p>Boxes show external components.</p>
+
   <h3>Arduino Circuit:</h3>
-  <a href="arduino_circuit.svg"><img src="arduino_circuit.svg" width="1000" /></a>
+  <div class="image-container">
+    <a href="arduino_circuit.svg">
+      <img src="arduino_circuit.svg" width="1000">
+    </a>
+  </div>
 
   <h3>PV-Side Circuit:</h3>
-  <a href="pv_circuit.svg"><img src="pv_circuit.svg" width="1000" /></a>
+  <div class="image-container">
+    <a href="pv_circuit.svg">
+      <img src="pv_circuit.svg" width="1000">
+    </a>
+  </div>
 
   <h3 style="page-break-before: always;">Solar and AC (Grid + Inverter) Circuit:</h3>
   <p>This circuit works independent of Arduino control. But Arduino control depends on this circuit.</p>
@@ -1091,11 +993,19 @@
     </li>
   </ul>
 
-  <a href="changeover_circuit.svg"><img src="changeover_circuit.svg" width="700" /></a>
+  <div class="image-container">
+    <a href="changeover_circuit.svg">
+      <img src="changeover_circuit.svg" width="700">
+    </a>
+  </div>
 
   <h2 id="flowchart">Flowchart:</h2>
   <p>Actual checks and details are a bit complex but a simplified version is:</p>
-  <a href="flowchart.svg"><img src="flowchart.svg" width="600" /></a>
+  <div class="image-container">
+    <a href="flowchart.svg">
+      <img src="flowchart.svg" width="600">
+    </a>
+  </div>
 
   <h2 style="page-break-before: always;">Code:</h2>
   <a href="https://github.com/mirfatif/SolarBMS/SolarBMS.ino">https://github.com/mirfatif/SolarBMS/SolarBMS.ino</a>
@@ -1109,7 +1019,11 @@
   </ul>
 
   <h2>Finally:</h2>
-  <a href="image.jpg"><img src="image.jpg" width="500" /></a>
+  <div class="image-container">
+    <a href="image.jpg">
+      <img src="image.jpg" width="500">
+    </a>
+  </div>
 
   <h2>Links</h2>
   <ol>
@@ -1148,6 +1062,8 @@
     <li id="33"><a href="https://www.analog.com/en/resources/app-notes/an-913.html">https://www.analog.com/en/resources/app-notes/an-913.html</a></li>
     <li id="34"><a href="https://toshiba.semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/design-development/innovationcentre/whitepapers/TCM0646_Toshiba_Isolated_I2C_Communications_Using_Optoisolators.pdf">https://toshiba.semicon-storage.com/content/dam/toshiba-ss-v3/master/en/semiconductor/design-development/innovationcentre/whitepapers/TCM0646_Toshiba_Isolated_I2C_Communications_Using_Optoisolators.pdf</a></li>
     <li id="35"><a href="https://www.vishay.com/docs/84901/opticalisolatorfoti2cvussystem.pdf">https://www.vishay.com/docs/84901/opticalisolatorfoti2cvussystem.pdf</a></li>
+    <li id="36"><a href="https://www.daraz.pk/products/i433460246-s2080834429.html">https://www.daraz.pk/products/i433460246-s2080834429.html</a></li>
+    <li id="37"><a href="https://www.daraz.pk/products/i260624136-s1478880694.html">https://www.daraz.pk/products/i260624136-s1478880694.html</a></li>
   </ol>
 
 </body>

@@ -618,48 +618,16 @@ public:
 class Solar : public DcSource {
   OngoingEventTs pvCurrentEnough, pvVoltsEnough;
 
-  bool isSolarSensorPresent() {
-    Wire.beginTransmission(SOLAR_SENSOR_ADDR);
-    return (Wire.endTransmission() == 0);
-  }
-
 public:
-  bool present = false;
-
   Solar()
     : DcSource(solarSensor) {}
 
-  // I²C bus may become stuck when one of the lines (SDA or SCL) is held permanently LOW, preventing any communication.
-  // INA219's SCL line is input-only (no clock-stretching), so only SDA can stuck. But when INA219 on PV-side is powered down,
-  // we are sure that Arduino-side SDA line of 6N137 opto-coupler is pulled HIGH by the pull-up resistor. It goes LOW only when
-  // the PV-side is powered up and INA219 pulls the SDA line LOW (by lighting the 6N137 LED). So there's no chance of SDA bus
-  // being stuck. We only check if INA219 responds at its address. No need to try bus recovery.
-  void readSensorIfPresent() {
-    if (!isSolarSensorPresent()) {
-      volts = current = 0;
-      present = false;
-    } else if (!present) {
-      present = initSensor(F("Solar"),
-                           PG_40,    // Max current = 40mV / 0.00075Ω = 54A
-                           BRNG_32,  // Max voltage = 32V
-                           INA219_SOL_SHUNT_VOLT_OFFSET_MV,
-                           INA219_SOL_CORR_FACTOR,
-                           1);
-    }
-
-    if (present) {
-      readSensor();
-    }
-  }
-
   void updateTs() {
-    if (present) {
-      averageReadings();
-      volts += INA219_SOL_BUS_VOLTAGE_OFFSET;
-    }
+    averageReadings();
+    volts += INA219_SOL_BUS_VOLTAGE_OFFSET;
 
-    pvCurrentEnough.updateTs(present && current >= prefs.solarMinCurrent);
-    pvVoltsEnough.updateTs(present && (volts >= 15 || current >= 5));
+    pvCurrentEnough.updateTs(current >= prefs.solarMinCurrent);
+    pvVoltsEnough.updateTs(volts >= 15 || current >= 5);
   }
 
   // Should be called only when on inverter and battery is low or discharging.
@@ -1586,7 +1554,7 @@ void loop() {
 
   // Take 10 samples per second
   battery.readSensor();
-  solar.readSensorIfPresent();
+  solar.readSensor();
 
   static Ts tsLoopCheck;
 
