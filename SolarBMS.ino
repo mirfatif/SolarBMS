@@ -852,6 +852,8 @@ bool shouldSwitchToInverterNoGrid() {
 }
 
 void handleInverterGridSwitching() {
+  handleSwitchToInverterSched();
+
   hasGrid = gridSensor.getRmsVoltage() > GRID_VOLTAGE_THRESHOLD;
   isSunTime = checkSunTime();
 
@@ -1486,8 +1488,6 @@ void setup() {
 void loop() {
   delay(100);
 
-  handleDisplayOnOff();
-
   static Ts tsTwoHzTimer;
 
   // Using String, ISP, float point etc. in ISR (hardware timer interrupts) is problematic.
@@ -1515,11 +1515,11 @@ void loop() {
   battery.updateTs();
   solar.updateTs();
 
-  handleSwitchToInverterSched();
   handleInverterGridSwitching();
   setBuzzerAndWarning();
   handleButtonsPressed();
   handleHandWaved();
+  handleDisplayOnOff();
   updateDisplayMsg();
   handleFan();
 
