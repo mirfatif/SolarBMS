@@ -107,7 +107,8 @@ INA219_WE solarSensor = INA219_WE(SOLAR_SENSOR_ADDR);
 
 char leftStr[8] = "HELLO";
 char rightStr[8] = "JI";
-bool blinkLeft, blinkRight, hasGrid, downButtonPressed, menuButtonPressed, upButtonPressed, handWaved;
+bool blinkLeft, blinkRight, hasGrid, downButtonPressed, menuButtonPressed, upButtonPressed;
+volatile bool handWaved;
 
 ////////////////////////////////////////////////////////////////////
 
@@ -1118,13 +1119,8 @@ bool isButtonPressed(uint8_t pin) {
   return false;
 }
 
-// Check if hand is stable for 20 ms before declaring it waved
-bool isHandWaved() {
-  return isButtonPressed(PIN_IR_SENSOR);
-}
-
 void handleDisplayOnOff() {
-  if (isHandWaved()) {
+  if (handWaved) {
     handWaved = !startDisplay();
     ts.humanActivity.set();
   }
@@ -1511,6 +1507,12 @@ void setup() {
   pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
   pinMode(PIN_BUTTON_MENU, INPUT_PULLUP);
   pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
+
+  attachInterrupt(
+    digitalPinToInterrupt(PIN_IR_SENSOR), []() {
+      handWaved = true;
+    },
+    LOW);
 
   digitalWrite(PIN_FAN, LOW);
   digitalWrite(PIN_AC_RELAY, HIGH);
