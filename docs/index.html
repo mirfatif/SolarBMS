@@ -380,7 +380,7 @@
     </li>
     <li><strong>Capacitors:</strong>
       <ul>
-        <li>2 x 0.1µF 50V Ceramic</li>
+        <li>3 x 0.1µF 50V Ceramic</li>
         <li>2 x 10µF 25V Electrolytic</li>
       </ul>
     </li>
@@ -550,9 +550,8 @@
             <li><code>SDA</code>, <code>SCL</code> → ADuM1250</li>
           </ul>
         </li>
-        <li>Filters (for PWM controller noise):
+        <li>Filter (for PWM controller noise):
           <ul>
-            <li><code>VCC</code> → 0.1µF Ceramic → <code>GND</code></li>
             <li><code>Vin+</code> → 0.1µF ceramic → <code>Vin-</code>
               <ul>
                 <li>Works in combination with 10Ω in-series with <code>Vin+</code> and <code>Vin-</code>.</li>
@@ -575,6 +574,12 @@
             <li><code>SDA<sub>2</sub></code> → INA219 <code>SDA</code></li>
             <li><code>SCL<sub>2</sub></code> → INA219 <code>SDA</code></li>
             <li><code>GND<sub>2</sub></code> → GND_ISO rail</li>
+          </ul>
+        </li>
+        <li>Filters (decoupling):
+          <ul>
+            <li><code>V<sub>DD1</sub></code> → 0.1µF ceramic → <code>GND<sub>1</sub></code></li>
+            <li><code>V<sub>DD2</sub></code> → 0.1µF ceramic → <code>GND<sub>2</sub></code></li>
           </ul>
         </li>
         <li>4 x Pull-Ups:

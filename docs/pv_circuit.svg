@@ -50,8 +50,8 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="1.4142136"
-     inkscape:cx="405.17219"
-     inkscape:cy="271.52901"
+     inkscape:cx="422.14274"
+     inkscape:cy="297.69195"
      inkscape:window-width="1920"
      inkscape:window-height="1022"
      inkscape:window-x="0"
@@ -518,102 +518,92 @@
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line41-7" />
   <text
-     x="299.64209"
+     x="343.64209"
      y="352.15625"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="middle"
      id="text43">INA219 DC Current Sensor Module</text>
-  <text
-     x="721.18018"
-     y="352.15625"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="middle"
-     id="text43-4"><tspan
-       sodipodi:role="line"
-       id="tspan4"
-       x="721.18018"
-       y="352.15625">Decoupling (INA219)</tspan></text>
   <rect
-     x="249.64209"
+     x="293.64209"
      y="362.15625"
      width="100"
      height="50"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect43" />
   <line
-     x1="349.64209"
+     x1="393.64209"
      y1="372.15625"
-     x2="364.64209"
+     x2="408.64209"
      y2="372.15625"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line43" />
   <text
-     x="345.64209"
+     x="389.64209"
      y="372.15625"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text44">VCC</text>
   <line
-     x1="234.64209"
+     x1="278.64209"
      y1="382.15625"
-     x2="249.64209"
+     x2="293.64209"
      y2="382.15625"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line44" />
   <text
-     x="253.64209"
+     x="297.64209"
      y="382.15625"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text45">Vin+</text>
   <line
-     x1="349.64209"
+     x1="393.64209"
      y1="382.15625"
-     x2="364.64209"
+     x2="408.64209"
      y2="382.15625"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line45" />
   <text
-     x="345.64209"
+     x="389.64209"
      y="382.15625"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text46">GND</text>
   <line
-     x1="234.64209"
+     x1="278.64209"
      y1="392.15625"
-     x2="249.64209"
+     x2="293.64209"
      y2="392.15625"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line46" />
   <text
-     x="253.64209"
+     x="297.64209"
      y="392.15625"
      style="font-size:11px;font-family:Arial;text-anchor:start"
      dominant-baseline="middle"
      id="text47">Vin-</text>
   <line
-     x1="349.64209"
+     x1="393.64209"
      y1="392.15625"
-     x2="364.64209"
+     x2="408.64209"
      y2="392.15625"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line47" />
   <text
-     x="345.64209"
+     x="389.64209"
      y="392.15625"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
      id="text48">SCL</text>
   <line
-     x1="349.64209"
+     x1="393.64209"
      y1="402.15625"
-     x2="364.64209"
+     x2="408.64209"
      y2="402.15625"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line48" />
   <text
-     x="345.64209"
+     x="389.64209"
      y="402.15625"
      style="font-size:11px;font-family:Arial;text-anchor:end"
      dominant-baseline="middle"
@@ -621,44 +611,44 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="386.38782"
+     x="430.38782"
      y="384.18793"
      id="text188-3-3-4"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-3"
-       x="386.38782"
+       x="430.38782"
        y="384.18793"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">GND_ISO</tspan></text>
   <line
-     x1="455.25629"
+     x1="519.25629"
      y1="380.35541"
-     x2="476.25629"
+     x2="540.25629"
      y2="380.35541"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line93-0" />
   <line
-     x1="484.25629"
+     x1="548.25629"
      y1="380.35541"
-     x2="505.25629"
+     x2="569.25629"
      y2="380.35541"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line94-6" />
   <line
-     x1="476.25629"
+     x1="540.25629"
      y1="366.35541"
-     x2="476.25629"
+     x2="540.25629"
      y2="394.35547"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line95-2" />
   <line
-     x1="484.25629"
+     x1="548.25629"
      y1="366.35541"
-     x2="484.25629"
+     x2="548.25629"
      y2="394.35547"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line96-6" />
   <text
-     x="480.25629"
+     x="544.25629"
      y="360.35541"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
@@ -666,27 +656,27 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="451.31055"
+     x="515.31055"
      y="391.22345"
      id="text188-3-62-6-2-8"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-15-7"
-       x="451.31055"
+       x="515.31055"
        y="391.22345"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SEN_IN+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="510.2959"
+     x="574.2959"
      y="390.95776"
      id="text188-3-62-6-9-9-9"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-2-0-1-2"
-       x="510.2959"
+       x="574.2959"
        y="390.95776"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SEN_IN-</tspan></text>
   <line
@@ -810,88 +800,28 @@
        y="105.52582"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">GND</tspan></text>
   <line
-     x1="693.02332"
-     y1="397.19916"
-     x2="714.02332"
-     y2="397.19916"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line93-0-2" />
-  <line
-     x1="722.02332"
-     y1="397.19916"
-     x2="743.02332"
-     y2="397.19916"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line94-6-65" />
-  <line
-     x1="714.02332"
-     y1="383.19916"
-     x2="714.02332"
-     y2="411.19922"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line95-2-8" />
-  <line
-     x1="722.02332"
-     y1="383.19916"
-     x2="722.02332"
-     y2="411.19922"
-     style="stroke:#000000;stroke-width:2;stroke-linecap:square"
-     id="line96-6-7" />
-  <text
-     x="718.02332"
-     y="377.19916"
-     style="font-size:11px;font-family:Arial;text-anchor:middle"
-     dominant-baseline="baseline"
-     id="text96-1-96">0.1µF</text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="689.19891"
-     y="407.89044"
-     id="text188-3-62-6-2-8-0"
-     inkscape:transform-center-x="151.24774"
-     inkscape:transform-center-y="143.09222"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-6-2-15-7-4"
-       x="689.19891"
-       y="407.89044"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">5V_ISO</tspan></text>
-  <text
-     xml:space="preserve"
-     style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="745.93121"
-     y="407.97827"
-     id="text188-3-62-6-9-9-9-1"
-     inkscape:transform-center-x="151.24774"
-     inkscape:transform-center-y="143.09222"><tspan
-       sodipodi:role="line"
-       id="tspan187-6-6-2-0-1-2-0"
-       x="745.93121"
-       y="407.97827"
-       style="font-size:8px;fill:#ff0000;fill-opacity:1">GND_ISO</tspan></text>
-  <line
-     x1="557.32953"
+     x1="641.32953"
      y1="362.74902"
-     x2="562.32953"
+     x2="646.32953"
      y2="362.74902"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line49-3" />
   <line
-     x1="602.32953"
+     x1="686.32953"
      y1="362.74902"
-     x2="607.32953"
+     x2="691.32953"
      y2="362.74902"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line50-6" />
   <rect
-     x="562.32953"
+     x="646.32953"
      y="354.74902"
      width="40"
      height="16"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect50-7" />
   <text
-     x="582.32953"
+     x="666.32953"
      y="348.74902"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
@@ -899,52 +829,52 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="628.19995"
+     x="712.19995"
      y="365.37543"
      id="text188-3-62-9-1-1-5-3"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-0-5"
-       x="628.19995"
+       x="712.19995"
        y="365.37543"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SEN_IN+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="544.12323"
+     x="628.12323"
      y="365.44562"
      id="text188-3-62-9-1-1-4-6"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-6-2"
-       x="544.12323"
+       x="628.12323"
        y="365.44562"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">PV+</tspan></text>
   <line
-     x1="557.46185"
+     x1="641.46185"
      y1="409.09283"
-     x2="562.46185"
+     x2="646.46185"
      y2="409.09283"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line49-9" />
   <line
-     x1="602.46185"
+     x1="686.46185"
      y1="409.09283"
-     x2="607.46191"
+     x2="691.46191"
      y2="409.09283"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line50-1" />
   <rect
-     x="562.46185"
+     x="646.46185"
      y="401.09283"
      width="40"
      height="16"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect50-2" />
   <text
-     x="582.46185"
+     x="666.46185"
      y="395.09283"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
@@ -952,109 +882,109 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="626.93909"
+     x="710.93909"
      y="411.40955"
      id="text188-3-62-9-1-1-5-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-0-9"
-       x="626.93909"
+       x="710.93909"
        y="411.40955"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SEN_IN-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="544.40228"
+     x="628.40228"
      y="411.9151"
      id="text188-3-62-9-1-1-4-3"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-6-6"
-       x="544.40228"
+       x="628.40228"
        y="411.9151"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SHT</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="213.57703"
+     x="257.57703"
      y="384.66705"
      id="text188-3-97"><tspan
        sodipodi:role="line"
        id="tspan187-6-3"
-       x="213.57703"
+       x="257.57703"
        y="384.66705"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SEN_IN+</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="383.2644"
+     x="427.2644"
      y="374.77771"
      id="text188-3-18-4-5"><tspan
        sodipodi:role="line"
        id="tspan187-6-7-7-2"
-       x="383.2644"
+       x="427.2644"
        y="374.77771"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">5V_ISO</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="213.29108"
+     x="257.29108"
      y="394.79047"
      id="text188-3-62-9-1-1-5-0-3"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-0-9-6"
-       x="213.29108"
+       x="257.29108"
        y="394.79047"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SEN_IN-</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="385.27008"
+     x="429.27008"
      y="394.59961"
      id="text188-3-3-0-8-4-9-9-81-4-5-4-8"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-0-62-9-9-0"
-       x="385.27008"
+       x="429.27008"
        y="394.59961"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SCL_INA</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="385.16016"
+     x="429.16016"
      y="404.38672"
      id="text188-3-3-0-8-4-9-9-81-4-5-4-8-4"><tspan
        sodipodi:role="line"
        id="tspan187-6-56-6-7-8-0-6-0-62-9-9-0-0"
-       x="385.16016"
+       x="429.16016"
        y="404.38672"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SDA_INA</tspan></text>
   <line
-     x1="73.879997"
+     x1="97.879997"
      y1="358.50168"
-     x2="78.879997"
+     x2="102.88"
      y2="358.50168"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line49-9-6-5-9-2" />
   <line
-     x1="118.88"
+     x1="142.88"
      y1="358.50168"
-     x2="123.88007"
+     x2="147.88007"
      y2="358.50168"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line50-1-1-5-6-8" />
   <rect
-     x="78.879997"
+     x="102.88"
      y="350.50168"
      width="40"
      height="16"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect50-2-0-2-2-8" />
   <text
-     x="98.879997"
+     x="122.88"
      y="344.50168"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
@@ -1062,52 +992,52 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="144.60724"
+     x="168.60724"
      y="361.19339"
      id="text188-3-62-9-1-1-5-0-2-0-4-6"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-0-9-2-2-4-8"
-       x="144.60724"
+       x="168.60724"
        y="361.19339"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SCL_INA</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="56.132927"
+     x="80.132927"
      y="361.26144"
      id="text188-3-62-9-1-1-4-3-2-8-9-3"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-6-6-0-3-9-8"
-       x="56.132927"
+       x="80.132927"
        y="361.26144"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">5V_ISO</tspan></text>
   <line
-     x1="73.590569"
+     x1="97.590569"
      y1="405.27985"
-     x2="78.590569"
+     x2="102.59057"
      y2="405.27985"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line49-9-6-5-9-2-3" />
   <line
-     x1="118.59058"
+     x1="142.59058"
      y1="405.27985"
-     x2="123.59064"
+     x2="147.59064"
      y2="405.27985"
      style="stroke:#000000;stroke-width:2;stroke-linecap:square"
      id="line50-1-1-5-6-8-3" />
   <rect
-     x="78.590569"
+     x="102.59057"
      y="397.27985"
      width="40"
      height="16"
      style="fill:#000000;fill-opacity:0;stroke:#000000;stroke-width:2"
      id="rect50-2-0-2-2-8-3" />
   <text
-     x="98.590569"
+     x="122.59057"
      y="391.27985"
      style="font-size:11px;font-family:Arial;text-anchor:middle"
      dominant-baseline="baseline"
@@ -1115,27 +1045,27 @@
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="144.94281"
+     x="168.94281"
      y="407.59656"
      id="text188-3-62-9-1-1-5-0-2-0-4-6-0"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-0-9-2-2-4-8-4"
-       x="144.94281"
+       x="168.94281"
        y="407.59656"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">SDA_INA</tspan></text>
   <text
      xml:space="preserve"
      style="font-weight:bold;font-size:8px;font-family:Arial;-inkscape-font-specification:'Arial Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ff0000;fill-opacity:1;stroke-width:0;stroke-opacity:0"
-     x="55.905998"
+     x="79.905998"
      y="407.97711"
      id="text188-3-62-9-1-1-4-3-2-8-9-3-7"
      inkscape:transform-center-x="151.24774"
      inkscape:transform-center-y="143.09222"><tspan
        sodipodi:role="line"
        id="tspan187-6-6-3-05-0-6-6-0-3-9-8-6"
-       x="55.905998"
+       x="79.905998"
        y="407.97711"
        style="font-size:8px;fill:#ff0000;fill-opacity:1">5V_ISO</tspan></text>
   <line
