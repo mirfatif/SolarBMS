@@ -67,7 +67,7 @@
 
   <h2>Project Objective</h2>
   <p>
-    This project aims to develop a solar and battery power management system using an Arduino Nano. The system prioritizes solar energy during daytime (in SUB mode) to power an inverter and charge a battery, while intelligently switching to utility power (WAPDA) when necessary. The primary objective is to ensure continuous power availability while protecting the battery from overcharge (high charge quantity), over-feeding (high charging rate), over-discharge (high discharge quantity), and overload (high discharge rate) conditions.
+    This project aims to develop a solar and battery power management system using an Arduino Nano. The system prioritizes solar energy during daytime (in SUB mode) to power an inverter and charge a battery, while intelligently switching to utility power (WAPDA) when necessary. The primary objective is to ensure continuous power availability while protecting the battery from over-(dis)charge (quantity) and high (dis)charge (rate) conditions.
   </p>
 
   <h2>System Overview</h2>
@@ -79,15 +79,21 @@
   </ul>
 
   <h2>Operational Logic</h2>
-  <ol>
-    <li>During daytime, power is drawn from PV array (according to solar on/off time settings and sunlight availability) to run the inverter and charge the battery.
+  <ul>
+    <li>During daytime:
       <ul>
-        <li>You can configure time (in minutes, before configured sunlight time) in which load is shifted from grid to solar if sunlight is sufficient to bear the load. Otherwise, load is silently shifted back to grid.</li>
-        <li>Similarly, at evening, load is kept on solar as long as sunlight is sufficient.</li>
+        <li>Power is drawn from PV array (according to solar on/off time settings and sunlight availability) to run the inverter and charge the battery.</li>
+        <li>In the morning, load is switched from grid to solar at the configured sun time.</li>
+        <li>In the evening, after sun time, load is kept on solar as long as the battery doesn't start discharging.</li>
+        <li>If battery start discharging due to any of the following reasons, load is switched to grid, even during daytime:
+          <ul>
+            <li>Sunlight is not sufficient to produce the minimum required current (configured) e.g. due to morning / evening or clouds.</li>
+            <li>Inverter load exceeds solar supply.</li>
+          </ul>
+        </li>
+        <li>After switching to grid, we keep trying to switch back to the solar after some delays (configured).</li>
       </ul>
     </li>
-    <li>If sunlight is not sufficient to produce the minimum required current e.g. due to morning / evening or clouds, load is silently shifted to grid.</li>
-    <li>If the inverter load exceeds solar supply and the battery begins to discharge, switch to grid, even during daytime.</li>
     <li>At night:
       <ul>
         <li>If grid is available, use it instead of draining the battery.</li>
@@ -95,7 +101,7 @@
       </ul>
     </li>
     <li>If USB mode is selected (instead of SUB), grid is always given priority. This can be useful in winters when not much power is needed during daytime. So inverter runs only during power outages.</li>
-  </ol>
+  </ul>
 
   <p>Also see <a href="#flowchart">flowchart</a>.</p>
 
@@ -119,12 +125,12 @@
     <li>Battery is below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
     <li>Battery is being charged at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
     <li>Battery is being discharged at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
-    <li>During daytime, if sunlight is sufficient:
+    <li>During daytime, if sunlight is sufficient, and:
       <ul>
         <li>Battery is being discharged (at any rate; we should be using solar)</li>
         <li>Inverter turned off (and switched to grid; we should be using solar)
           <ul>
-            <li>Exact reason of turning off the inverter is shown on screen. See warnings below.</li>
+            <li>Exact reason of turning off the inverter is shown on the screen. See warnings below.</li>
           </ul>
         </li>
       </ul>
@@ -137,7 +143,11 @@
   <ul>
     <li><strong>E 1</strong>: Battery low – voltage below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
     <li><strong>E 2</strong>: Battery overloaded – high current (> <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>) drained</li>
-    <li><strong>E 3</strong>: Load higher than the solar power (during daytime) – due to morning / evening, clouds etc.</li>
+    <li><strong>E 3</strong>: Load higher than the solar power (during daytime) – due to morning / evening, clouds etc.
+      <ul>
+        <li>It's a silent alert.</li>
+      </ul>
+    </li>
     <li><strong>E 4</strong>: Load higher than the solar power (during daytime) – your fault.</li>
   </ul>
 
@@ -145,9 +155,9 @@
   <ul>
     <li>Use push buttons to jump to the next screen (center) and to change the configurable values (left and right).</li>
     <li>First 5 screens are informatory. On these screens, setting buttons turn off the display.</li>
-    <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared proximity detector) to turn the display back on.</li>
+    <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared proximity sensor) to turn the display back on.</li>
     <li>When display is on, waving hand before IR sensor rotates the display between informatory screens.</li>
-    <li>On SAVE screen (last), setting buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
+    <li>On SAVE screen (last), UP/DOWN buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
         <li><a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
         <li><a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
@@ -160,19 +170,19 @@
     <li>Display jumps back to the first screen after 30 seconds of inactivity (except first 4 informatory screens).</li>
   </ul>
 
-  <p>Screens:</p>
+  <b>Screens:</b>
   <ol>
-    <li>Battery voltage (left, Volts) and current (right, Ampere)</li>
-    <li>Battery voltage (left, Volts) and power being drawn from or fed to the battery (product of voltage and current) (right, Watt)</li>
-    <li>PV array voltage (left, Volts) and current (right, Ampere)</li>
-    <li>PV array voltage (left, Volts) and power (product of voltage and current) (right, Watt)</li>
-    <li>Clock (left, 24h format) and temperature (right, °C)</li>
-    <li id="pref_btry_volt_full"><code>BV<sub>full</sub></code>: Battery full charge voltage (Volts, range: 12.0-16.0, default: 14.4)</li>
-    <li id="pref_btry_volt_low"><code>BV<sub>low</sub></code>: Battery discharged voltage low threshold (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
-    <li id="pref_btry_volt_crit"><code>BV<sub>crit</sub></code>: Battery discharged voltage critical threshold (Volts, range: 9.0-12.0, default: 11.0)</li>
-    <li id="pref_btry_curr_crit"><code>BI<sub>crit</sub></code>: Battery discharge current critical threshold (Ampere, range: 20-60, default: 50)</li>
-    <li id="pref_btry_curr_high"><code>BI<sub>high</sub></code>: Battery discharge current high threshold (Ampere, range: 10-30, default: 20 (@ C10))</li>
-    <li id="pref_btry_curr_low"><code>BI<sub>low</sub></code>: Battery discharge current low threshold (Ampere, range: 1-15, default: 5)</li>
+    <li><code>INFO |</code> Battery voltage (left, Volts) and current (right, Ampere)</li>
+    <li><code>INFO |</code> Battery voltage (left, Volts) and power being drawn from or fed to the battery (product of voltage and current) (right, Watt)</li>
+    <li><code>INFO |</code> PV array voltage (left, Volts) and current (right, Ampere)</li>
+    <li><code>INFO |</code> PV array voltage (left, Volts) and power (product of voltage and current) (right, Watt)</li>
+    <li><code>INFO |</code> Clock (left, 24h format) and temperature (right, °C)</li>
+    <li id="pref_btry_volt_full"><code>BV<sub>full</sub> |</code> Battery full charge voltage (Volts, range: 12.0-16.0, default: 14.4)</li>
+    <li id="pref_btry_volt_low"><code>BV<sub>low</sub> |</code> Battery discharged voltage low threshold (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
+    <li id="pref_btry_volt_crit"><code>BV<sub>crit</sub> |</code> Battery discharged voltage critical threshold (Volts, range: 9.0-12.0, default: 11.0)</li>
+    <li id="pref_btry_curr_crit"><code>BI<sub>crit</sub> |</code> Battery discharge current critical threshold (Ampere, range: 20-60, default: 50)</li>
+    <li id="pref_btry_curr_high"><code>BI<sub>high</sub> |</code> Battery discharge current high threshold (Ampere, range: 10-30, default: 20 (@ C10))</li>
+    <li id="pref_btry_curr_low"><code>BI<sub>low</sub> |</code> Battery discharge current low threshold (Ampere, range: 1-15, default: 5)</li>
     <li>Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
     <li>Delay before switching AC load to inverter after starting inverter (Seconds, range: 0-10, default: 5)</li>
     <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> (Minutes, range: 1-10, default: 5)</li>
@@ -183,7 +193,6 @@
     <li>Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
     <li>Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
     <li>Clock time (24h format)</li>
-    <li>Time before solar on time, try switch to solar (Minutes, range: 0-60, default: 0)</li>
     <li>Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
     <li>Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
     <li>Solar minimum current required from PV array (Ampere, range: 1-30, default: 15)</li>
