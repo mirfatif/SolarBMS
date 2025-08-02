@@ -1280,7 +1280,7 @@ void handleHandWaved() {
 ////////////////////////////////////////////////////////////////////
 
 void updateDisplayMsg() {
-  if (screenNum > SCR_PV_VOLT_PWR && ts.buttonPressed.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
+  if (screenNum > SCR_PV_VOLT_PWR && ts.humanActivity.isOlderThanSec(PREF_SCREEN_IDLE_TIMEOUT_SEC)) {
     Serial.println(F("No activity. Jumping to first screen..."));
     screenNum = SCR_BTRY_VOLT_CURR;
     discardChangedPrefs();
