@@ -1459,7 +1459,7 @@ void setup() {
     digitalPinToInterrupt(PIN_IR_SENSOR), []() {
       handWaved = true;
     },
-    LOW);
+    FALLING);
 
   digitalWrite(PIN_FAN, LOW);
   digitalWrite(PIN_AC_RELAY, HIGH);
