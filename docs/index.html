@@ -73,31 +73,31 @@
   <h2>System Overview</h2>
   <ul>
     <li><strong>Primary Power Source:</strong> 4 x 300W (V<sub>oc</sub> = 24V, I<sub>sc</sub> = 15A) PV solar array via a PWM charge controller.</li>
-    <li><strong>Backup Power Source:</strong> 220V 50Hz Utility grid (WAPDA).</li>
+    <li><strong>Backup Power Source:</strong> 220V 50Hz utility grid (WAPDA).</li>
     <li><strong>Storage:</strong> 12V 200Ah lead-acid tubular battery, which stays at ≈12.9V when fully charged, with no load and no charging.</li>
-    <li><strong>Load:</strong> 600W inverter powering AC appliances.</li>
+    <li><strong>Load:</strong> 600W inverter powering light AC appliances (mainly fans & lights).</li>
   </ul>
 
   <h2>Operational Logic</h2>
   <ul>
     <li>During daytime:
       <ul>
-        <li>Power is drawn from PV array (according to solar on/off time settings and sunlight availability) to run the inverter and charge the battery.</li>
+        <li>Power is drawn from the PV array (according to solar on/off time settings and sunlight availability) to run the inverter and charge the battery.</li>
         <li>In the morning, load is switched from grid to solar at the configured sun time.</li>
         <li>In the evening, after sun time, load is kept on solar as long as the battery doesn't start discharging.</li>
-        <li>If battery start discharging due to any of the following reasons, load is switched to grid, even during daytime:
+        <li>If battery starts discharging due to any of the following reasons, load is switched to grid, even during daytime:
           <ul>
             <li>Sunlight is not sufficient to produce the minimum required current (configured) e.g. due to morning / evening or clouds.</li>
             <li>Inverter load exceeds solar supply.</li>
           </ul>
         </li>
-        <li>After switching to grid, we keep trying to switch back to the solar after some delays (configured).</li>
+        <li>After switching to grid, we keep trying to switch back to solar after some delays (configured).</li>
       </ul>
     </li>
     <li>At night:
       <ul>
         <li>If grid is available, use it instead of draining the battery.</li>
-        <li>If grid is unavailable, use the battery to run the inverter as long as the battery state remains within safe operating limits.</li>
+        <li>If grid is unavailable, use the battery to run the inverter as long as the battery state remains within safe operating limits (see Battery Protection Rules).</li>
       </ul>
     </li>
     <li>If USB mode is selected (instead of SUB), grid is always given priority. This can be useful in winters when not much power is needed during daytime. So inverter runs only during power outages.</li>
@@ -108,13 +108,17 @@
   <h2>Battery Protection Rules</h2>
   <ul>
     <li>
-      <b>Over-discharge protection</b>
-      <div>Inverter is turned off if battery voltage drops below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a>, even if there is no grid. A 2 minutes window is given if voltages remain above <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a>.</div>
-      <div>Discharging current is also limited to <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. A 10 seconds window is given if discharge rate is below <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</div>
+      <b>Over-discharge / high-discharge protection</b>
+      <ul>
+        <li>Inverter is turned off if battery voltage drops below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a>, even if there is no grid. A 2 minutes window is given if voltages remain above <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a>.</li>
+        <li>Discharging current is also limited to <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. A 10 seconds window is given if discharge rate is below <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</li>
+      </ul>
     </li>
     <li>
-      <b>Overcharge protection</b>
-      <div>Start beeping if battery is overcharged i.e. charged above <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a> or at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. We cannot control the PWM controller with Arduino. But we can cry.</div>
+      <b>Over-charge / high-charge protection</b>
+      <ul>
+        <li>Start beeping if battery is overcharged i.e. charged above <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a> or at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. We cannot control the PWM controller with Arduino. But we can cry.</li>
+      </ul>
     </li>
   </ul>
 
@@ -130,7 +134,7 @@
         <li>Battery is being discharged (at any rate; we should be using solar)</li>
         <li>Inverter turned off (and switched to grid; we should be using solar)
           <ul>
-            <li>Exact reason of turning off the inverter is shown on the screen. See warnings below.</li>
+            <li>Exact reason of turning off the inverter is shown on the screen. See On-Screen Warnings below.</li>
           </ul>
         </li>
       </ul>
@@ -153,11 +157,11 @@
 
   <h2>Display + Settings</h2>
   <ul>
-    <li>Use push buttons to jump to the next screen (center) and to change the configurable values (left and right).</li>
-    <li>First 5 screens are informatory. On these screens, setting buttons turn off the display.</li>
-    <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger infrared proximity sensor) to turn the display back on.</li>
+    <li>Use MENU button to jump to the next screen and UP/DOWN buttons to change the configurable values.</li>
+    <li>First 5 screens are informatory. On these screens, UP/DOWN buttons turn off the display.</li>
+    <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger the infrared proximity sensor) to turn the display back on.</li>
     <li>When display is on, waving hand before IR sensor rotates the display between informatory screens.</li>
-    <li>On SAVE screen (last), UP/DOWN buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
+    <li>On SAVE screen (the last one), UP/DOWN buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
         <li><a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
         <li><a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
@@ -638,7 +642,7 @@
     </li>
   </ul>
 
-  <h3>2. INA219 Current Sensor & FL-2C Shunt (Battery)</h3>
+  <h3>2. INA219 Current Sensor + FL-2C Shunt (Battery)</h3>
   <ul>
     <li><strong>Shunt Resistor:</strong> Place between the battery positive terminal and the load.</li>
     <li>Connections:
