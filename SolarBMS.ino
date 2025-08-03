@@ -457,7 +457,7 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 class DcSource {
-  INA219_WE sensor;
+  INA219_WE &sensor;
 
   float voltRecords[DC_SAMPLE_COUNT];
   float currentRecords[DC_SAMPLE_COUNT];
@@ -1502,6 +1502,12 @@ void setup() {
                      BRNG_16,  // Max voltage = 16V
                      INA219_BAT_SHUNT_VOLT_OFFSET_MV,
                      INA219_BAT_CORR_FACTOR);
+
+  solar.initSensor(F("Solar"),
+                   PG_40,    // Max current = 40mV / 0.00075Ω = 53A
+                   BRNG_32,  // Max voltage = 32V
+                   INA219_SOL_SHUNT_VOLT_OFFSET_MV,
+                   INA219_SOL_CORR_FACTOR);
 
   gridSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
 
