@@ -172,6 +172,7 @@
       </ul>
     </li>
     <li>Display jumps back to the first screen after 30 seconds of inactivity (except first 4 informatory screens).</li>
+    <li>When you select <a class="no-color" href="#pref_pri_solar"><u>SUB mode</u></a> or opt to not <a class="no-color" href="#pref_check_sun_time"><u>check sun time</u></a>, unused setting screens are jumped automatically.</li>
   </ul>
 
   <b>Screens:</b>
@@ -187,19 +188,20 @@
     <li id="pref_btry_curr_crit"><code>BI<sub>crit</sub> |</code> Battery discharge current critical threshold (Ampere, range: 20-60, default: 50)</li>
     <li id="pref_btry_curr_high"><code>BI<sub>high</sub> |</code> Battery discharge current high threshold (Ampere, range: 10-30, default: 20 (@ C10))</li>
     <li id="pref_btry_curr_low"><code>BI<sub>low</sub> |</code> Battery discharge current low threshold (Ampere, range: 1-15, default: 5)</li>
-    <li>Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
+    <li id="pref_pri_solar">Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
     <li>Delay before switching AC load to inverter after starting inverter (Seconds, range: 0-10, default: 5)</li>
     <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> (Minutes, range: 1-10, default: 5)</li>
-    <li>Delay before switching AC load back to inverter (daytime) after inverter was turned off due to sunlight not sufficient, now let's retry (Minutes, range: 15-60, default: 15)</li>
-    <li>Delay before switching AC load back to inverter (daytime) after inverter was turned off for any other reason (Minutes, range: 1-10, default: 5)</li>
+    <li><code>SOLAR |</code> Delay before switching AC load back to inverter (daytime) after inverter was turned off due to sunlight not sufficient, now let's retry (Minutes, range: 15-60, default: 15)</li>
+    <li><code>SOLAR |</code> Delay before switching AC load back to inverter (daytime) after inverter was turned off for any other reason (Minutes, range: 1-10, default: 5)</li>
     <li>Window before switching AC load to grid if battery voltages are between <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> and <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
     <li>Window before switching AC load to grid if battery discharge current is between <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> and <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> (Seconds, range: 5-60, default: 10)</li>
-    <li>Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
-    <li>Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
-    <li>Clock time (24h format)</li>
-    <li>Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
-    <li>Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
-    <li>Solar minimum current required from PV array (Ampere, range: 1-30, default: 15)</li>
+    <li><code>SOLAR |</code> Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
+    <li><code>SOLAR |</code> Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
+    <li id="pref_check_sun_time"><code>SOLAR |</code> Check sun time (Selection, options: 1 (true) / 0 (false), default: 1)</li>
+    <li><code>SOLAR |</code> Clock time (24h format)</li>
+    <li><code>SOLAR |</code> Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
+    <li><code>SOLAR |</code> Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
+    <li><code>SOLAR |</code> Solar minimum current required from PV array (Ampere, range: 1-30, default: 15)</li>
     <li>Display brightness (Level, range: 1-10, default: 1)</li>
     <li>Buzzer loudness (Level, range: 1-10, default: 1)</li>
     <li>Save</li>

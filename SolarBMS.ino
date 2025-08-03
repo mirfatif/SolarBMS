@@ -53,6 +53,7 @@ enum Screen {
   SCR_PV_VOLT_CURR,
   SCR_PV_VOLT_PWR,
   SCR_CLK_TEMP,
+
   // Settings
   SCR_BTRY_FULL_VOLT,
   SCR_BTRY_LOW_VOLT,
@@ -63,16 +64,25 @@ enum Screen {
   SCR_SOLAR_GRID_MODE,
   SCR_DLY_TO_INV_AFT_INV_START,
   SCR_DLY_TO_INV_AFT_BTRY_KILL,
-  SCR_DLY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT,  // Solar-only
-  SCR_DLY_DAYTIME_TO_INV,                   // Solar-only
+
+  // Solar-only
+  SCR_DLY_DAYTIME_TO_INV_AFT_LOW_SUNLIGHT,
+  SCR_DLY_DAYTIME_TO_INV,
+
+  // More settings
   SCR_WIND_TO_GRID_ON_VOLT_LOW,
   SCR_WIND_TO_GRID_ON_CURR_CRIT,
-  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,  // Solar-only
-  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,   // Solar-only
-  SCR_CLOCK,                              // Solar-only
-  SCR_SOLAR_ON_TIME,                      // Solar-only
-  SCR_SOLAR_OFF_TIME,                     // Solar-only
-  SCR_SOLAR_MIN_CURRENT,                  // Solar-only
+
+  // Solar-only
+  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH,
+  SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW,
+  SCR_CHECK_SUN_TIME,
+  SCR_CLOCK,
+  SCR_SOLAR_ON_TIME,
+  SCR_SOLAR_OFF_TIME,
+  SCR_SOLAR_MIN_CURRENT,
+
+  // Even more settings
   SCR_LED_BRIGHTNESS,
   SCR_BUZZER_LEVEL,
   SCR_SAVE
@@ -131,6 +141,7 @@ enum EEPROM_Addr {
   EE_WINDOW_TO_GRID_CURR_CRIT,
   EE_WINDOW_DAYTIME_CURR_HIGH,
   EE_WINDOW_DAYTIME_CURR_LOW,
+  EE_CHECK_SUN_TIME,
   EE_SOLAR_ON_HOUR,
   EE_SOLAR_ON_MIN,
   EE_SOLAR_OFF_HOUR,
@@ -158,13 +169,14 @@ public:
   uint8_t windowToGridOnCurrentCrit = 10;          // 18. Seconds (5-60, step: 5) | Battery current b/w high and critical
   uint8_t windowToGridDaytimeOnCurrentHigh = 2;    // 19. Minutes (1-10, step: 1) | Battery current b/w low and high
   uint8_t windowToGridDaytimeOnCurrentLow = 5;     // 20. Minutes (1-15, step: 1) | Battery current below low
-  uint8_t solarOnTimeHours = 7;                    // 22. Hour of the day (5-10, step: 1)
-  uint8_t solarOnTimeMinutes = 0;                  // 22. Minute of the hour (0-45, step: 15)
-  uint8_t solarOffTimeHours = 17;                  // 23. Hour of the day (14-19, step: 1)
-  uint8_t solarOffTimeMinutes = 0;                 // 23. Minute of the hour (0-45, step: 15)
-  uint8_t solarMinCurrent = 15;                    // 24. Ampere (1-30, step: 1)
-  uint8_t ledBrightLevel = 1;                      // 25. Level (1-10, step: 1)
-  uint8_t buzzerLevel = 1;                         // 26. Level (1-10, step: 1)
+  bool checkSunTime = true;                        // 21. Selection (1: true, 0: false)
+  uint8_t solarOnTimeHours = 7;                    // 23. Hour of the day (5-10, step: 1)
+  uint8_t solarOnTimeMinutes = 0;                  // 23. Minute of the hour (0-45, step: 15)
+  uint8_t solarOffTimeHours = 17;                  // 24. Hour of the day (14-19, step: 1)
+  uint8_t solarOffTimeMinutes = 0;                 // 24. Minute of the hour (0-45, step: 15)
+  uint8_t solarMinCurrent = 15;                    // 25. Ampere (1-30, step: 1)
+  uint8_t ledBrightLevel = 1;                      // 26. Level (1-10, step: 1)
+  uint8_t buzzerLevel = 1;                         // 27. Level (1-10, step: 1)
 
   bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
@@ -182,6 +194,7 @@ public:
     windowToGridOnCurrentCrit = EEPROM.read(EE_WINDOW_TO_GRID_CURR_CRIT);
     windowToGridDaytimeOnCurrentHigh = EEPROM.read(EE_WINDOW_DAYTIME_CURR_HIGH);
     windowToGridDaytimeOnCurrentLow = EEPROM.read(EE_WINDOW_DAYTIME_CURR_LOW);
+    checkSunTime = EEPROM.read(EE_CHECK_SUN_TIME);
     solarOnTimeHours = EEPROM.read(EE_SOLAR_ON_HOUR);
     solarOnTimeMinutes = EEPROM.read(EE_SOLAR_ON_MIN);
     solarOffTimeHours = EEPROM.read(EE_SOLAR_OFF_HOUR);
@@ -209,6 +222,7 @@ public:
     EEPROM.update(EE_WINDOW_TO_GRID_CURR_CRIT, windowToGridOnCurrentCrit);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_HIGH, windowToGridDaytimeOnCurrentHigh);
     EEPROM.update(EE_WINDOW_DAYTIME_CURR_LOW, windowToGridDaytimeOnCurrentLow);
+    EEPROM.update(EE_CHECK_SUN_TIME, checkSunTime);
     EEPROM.update(EE_SOLAR_ON_HOUR, solarOnTimeHours);
     EEPROM.update(EE_SOLAR_ON_MIN, solarOnTimeMinutes);
     EEPROM.update(EE_SOLAR_OFF_HOUR, solarOffTimeHours);
@@ -251,6 +265,7 @@ private:
     computeCRC8(crc, windowToGridOnCurrentCrit);
     computeCRC8(crc, windowToGridDaytimeOnCurrentHigh);
     computeCRC8(crc, windowToGridDaytimeOnCurrentLow);
+    computeCRC8(crc, checkSunTime);
     computeCRC8(crc, solarOnTimeHours);
     computeCRC8(crc, solarOnTimeMinutes);
     computeCRC8(crc, solarOffTimeHours);
@@ -744,6 +759,10 @@ bool checkSunTime() {
     return false;
   }
 
+  if (!prefs.checkSunTime) {
+    return solar.isPvVoltsEnough();
+  }
+
   uint8_t hoursNow = rtc.getHr();
   uint8_t minutesNow = rtc.getMinute();
 
@@ -1166,6 +1185,8 @@ void handleButtonsPressed() {
       } else if (screenNum >= SCR_WIND_TO_GRID_DAYTIME_ON_CURR_HIGH && screenNum <= SCR_SOLAR_MIN_CURRENT) {
         screenNum = SCR_LED_BRIGHTNESS;
       }
+    } else if (!chPrefs.checkSunTime && screenNum >= SCR_CLOCK && screenNum <= SCR_SOLAR_OFF_TIME) {
+      screenNum = SCR_SOLAR_MIN_CURRENT;
     }
     return;
   }
@@ -1222,6 +1243,9 @@ void handleButtonsPressed() {
       break;
     case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       handleMinMaxPrefButtonPress(chPrefs.windowToGridDaytimeOnCurrentLow, 1, 15);
+      break;
+    case SCR_CHECK_SUN_TIME:
+      chPrefs.checkSunTime = !chPrefs.checkSunTime;
       break;
     case SCR_CLOCK:
       if (!clk.updated) {
@@ -1386,6 +1410,9 @@ void updateDisplayMsg() {
       break;
     case SCR_WIND_TO_GRID_DAYTIME_ON_CURR_LOW:
       itoa(chPrefs.windowToGridDaytimeOnCurrentLow, rightStr, 10);
+      break;
+    case SCR_CHECK_SUN_TIME:
+      itoa(chPrefs.checkSunTime ? 1 : 0, rightStr, 10);
       break;
     case SCR_CLOCK:
       if (clk.updated) {
