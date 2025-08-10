@@ -508,10 +508,19 @@ public:
     return true;
   }
 
-  void readSensor() {
-    // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
-    voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
-    currentRecords[pos] = sensor.getCurrent_mA() / 1000;
+  void readSensor(bool retry = false) {
+    // We have noise-induced glitches on PV voltage/current sensor.
+    while (true) {
+      Wire.clearWireTimeoutFlag();
+
+      // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
+      voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
+      currentRecords[pos] = sensor.getCurrent_mA() / 1000;
+
+      if (!retry || !Wire.getWireTimeoutFlag()) {
+        break;
+      }
+    }
 
     pos++;
 
@@ -1497,6 +1506,10 @@ void setup() {
 
   Wire.begin();
 
+  // We have noise-induced glitches on PV voltage/current sensor.
+  // Even Wire.beginTransmission() stucks if no timeout is set.
+  Wire.setWireTimeout(3000, true);  // 3 milliseconds
+
   battery.initSensor(F("Battery"),
                      PG_80,    // Max current = 80mV / 0.00075Ω = 107A
                      BRNG_16,  // Max voltage = 16V
@@ -1534,7 +1547,7 @@ void loop() {
 
   // Take 10 samples per second
   battery.readSensor();
-  solar.readSensor();
+  solar.readSensor(true);
 
   static Ts tsLoopCheck;
 
