@@ -2,7 +2,7 @@
 #include <util/atomic.h>
 #include <EEPROM.h>
 #include <DS3231.h>
-#include <INA219_WE.h>
+#include <ADS1115_WE.h>
 #include <max7219.h>
 #include <TimerOne_V2.h>
 #include <ZMPT101B.h>
@@ -97,20 +97,20 @@ Screen screenNum = SCR_BTRY_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
 
-#define DC_SAMPLE_COUNT 10         // Keep this many samples and take their average
-#define INA219_SHUNT_SIZE 0.00075  // External 75mV / 100A shunt, on-board 0.1Ω shunt removed
-#define INA219_BAT_SHUNT_VOLT_OFFSET_MV 0.010
-#define INA219_BAT_CORR_FACTOR 1.4
-#define INA219_BAT_BUS_VOLTAGE_OFFSET -0.04
-#define INA219_SOL_SHUNT_VOLT_OFFSET_MV 0
-#define INA219_SOL_CORR_FACTOR 1
-#define INA219_SOL_BUS_VOLTAGE_OFFSET 0
+#define DC_SAMPLE_COUNT 10  // Keep this many samples and take their average
 
-#define SOLAR_SENSOR_ADDR 0x41
+// Voltage readings
+#define CALIB_BAT_SOL_0A 0
+#define CALIB_BAT_SOL_60A 0.36
+#define CALIB_BAT_SOL_0V 0
+#define CALIB_BAT_16V 1
+#define CALIB_SOL_25V 1
 
-// I2C pins A4 (SDA) and A5 (SCL), address 0x40 and 0x41
-INA219_WE batterySensor = INA219_WE(0x40);
-INA219_WE solarSensor = INA219_WE(SOLAR_SENSOR_ADDR);
+#define SOLAR_SENSOR_ADDR 0x49
+
+// I2C pins A4 (SDA) and A5 (SCL), address 0x48 and 0x49
+ADS1115_WE batterySensor = ADS1115_WE(0x48);
+ADS1115_WE solarSensor = ADS1115_WE(SOLAR_SENSOR_ADDR);
 
 ////////////////////////////////////////////////////////////////////
 
@@ -457,46 +457,30 @@ public:
 ////////////////////////////////////////////////////////////////////
 
 class DcSource {
-  INA219_WE &sensor;
+  ADS1115_WE &sensor;
 
-  float voltRecords[DC_SAMPLE_COUNT];
-  float currentRecords[DC_SAMPLE_COUNT];
+  float voltRecords[DC_SAMPLE_COUNT];     // Voltage readings from divider
+  float currentRecords[DC_SAMPLE_COUNT];  // Voltage readings from shunt
   uint8_t pos = 0;
+
+  float getResult(ADS1115_RANGE range, ADS1115_MUX mux) {
+    sensor.setVoltageRange_mV(range);
+    sensor.setCompareChannels(mux);
+    sensor.startSingleMeasurement();
+    while (sensor.isBusy()) {}
+    return sensor.getResult_V();
+  }
 
 public:
   float volts;    // V
   float current;  // A
 
-  bool initSensor(const __FlashStringHelper *name,
-                  INA219_PGAIN pGain,
-                  INA219_BUS_RANGE busRange,
-                  float shuntVoltOffset,
-                  float correctionFactor,
-                  uint8_t tries = 0) {
-    uint8_t n = 0;
-
-    while (true) {
-      n++;
-
-      if (sensor.init()) {
-        break;
-      } else if (tries > 0 && n == tries) {
-        return false;
-      }
-
+  bool initSensor(const __FlashStringHelper *name) {
+    while (!sensor.init()) {
       Serial.print(name);
       Serial.println(F(" sensor not ready"));
       delay(100);
     }
-
-    sensor.setADCMode(SAMPLE_MODE_128);
-    sensor.setMeasureMode(CONTINUOUS);
-    sensor.setShuntSizeInOhms(INA219_SHUNT_SIZE);
-
-    sensor.setPGain(pGain);
-    sensor.setBusRange(busRange);
-    sensor.setShuntVoltOffset_mV(shuntVoltOffset);
-    sensor.setCorrectionFactor(correctionFactor);
 
     delay(100);
 
@@ -508,19 +492,9 @@ public:
     return true;
   }
 
-  void readSensor(bool retry = false) {
-    // We have noise-induced glitches on PV voltage/current sensor.
-    while (true) {
-      Wire.clearWireTimeoutFlag();
-
-      // Voltage is the sum of bus voltage and shunt voltage (though the latter is very small).
-      voltRecords[pos] = (sensor.getShuntVoltage_mV() + sensor.getBusVoltage_V() * 1000) / 1000;
-      currentRecords[pos] = sensor.getCurrent_mA() / 1000;
-
-      if (!retry || !Wire.getWireTimeoutFlag()) {
-        break;
-      }
-    }
+  void readSensor() {
+    voltRecords[pos] = getResult(ADS1115_RANGE_1024, ADS1115_COMP_0_1);     // 0~1V
+    currentRecords[pos] = getResult(ADS1115_RANGE_0512, ADS1115_COMP_2_3);  // 0~360mV
 
     pos++;
 
@@ -530,7 +504,7 @@ public:
   }
 
 protected:
-  DcSource(INA219_WE &sensor)
+  DcSource(ADS1115_WE &sensor)
     : sensor(sensor) {}
 
   void averageReadings() {
@@ -544,6 +518,13 @@ protected:
 
     volts /= DC_SAMPLE_COUNT;
     current /= DC_SAMPLE_COUNT;
+
+    if (&sensor == &batterySensor) {
+      volts = lerp(CALIB_BAT_SOL_0V, CALIB_BAT_16V, 0, 16, volts);
+    } else {
+      volts = lerp(CALIB_BAT_SOL_0V, CALIB_SOL_25V, 0, 25, volts);
+    }
+    current = lerp(CALIB_BAT_SOL_0A, CALIB_BAT_SOL_60A, 0, 60, current);
   }
 };
 
@@ -573,11 +554,6 @@ public:
 
   void updateTs() {
     averageReadings();
-
-    volts += INA219_BAT_BUS_VOLTAGE_OFFSET * (volts > 14 ? 1.5 : 1);
-
-    // We are getting negative current when charging the battery. Inverse it.
-    current *= -1;
 
     if (current < -1 * prefs.batteryDischargeCurrentCrit) {
       currentState = BI_DISCH_VERY_CRITICAL;
@@ -638,8 +614,6 @@ public:
 
   void updateTs() {
     averageReadings();
-    volts += INA219_SOL_BUS_VOLTAGE_OFFSET;
-
     pvCurrentEnough.updateTs(current >= prefs.solarMinCurrent);
     pvVoltsEnough.updateTs(volts >= 15 || current >= 5);
   }
@@ -1506,21 +1480,8 @@ void setup() {
 
   Wire.begin();
 
-  // We have noise-induced glitches on PV voltage/current sensor.
-  // Even Wire.beginTransmission() stucks if no timeout is set.
-  Wire.setWireTimeout(3000, true);  // 3 milliseconds
-
-  battery.initSensor(F("Battery"),
-                     PG_80,    // Max current = 80mV / 0.00075Ω = 107A
-                     BRNG_16,  // Max voltage = 16V
-                     INA219_BAT_SHUNT_VOLT_OFFSET_MV,
-                     INA219_BAT_CORR_FACTOR);
-
-  solar.initSensor(F("Solar"),
-                   PG_40,    // Max current = 40mV / 0.00075Ω = 53A
-                   BRNG_32,  // Max voltage = 32V
-                   INA219_SOL_SHUNT_VOLT_OFFSET_MV,
-                   INA219_SOL_CORR_FACTOR);
+  battery.initSensor(F("Battery"));
+  solar.initSensor(F("Solar"));
 
   gridSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
 
@@ -1547,7 +1508,7 @@ void loop() {
 
   // Take 10 samples per second
   battery.readSensor();
-  solar.readSensor(true);
+  solar.readSensor();
 
   static Ts tsLoopCheck;
 
