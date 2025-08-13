@@ -13,8 +13,8 @@ enum Pin {
 
   PIN_AC_SENSOR,
   PIN_IR_SENSOR,
-  PIN_AC_RELAY,
-  PIN_INV_RELAY,
+  PIN_AC_RELAY,   // NO
+  PIN_INV_RELAY,  // NC
   PIN_BUZZER,
   PIN_BUTTON_DOWN,
   PIN_BUTTON_MENU,
@@ -754,7 +754,7 @@ void switchToInverter() {
 
   Serial.println(F("Switching to inverter..."));
 
-  digitalWrite(PIN_AC_RELAY, HIGH);
+  digitalWrite(PIN_AC_RELAY, LOW);
   ts.switchedToInverter.set();
 }
 
@@ -806,7 +806,7 @@ void switchToGrid(InverterHaltReason reason) {
     Serial.println();
   }
 
-  digitalWrite(PIN_AC_RELAY, LOW);
+  digitalWrite(PIN_AC_RELAY, HIGH);
   digitalWrite(PIN_INV_RELAY, HIGH);
   ts.switchedToGrid.set();
 }
@@ -1555,9 +1555,6 @@ void setup() {
       handWaved = true;
     },
     FALLING);
-
-  digitalWrite(PIN_FAN, LOW);
-  digitalWrite(PIN_AC_RELAY, HIGH);
 
   // Note: Hardware PWM on pins D9/D10 is disabled.
   Timer1.initialize(10000);  // 1 centi-second interrupt

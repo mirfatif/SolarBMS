@@ -329,12 +329,12 @@
         <li>I<sup>2</sup>C Address: 0x68</li>
       </ul>
     </li>
-    <li><strong>Relay Module</strong> <sup><a href="#9">[9]</a></sup> (in NO mode) – used to switch AC load between grid and inverter output.</li>
-    <li><strong>5V Relay</strong> <sup><a href="#10">[10]</a></sup> (in NC mode) – used to turn off inverter when not needed (to save battery) or during battery protection events. This relay is installed inside the inverter in series with the main power button.
+    <li><strong>5V Relay</strong> <sup><a href="#10">[10]</a></sup> (in NO mode) – used to switch AC load between grid and inverter output.
       <ul>
         <li>Max current: 60mA</li>
       </ul>
     </li>
+    <li><strong>5V Relay</strong> <sup><a href="#10">[10]</a></sup> (in NC mode) – used to turn off inverter when not needed (to save battery) or during battery protection events. This relay is installed inside the inverter in series with the main power button.</li>
     <li><strong>8-Digit Display MAX7219 Module</strong> <sup><a href="#11">[11]</a></sup> – shows information and configurable values.</li>
     <li><strong>5-12V Active Buzzer</strong> <sup><a href="#12">[12]</a></sup> – for alarms.
       <ul>
@@ -433,7 +433,7 @@
         </li>
       </ul>
     </li>
-    <li><strong>470 Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
+    <li><strong>470Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
       <ul>
         <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
       </ul>
@@ -442,15 +442,20 @@
     <li>Insert an <strong>RC filter</strong> (b/w Arduino and transistor, or b/w transistor and buzzer), or only a <strong>capacitor</strong> parallel to the buzzer, to flatten / smooth out the averaged output of PWM.</li>
   </ul>
 
-  <b>For Relay (inverter)</b>
+  <b>For Relay (AC)</b>
   <ul>
     <li><strong>2N3904 NPN BJT</strong> – drives the relay.</li>
-    <li><strong>470 Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
+    <li><strong>470Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
       <ul>
         <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
       </ul>
     </li>
     <li><strong>1N4007 diode</strong> – for flyback protection at the relay coil.</li>
+  </ul>
+
+  <b>For Relay (inverter)</b>
+  <ul>
+    <li>Same parts as for AC relay</li>
     <li><strong>47µF 16V capacitor</strong> – for stabilizing voltage at the relay coil.
       <ul>
         <li>Purpose is to act as a local energy reservoir, supplying extra current to avoid the voltage dip during the initial surge when the relay coil is energized. But size it wisely (or add a small resistor in series) to avoid high inrush current to the capacitor itself when the transistor turns on (though BJTs can tolerate short over-current spikes).</li>
@@ -485,39 +490,45 @@
 
   <b>Others:</b>
   <ul>
-    <li><strong>3 Pin T-Block Connector</strong> – AC mains connections:
-      <ol>
-        <li>220V live</li>
-        <li>220V neutral</li>
-        <li>Output of Relay Module to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
-      </ol>
-    </li>
-    <li>4 x <strong>2 Pin T-Block Connector</strong> for:
-      <ol>
-        <li>12V supply (battery)</li>
-        <li>Relay (inverter)</li>
-        <li>2 x FL-2C Shunt Resistor</li>
-      </ol>
-    </li>
-    <li>1 x <strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.
+    <li>3 x <strong>3-Pin T-Block Connector</strong> – AC mains connections:
       <ul>
-        <li>High-frequency electrical noise (HF EMI/RFI) from the inverter may cause excessive RMS current in the fuse, even though DC measurement appears low (multimeter shows average DC). This high RMS may cause localized heating in fuse due to HF current ripple/pulses. To avoid this:
+        <li>
+          <ol>
+            <li>220V Live</li>
+            <li>220V Neutral</li>
+            <li>Output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
+          </ol>
+        </li>
+        <li>FL-2C Shunt Resistor terminals & battery 12V+ supply</li>
+        <li>FL-2C Shunt Resistor terminals & PV+ supply</li>
+      </ul>
+    </li>
+    <li>2 x <strong>2-Pin T-Block Connector</strong> – for:
+      <ul>
+        <li>Relay (inverter)</li>
+        <li>Buzzer</li>
+      </ul>
+    </li>
+    <li><strong>Barrier T-Block Screw Connector</strong> – for external connections.</li>
+    <li>2 x <strong>1A Fuse + Fuse Holder</strong> – for whole circuit's protection.
+      <ul>
+        <li>High-frequency electrical noise (HF EMI/RFI) from inverter and PWM controller may cause excessive RMS current in the fuse, even though DC measurement appears low (multimeter shows average DC). This high RMS may cause localized heating in fuse due to HF current ripple/pulses. To avoid this:
           <ul>
             <li>Do LC or RC filtering.</li>
             <li>Use a slow-blow fuse.</li>
-            <li>Or run dedicated pairs of wires (positive and negative) from the battery to the Arduino circuit (do not share with inverter leads).</li>
-            <li>Or at least use a long wire for Arduino circuit power supply.</li>
+            <li>Run dedicated pairs of wires (positive and negative) from the battery to the Arduino circuit (do not share with inverter leads).</li>
+            <li>Use a long wire for Arduino circuit power supply.</li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><strong>DC Power Jack</strong> (male + female) – to make a detachable connection to Relay (inverter).</li>
+    <li><strong>DC Power Jack</strong> (male + female) – to make a detachable connection to relay (inverter).</li>
     <li><strong>Veroboard Dotted</strong> (145mm x 65mm) – circuit designing.</li>
     <li><strong>2.54mm Pitch Male Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
     <li><strong>2.54mm Pitch Female Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
     <li><strong>Plastic Enclosure Box</strong> (160mm x 96mm x 50mm) – enclose the circuit.</li>
     <li>4 x <strong>Plastic PCB Circuit Board Spacer</strong> – between veroboard and the box bottom.</li>
-    <li><strong>2-Core Cable</strong> – for 12V power supply, Relay (inverter) and FL-2C Shunt Resistor connections.</li>
+    <li><strong>2-Core Cable</strong> – for 12V power supply, relay (inverter) and FL-2C Shunt Resistor connections.</li>
     <li><strong>3-Core Cable</strong> – for AC connections.</li>
   </ul>
 
@@ -531,8 +542,7 @@
     <li>1 x B0505S-1W DC-DC Isolated Power Converter <sup><a href="#37">[37]</a></sup></li>
     <li>1 x H11AA1 Optocoupler <sup><a href="#15">[15]</a></sup></li>
     <li>1 x DS3231 Precision RTC Module <sup><a href="#7">[7]</a></sup></li>
-    <li>1 x 5V Single Channel Relay Module <sup><a href="#9">[9]</a></sup></li>
-    <li>1 x 5V SPDT Relay <sup><a href="#10">[10]</a></sup></li>
+    <li>2 x 5V SPDT Relay <sup><a href="#10">[10]</a></sup></li>
     <li>1 x 8-Digit Display MAX7219 Module <sup><a href="#11">[11]</a></sup></li>
     <li>1 x 5-12V Active Buzzer <sup><a href="#12">[12]</a></sup></li>
     <li>3 x Push Buttons <sup><a href="#13">[13]</a></sup></li>
@@ -540,9 +550,10 @@
     <li>1 x 5V 0.5W Fan <sup><a href="#28">[28]</a></sup></li>
     <li>1 x MP2307 Buck Converter <sup><a href="#21">[21]</a></sup></li>
     <li>1 x LM2596 Buck Converter <sup><a href="#14">[14]</a></sup></li>
-    <li>1 x 3-Pin T-Block Connector</li>
-    <li>4 x 2 Pin T-Block Connector</li>
-    <li>1 x 1A Fuse + Fuse Holder</li>
+    <li>3 x 3-Pin T-Block Connector</li>
+    <li>2 x 2-Pin T-Block Connector</li>
+    <li>1 x Barrier T-Block Screw Connector</li>
+    <li>2 x 1A Fuse + Fuse Holder</li>
     <li>1 x DC Power Jack (male + female)</li>
     <li>1 x Veroboard Dotted (145mm x 65mm)</li>
     <li>1 x 2.54mm Pitch Male Header</li>
@@ -551,11 +562,11 @@
     <li>4 x Plastic PCB Circuit Board Spacer</li>
     <li>1 x 2-Core Cable</li>
     <li>1 x 3-Core Cable</li>
-    <li>2 x 2N3904 NPN BJT</li>
+    <li>3 x 2N3904 NPN BJT</li>
     <li>1 x 2N2222A NPN BJT</li>
     <li>8 x 33Ω Resistor</li>
     <li>1 x 220Ω Resistor</li>
-    <li>3 x 470Ω Resistor</li>
+    <li>4 x 470Ω Resistor</li>
     <li>1 x 820Ω Resistor</li>
     <li>2 x 100kΩ Resistor</li>
     <li>2 x 220kΩ Resistor</li>
@@ -566,7 +577,7 @@
     <li>2 x 10µF 25V Electrolytic</li>
     <li>1 x 47µF 16V Electrolytic</li>
     <li>1 x 100µF 25V Electrolytic</li>
-    <li>3 x 1N4007 Diode</li>
+    <li>4 x 1N4007 Diode</li>
     <li>2 x 1N5822 Diode</li>
     <li>2 x 100µH Inductor (DIP)</li>
   </ul>
@@ -729,8 +740,8 @@
       <ul>
         <li><strong>10kΩ Potentiometer:</strong>
           <ul>
-            <li>Terminal 1 → 220kΩ → Live (220V)</li>
-            <li>Terminal 2 → 220kΩ → Neutral (220V)</li>
+            <li>Terminal 1 → 220kΩ → 220V_LF</li>
+            <li>Terminal 2 → 220kΩ → 220V Neutral</li>
           </ul>
         </li>
         <li>Connections:
@@ -763,43 +774,46 @@
     <li><code>SCL</code> → Arduino Nano A5 (shared with INA219)</li>
   </ul>
 
-  <h3>5. 5V Relay Module (AC Changeover)</h3>
+  <h3>5. Relay (AC Changeover)</h3>
   <ul>
-    <li><code>VCC</code> → 5V rail</li>
-    <li><code>GND</code> → GND rail</li>
-    <li><code>IN</code> → Arduino Nano D4 (control signal)</li>
-    <li><strong>AC Load:</strong>
-      <ul>
-        <li>Relay <code>COM</code> → 220V Live</li>
-        <li>Relay <code>NO</code> → Changeover coil (Live side)</li>
-        <li>Changeover coil Neutral → 220V Neutral</li>
-      </ul>
-    </li>
-  </ul>
-
-  <h3>6. 5V Relay (Inverter)</h3>
-  <ul>
-    <li><strong>Power ORing:</strong>
-      <ul>
-        <li>Diode 1: Arduino circuit 5V rail → [Anode] 1N5822 [Cathode] → Relay coil+</li>
-        <li>Diode 2: External 5V+ adapter → [Anode] 1N5822 [Cathode] → Relay coil+</li>
-      </ul>
-    </li>
     <li><strong>Transistor Driver:</strong>
       <ul>
-        <li>Arduino D5 → 1 kΩ resistor → 2N3904 Base</li>
-        <li>2N3904 Emitter → GND</li>
+        <li>2N3904 Base → 1 kΩ resistor → Arduino Nano D4</li>
+        <li>2N3904 Emitter → GND rail</li>
         <li>2N3904 Collector → Relay coil-</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
       <ul>
         <li>1N4007 flyback diode across relay coil (reverse polarity: cathode to 5V, anode to GND terminal).</li>
-        <li>100 µF capacitor across relay coil+ and coil-.</li>
+      </ul>
+    </li>
+    <li>Relay coil+ → 5V rail</li>
+    <li><strong>AC Load:</strong>
+      <ul>
+        <li>Relay <code>COM</code> → 220V_LF</li>
+        <li>Relay <code>NO</code> → Changeover coil (Live side)</li>
+        <li>Changeover coil Neutral → 220V Neutral</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>6. Relay (Inverter)</h3>
+  <ul>
+    <li>Same transistor and protection connections as AC relay, except that use Arduino Nano D5 for control signal.</li>
+    <li><strong>Protection:</strong>
+      <ul>
+        <li>47µF capacitor across relay coil+ and coil-</li>
+      </ul>
+    </li>
+    <li><strong>Power ORing:</strong>
+      <ul>
+        <li>Relay coil+ → [Anode] 1N5822 [Cathode] → Arduino circuit 5V rail</li>
+        <li>Relay coil+ → [Anode] 1N5822 [Cathode] → External 5V+ adapter</li>
       </ul>
     </li>
     <li>Relay <code>COM</code> and <code>NC</code> → Inverter on/off switch</li>
-    <li>External 5V- adapter → Relay coil-</li>
+    <li>Relay coil- → External 5V- adapter</li>
   </ul>
 
   <h3>7. MAX7219 8-Digit Display</h3>
@@ -918,10 +932,19 @@
         </li>
       </ul>
     </li>
-    <li><strong>220V AC:</strong><br>Feeds:
+    <li><strong>220V AC:</strong><br>
       <ul>
-        <li>H11AA1 Optocoupler – AC sensor</li>
-        <li>Relay module (for changeover coil)</li>
+        <li>Connections:
+          <ul>
+            <li>220V Live → Fuse → 220V_LF (220V live through fuse)</li>
+          </ul>
+        </li>
+        <li>Feeds:
+          <ul>
+            <li>H11AA1 Optocoupler – AC sensor</li>
+            <li>Relay (for changeover coil)</li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -950,14 +973,14 @@
       <td>~0</td>
     </tr>
     <tr>
-      <td>5V relay module (active-low)</td>
-      <td>70-100</td>
+      <td>2N3904 - drives a 5V relay<br>(AC)</td>
+      <td>60</td>
       <td>D4</td>
       <td>Output</td>
-      <td>-5 ~ -10</td>
+      <td>6</td>
     </tr>
     <tr>
-      <td>2N3904 - drives a 5V relay</td>
+      <td>2N3904 - drives a 5V relay<br>(inverter)</td>
       <td>60</td>
       <td>D5</td>
       <td>Output</td>
@@ -1015,8 +1038,8 @@
   </table>
 
   <ul>
-    <li>Total: 385~475mA</li>
-    <li>GPIO pins: 27~32mA</li>
+    <li>Total: 375~435mA</li>
+    <li>GPIO pins: 28mA</li>
   </ul>
 
   <b>B0505S: ~22mA</b>
