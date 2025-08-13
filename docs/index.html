@@ -353,13 +353,13 @@
         <li>Wave hand to turn on the display, or rotate between informatory screens.</li>
       </ul>
     </li>
-    <li><strong>5V 0.5W Fan</strong> <sup><a href="#28">[28]</a></sup> – used for cooling</li>
-    <li>2 x <strong>MP1584 Buck Converter</strong> <sup><a href="#40">[40]</a></sup> – converts 12V to 9V and 5V for Arduino Nano and other modules respectively.</li>
+    <li><strong>12V 1.8W Fan</strong> <sup><a href="#42">[42]</a></sup> – used for cooling</li>
+    <li>2 x <strong>MP1584 Buck Converter</strong> <sup><a href="#40">[40]</a></sup> – convert battery's 11~15V to 12V and 5V.</li>
   </ul>
 
   <h3>Minor Parts</h3>
 
-  <b>For PV Current / Voltage Sensing</b>
+  <b>For PV Current / Voltage Sensing:</b>
   <ul>
     <li><strong>Resistors:</strong>
       <ul>
@@ -385,7 +385,7 @@
     </li>
   </ul>
 
-  <b>For Battery Current / Voltage Sensing</b>
+  <b>For Battery Current / Voltage Sensing:</b>
   <ul>
     <li><strong>Resistors:</strong>
       <ul>
@@ -438,10 +438,14 @@
       </ul>
     </li>
     <li><strong>1N4007 diode</strong> – for flyback protection with the buzzer.</li>
-    <li>Insert an <strong>RC filter</strong> (b/w Arduino and transistor, or b/w transistor and buzzer), or only a <strong>capacitor</strong> parallel to the buzzer, to flatten / smooth out the averaged output of PWM.</li>
+    <li><strong>22µF 25V Electrolytic Capacitor</strong>
+      <ul>
+        <li>Better insert an <strong>RC filter</strong> (b/w Arduino and transistor, or b/w transistor and buzzer) to flatten / smooth out the averaged output of PWM.</li>
+      </ul>
+    </li>
   </ul>
 
-  <b>For Relay (AC)</b>
+  <b>For Relay (AC):</b>
   <ul>
     <li><strong>2N3904 NPN BJT</strong> – drives the relay.</li>
     <li><strong>470Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
@@ -452,7 +456,7 @@
     <li><strong>1N4007 diode</strong> – for flyback protection at the relay coil.</li>
   </ul>
 
-  <b>For Relay (inverter)</b>
+  <b>For Relay (inverter):</b>
   <ul>
     <li>Same parts as for AC relay</li>
     <li><strong>47µF 16V capacitor</strong> – for stabilizing voltage at the relay coil.
@@ -463,13 +467,13 @@
     <li>2 x <strong>1N5822 Schottky diode</strong> – for diode ORing. Power sources isolation is required because inverter relay is triggered from 2 sources in parallel: Arduino and a power adapter. Latter is used to bypass the protection system.</li>
   </ul>
 
-  <b>For Fan</b>
+  <b>For Fan:</b>
   <ul>
     <li><strong>2N2222A transistor</strong> – drives the fan.</li>
     <li><strong>220Ω-330Ω resistor</strong> – between the transistor (2N2222A) base and Arduino pin to protect high current draw.
       <ul>
         <li>For 130~200mA current draw from the transistor (5V - 0.7V / 13~20mA)</li>
-        <li>Fan current draw is less than 100mA.</li>
+        <li>Fan current draw is less than 150mA.</li>
       </ul>
     </li>
     <li><strong>1N4007 diode</strong> – for flyback protection.</li>
@@ -491,13 +495,7 @@
   <ul>
     <li>3 x <strong>3-Pin T-Block Connector</strong> – AC mains connections:
       <ul>
-        <li>
-          <ol>
-            <li>220V Live</li>
-            <li>220V Neutral</li>
-            <li>Output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
-          </ol>
-        </li>
+        <li>220V grid supply. And output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
         <li>FL-2C Shunt Resistor terminals & battery 12V+ supply</li>
         <li>FL-2C Shunt Resistor terminals & PV+ supply</li>
       </ul>
@@ -537,7 +535,6 @@
     <li>4 x HCPL-7840 Isolation Amplifier <sup><a href="#23">[23]</a></sup></li>
     <li>2 x ADS1115 16-Bit 4-Channel ADC + PGA <sup><a href="#38">[38]</a></sup></li>
     <li>2 x FL-2C Shunt Resistor 100A 75mV <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup></li>
-    <li>1 x ADuM1250 Bi-Direction I2C Digital Isolator <sup><a href="#36">[36]</a></sup></li>
     <li>1 x B0505S-1W DC-DC Isolated Power Converter <sup><a href="#37">[37]</a></sup></li>
     <li>1 x H11AA1 Optocoupler <sup><a href="#15">[15]</a></sup></li>
     <li>1 x DS3231 Precision RTC Module <sup><a href="#7">[7]</a></sup></li>
@@ -546,7 +543,7 @@
     <li>1 x 5-12V Active Buzzer <sup><a href="#12">[12]</a></sup></li>
     <li>3 x Push Buttons <sup><a href="#13">[13]</a></sup></li>
     <li>1 x IR Proximity (Obstacle Avoidance) Sensor <sup><a href="#22">[22]</a></sup></li>
-    <li>1 x 5V 0.5W Fan <sup><a href="#28">[28]</a></sup></li>
+    <li>1 x 12V 1.8W Fan <sup><a href="#42">[42]</a></sup></li>
     <li>2 x MP1584 Buck Converter <sup><a href="#40">[40]</a></sup></li>
     <li>2 x 2.54mm Pitch Jumper <sup><a href="#41">[41]</a></sup></li>
     <li>3 x 3-Pin T-Block Connector</li>
@@ -574,6 +571,7 @@
     <li>6 x 0.1µF 50V Ceramic</li>
     <li>1 x 10µF 50V Ceramic</li>
     <li>2 x 10µF 25V Electrolytic</li>
+    <li>1 x 22µF 25V Electrolytic</li>
     <li>1 x 47µF 16V Electrolytic</li>
     <li>1 x 100µF 25V Electrolytic</li>
     <li>4 x 1N4007 Diode</li>
@@ -775,19 +773,19 @@
 
   <h3>5. Relay (AC Changeover)</h3>
   <ul>
-    <li><strong>Transistor Driver:</strong>
+    <li><strong>Driver Circuit:</strong>
       <ul>
-        <li>2N3904 Base → 1 kΩ resistor → Arduino Nano D4</li>
+        <li>2N3904 Base → 1kΩ resistor → Arduino Nano D4</li>
         <li>2N3904 Emitter → GND rail</li>
         <li>2N3904 Collector → Relay coil-</li>
+        <li>Relay coil+ → 5V rail</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
       <ul>
-        <li>1N4007 flyback diode across relay coil (reverse polarity: cathode to 5V, anode to GND terminal).</li>
+        <li>Relay coil+ → [Cathode] 1N4007 [Anode] → Relay coil- (reverse polarity)</li>
       </ul>
     </li>
-    <li>Relay coil+ → 5V rail</li>
     <li><strong>AC Load:</strong>
       <ul>
         <li>Relay <code>COM</code> → 220V_LF</li>
@@ -800,9 +798,9 @@
   <h3>6. Relay (Inverter)</h3>
   <ul>
     <li>Same transistor and protection connections as AC relay, except that use Arduino Nano D5 for control signal.</li>
-    <li><strong>Protection:</strong>
+    <li><strong>Filter:</strong>
       <ul>
-        <li>47µF capacitor across relay coil+ and coil-</li>
+        <li>Relay coil+ → 47µF Electrolytic → Relay coil-</li>
       </ul>
     </li>
     <li><strong>Power ORing:</strong>
@@ -828,15 +826,20 @@
   <ul>
     <li><strong>Driver Circuit:</strong>
       <ul>
-        <li>Arduino Nano D6 (PWM frequency: ~976 Hz) → 1 kΩ resistor → 2N3904 Base</li>
-        <li>2N3904 Emitter → GND</li>
-        <li>2N3904 Collector → Buzzer negative terminal</li>
-        <li>Buzzer positive terminal → BAT_F+</li>
+        <li>2N3904 Base → 1kΩ resistor → Arduino Nano D6 (PWM frequency: ~976 Hz)</li>
+        <li>2N3904 Emitter → GND rail</li>
+        <li>2N3904 Collector → Buzzer-</li>
+        <li>Buzzer+ → 12V rail</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
       <ul>
-        <li>1N4007 diode across buzzer (reverse polarity: cathode to 12V+, anode to GND terminal).</li>
+        <li>Buzzer+ → [Cathode] 1N4007 [Anode] → Buzzer- (reverse polarity)</li>
+      </ul>
+    </li>
+    <li><strong>Filter:</strong>
+      <ul>
+        <li>Buzzer+ → 22µF Electrolytic → Buzzer-</li>
       </ul>
     </li>
   </ul>
@@ -845,7 +848,7 @@
   <ul>
     <li><strong>Each Button:</strong>
       <ul>
-        <li>One terminal → GND</li>
+        <li>One terminal → GND rail</li>
         <li>Other terminal → Arduino Nano D7, D8, D9 (digital inputs with internal pull-up enabled).</li>
       </ul>
     </li>
@@ -860,21 +863,22 @@
 
   <h3>11. Fan</h3>
   <ul>
-    <li><strong>Transistor Driver:</strong>
+    <li><strong>Driver Circuit:</strong>
       <ul>
-        <li>2N2222A Base → 330Ω → Arduino D14</li>
-        <li>2N2222A Emitter → GND</li>
+        <li>2N2222A Base → 330Ω resistor → Arduino Nano D14</li>
+        <li>2N2222A Emitter → GND rail</li>
         <li>2N2222A Collector → Fan-</li>
+        <li>Fan+ → 12V rail</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
       <ul>
-        <li>1N4007 flyback diode across fan (reverse polarity: cathode to 5V, anode to GND terminal).</li>
+        <li>Fan+ → [Cathode] 1N4007 [Anode] → Fan- (reverse polarity)</li>
       </ul>
     </li>
   </ul>
 
-  <h3>12. MP1584 Buck Converter (9V)</h3>
+  <h3>12. MP1584 Buck Converter (12V)</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
@@ -884,18 +888,18 @@
     </li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → Jumper → Arduino Nano <code>VIN</code></li>
-        <li><code>OUT-</code> → Arduino Nano <code>GND</code></li>
+        <li><code>OUT+</code> → Jumper → 12V rail → Arduino Nano <code>VIN</code></li>
+        <li><code>OUT-</code> → GND rail</li>
       </ul>
     </li>
   </ul>
 
   <h3>13. MP1584 Buck Converter (5V)</h3>
   <ul>
-    <li><strong>Input:</strong> Same as 9V converter.</li>
+    <li><strong>Input:</strong> Same as 12V converter.</li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → Jumper → All 5V modules and other circuit components</li>
+        <li><code>OUT+</code> → Jumper → 5V rail → All 5V modules and other circuit components</li>
         <li><code>OUT-</code> → GND rail</li>
       </ul>
     </li>
@@ -915,17 +919,16 @@
         </li>
         <li>Connections:
           <ul>
-            <li>Powers MP1584 (converted to 9V for Arduino).
+            <li>Powers MP1584 (12V).
               <ul>
-                <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe.</li>
+                <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe. So we feed it through <code>VIN</code>.</li>
               </ul>
             </li>
-            <li>Powers MP1584 (converted to 5V for modules).
+            <li>Powers MP1584 (5V).
               <ul>
                 <li>For accurate ADC readings, make sure that the output voltages match the Nano's on-board AMS1117 regulator output.</li>
               </ul>
             </li>
-            <li>Directly feeds buzzer (12V).</li>
             <li>Also connected to inverter and solar charge controller (-ve side through shunt resistor).</li>
           </ul>
         </li>
@@ -987,7 +990,7 @@
     </tr>
     <tr>
       <td>2N3904 - drives a 12V buzzer</td>
-      <td>40</td>
+      <td>40 @ 12V</td>
       <td>D6</td>
       <td>Output</td>
       <td>4</td>
@@ -1007,8 +1010,8 @@
       <td>±0.1 × 3 = ±0.3</td>
     </tr>
     <tr>
-      <td>2N2222A - drives a fan</td>
-      <td>100</td>
+      <td>2N2222A - drives a 12V fan</td>
+      <td>150 @ 12V</td>
       <td>D14</td>
       <td>Output</td>
       <td>10</td>
@@ -1036,14 +1039,24 @@
     </tr>
   </table>
 
+  <p>Total:</p>
   <ul>
-    <li>Total: 375~435mA</li>
-    <li>GPIO pins: 28mA</li>
-  </ul>
-
-  <b>B0505S: ~22mA</b>
-  <ul>
-    <li>HCPL-7840: 11mA × 2 = 22mA</li>
+    <li><b>5V MP1584</b>: 235~295mA</li>
+    <li><b>12V MP1584</b>: 40mA + 150mA + (43~58mA × 5V ÷ 12V) = 208~214mA
+      <ul>
+        <li><b>Nano</b>: 43~58mA
+          <ul>
+            <li>Self: 15~30mA</li>
+            <li>GPIO pins: 28mA</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><b>B0505S: ~22mA</b>
+      <ul>
+        <li>HCPL-7840: 11mA × 2 = 22mA</li>
+      </ul>
+    </li>
   </ul>
 
   <h2 style="page-break-before: always;">Schematics (TODO: update)</h2>
@@ -1198,6 +1211,7 @@
     <li id="39"><a href="https://github.com/wollewald/ADS1115_WE">https://github.com/wollewald/ADS1115_WE</a></li>
     <li id="40"><a href="https://digilog.pk/products/mini-mp1584en-dc-dc-buck-adjustable-step-down-module-4-5v-28v-input-0-8v-20v-output">https://digilog.pk/products/mini-mp1584en-dc-dc-buck-adjustable-step-down-module-4-5v-28v-input-0-8v-20v-output</a></li>
     <li id="41"><a href="https://digilog.pk/products/mini-jumpers-hard-drive-jumper-in-pakistan">https://digilog.pk/products/mini-jumpers-hard-drive-jumper-in-pakistan</a></li>
+    <li id="42"><a href="https://digilog.pk/products/40mm-x-40mm-x-10mm-4010-12v-0-15a-dc-brushless-ball-bearing-cooling-fan-2pin">https://digilog.pk/products/40mm-x-40mm-x-10mm-4010-12v-0-15a-dc-brushless-ball-bearing-cooling-fan-2pin</a></li>
   </ol>
 
 </body>
