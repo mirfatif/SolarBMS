@@ -295,15 +295,31 @@
       </ul>
     </li>
 
-    <li><strong>ZMPT101B AC Single Phase Voltage Sensor Module</strong> <sup><a href="#6">[6]</a></sup> – measures grid voltage. Alternatively, simply detect the presence of AC power using:
+    <li><strong>H11AA1 Optocoupler</strong> <sup><a href="#15">[15]</a></sup> – detects grid presence.
       <ul>
-        <li>220V AC to 5V DC Converter</li>
-        <li>AC 220V Optocoupler Isolation Module</li>
-        <li>Input current: 2mA</li>
-        <li>Output current: 2mA</li>
-        <li><b>H11AA1 Optocoupler</b> <sup><a href="#15">[15]</a></sup>
+        <li>Input LED:
           <ul>
-            <li>Input LEDs forward voltage drop: 1.2-1.5V, forward current: 10mA (max 60mA).</li>
+            <li>Forward voltage drop: 1.2-1.5V</li>
+            <li>Forward current (I<sub>F</sub>): 10mA (max 60mA)
+              <ul>
+                <li>Practically seems to work at <1mA </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>CTR: Minimum = 20% (at I<sub>F</sub> = 10mA, V<sub>CE</sub> = 10V)</li>
+        <li>Output voltage:
+          <ul>
+            <li>Limit (V<sub>CEO</sub>): 30V</li>
+            <li>Drop (V<sub>CE(sat)</sub>): ≤0.4V</li>
+          </ul>
+        </li>
+        <li>Output current (I<sub>C</sub>): ≤1mA (safe limit)</li>
+        <li>Alternatives:
+          <ul>
+            <li>220V AC to 5V DC Converter</li>
+            <li>AC 220V Optocoupler Isolation Module</li>
+            <li>ZMPT101B AC Single Phase Voltage Sensor Module <sup><a href="#6">[6]</a></sup></li>
           </ul>
         </li>
       </ul>
@@ -385,6 +401,18 @@
         <li>2 x 0.1µF 50V Ceramic</li>
       </ul>
     </li>
+  </ul>
+
+  <b>For H11AA1 Optocoupler:</b>
+  <ul>
+    <li>2 x <strong>220kΩ resistor</strong> (with live and neutral) – 230V (RMS, 325V peak) AC input current limiting.
+      <ul>
+        <li>Forward current (max): <math>(325V - 1.2V) / 440kΩ = ~0.74mA</math></li>
+        <li>Power rating: <math>(230V)</math><sup>2</sup><math> / 440kΩ = 120mW</math> (60mW per resistor)</li>
+      </ul>
+    </li>
+    <li><strong>10kΩ Multi-turn Potentiometer</strong> – for pulse-width calibration.</li>
+    <li><strong>100nF 50V Ceramic Capacitor</strong> – filter glitches.</li>
   </ul>
 
   <b>For Buzzer:</b>
@@ -501,7 +529,7 @@
     <li>2 x FL-2C Shunt Resistor 100A 75mV <sup><a href="#4">[4]</a> <a href="#24">[24]</a></sup></li>
     <li>1 x ADuM1250 Bi-Direction I2C Digital Isolator <sup><a href="#36">[36]</a></sup></li>
     <li>1 x B0505S-1W DC-DC Isolated Power Converter <sup><a href="#37">[37]</a></sup></li>
-    <li>1 x ZMPT101B AC Single Phase Voltage Sensor Module <sup><a href="#6">[6]</a></sup></li>
+    <li>1 x H11AA1 Optocoupler <sup><a href="#15">[15]</a></sup></li>
     <li>1 x DS3231 Precision RTC Module <sup><a href="#7">[7]</a></sup></li>
     <li>1 x 5V Single Channel Relay Module <sup><a href="#9">[9]</a></sup></li>
     <li>1 x 5V SPDT Relay <sup><a href="#10">[10]</a></sup></li>
@@ -530,8 +558,10 @@
     <li>3 x 470Ω Resistor</li>
     <li>1 x 820Ω Resistor</li>
     <li>2 x 100kΩ Resistor</li>
+    <li>2 x 220kΩ Resistor</li>
+    <li>1 x 10kΩ Multi-turn Potentiometer</li>
     <li>4 x 10nF 50V Ceramic</li>
-    <li>5 x 0.1µF 50V Ceramic</li>
+    <li>6 x 0.1µF 50V Ceramic</li>
     <li>1 x 10µF 50V Ceramic</li>
     <li>2 x 10µF 25V Electrolytic</li>
     <li>1 x 47µF 16V Electrolytic</li>
@@ -693,15 +723,34 @@
     <li>Remaining details are same as that of PV sensor.</li>
   </ul>
 
-  <h3>3. ZMPT101B AC Voltage Sensor</h3>
+  <h3>3. H11AA1 Optocoupler – AC Detection</h3>
   <ul>
-    <li><code>VCC</code> → 5V rail</li>
-    <li><code>OUT</code> → Arduino Nano A1</li>
-    <li><code>GND</code> → GND rail</li>
     <li><strong>AC Side:</strong>
       <ul>
-        <li><code>L</code> → Live (220V)</li>
-        <li><code>N</code> → Neutral (220V)</li>
+        <li><strong>10kΩ Potentiometer:</strong>
+          <ul>
+            <li>Terminal 1 → 220kΩ → Live (220V)</li>
+            <li>Terminal 2 → 220kΩ → Neutral (220V)</li>
+          </ul>
+        </li>
+        <li>Connections:
+          <ul>
+            <li>Pin 1 → Pot terminal</li>
+            <li>Pin 2 → Pot wiper</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><strong>DC Side:</strong>
+      <ul>
+        <li>Connections:
+          <ul>
+            <li>Pin 4 (collector) → Arduino Nano D2 (digital input with internal pull-up enabled)</li>
+            <li>Pin 5 (emitter) → GND rail</li>
+            <li>Pin 6 (base) → Unconnected (transistor is driven by the LEDs)</li>
+          </ul>
+        </li>
+        <li>Filter: Pin 4 → 100nF ceramic → Pin 5</li>
       </ul>
     </li>
   </ul>
@@ -800,7 +849,7 @@
   <ul>
     <li><strong>Transistor Driver:</strong>
       <ul>
-        <li>2N2222A Base → 330Ω → Arduino D2</li>
+        <li>2N2222A Base → 330Ω → Arduino D14</li>
         <li>2N2222A Emitter → GND</li>
         <li>2N2222A Collector → Fan-</li>
       </ul>
@@ -871,7 +920,7 @@
     </li>
     <li><strong>220V AC:</strong><br>Feeds:
       <ul>
-        <li>ZMPT101B AC voltage sensor</li>
+        <li>H11AA1 Optocoupler – AC sensor</li>
         <li>Relay module (for changeover coil)</li>
       </ul>
     </li>
@@ -887,11 +936,11 @@
       <th>Pin Source (+) / Sink (-)</br>Current (mA)</th>
     </tr>
     <tr>
-      <td>2N2222A - drives a fan</td>
-      <td>100</td>
+      <td>H11AA1 Optocoupler – AC sensor<br>(pulled-up @ ~20kΩ)</td>
+      <td></td>
       <td>D2</td>
-      <td>Output</td>
-      <td>10</td>
+      <td>Input</td>
+      <td>-0.25</td>
     </tr>
     <tr>
       <td>IR proximity sensor module</td>
@@ -936,18 +985,18 @@
       <td>±0.1 × 3 = ±0.3</td>
     </tr>
     <tr>
-      <td>ZMPT101B AC voltage sensor module</td>
-      <td>2</td>
-      <td>A1</td>
-      <td>Input</td>
-      <td>~0</td>
+      <td>2N2222A - drives a fan</td>
+      <td>100</td>
+      <td>D14</td>
+      <td>Output</td>
+      <td>10</td>
     </tr>
     <tr>
       <td>DS3231 clock module</td>
       <td>0.5-1.5</td>
       <td rowspan="3">A4-A5</td>
       <td rowspan="3">I<sup>2</sup>C</td>
-      <td rowspan="3">-0.5<br>(SDA/SCL pulled LOW)</td>
+      <td rowspan="3">-0.25 × 2 = -0.5<br>(SDA/SCL pulled LOW)</td>
     </tr>
     <tr>
       <td>Battery sensor:<br>ADS1115 module &<br>2 x HCPL-7840</td>
@@ -1074,7 +1123,6 @@
     <li>DS3231 <sup><a href="#16">[16]</a></sup></li>
     <li>ADS1115_WE <sup><a href="#39">[39]</a></sup></li>
     <li>max7219 <sup><a href="#18">[18]</a></sup></li>
-    <li>ZMPT101B-arduino <sup><a href="#19">[19]</a></sup></li>
     <li>TimerOne_V2 <sup><a href="#20">[20]</a></sup></li>
   </ul>
 

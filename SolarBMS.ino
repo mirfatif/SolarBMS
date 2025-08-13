@@ -5,17 +5,29 @@
 #include <ADS1115_WE.h>
 #include <max7219.h>
 #include <TimerOne_V2.h>
-#include <ZMPT101B.h>
 
-#define PIN_FAN 2
-#define PIN_IR_SENSOR 3
-#define PIN_AC_RELAY 4
-#define PIN_INV_RELAY 5
-#define PIN_BUZZER 6
-#define PIN_BUTTON_DOWN 7
-#define PIN_BUTTON_MENU 8
-#define PIN_BUTTON_UP 9
-#define PIN_AC_VOLT A1
+enum Pin {
+  // UART
+  PIN_0,
+  PIN_1,
+
+  PIN_AC_SENSOR,
+  PIN_IR_SENSOR,
+  PIN_AC_RELAY,
+  PIN_INV_RELAY,
+  PIN_BUZZER,
+  PIN_BUTTON_DOWN,
+  PIN_BUTTON_MENU,
+  PIN_BUTTON_UP,
+
+  // MAX7219
+  PIN_10,
+  PIN_11,
+  PIN_12,
+
+  PIN_13,  // LED_BUILTIN
+  PIN_FAN  // PIN_A0
+};
 
 ////////////////////////////////////////////////////////////////////
 
@@ -27,10 +39,89 @@ bool buzzerOn = false;
 
 ////////////////////////////////////////////////////////////////////
 
-#define AC_SENSOR_SENSITIVITY 500   // On-board potentiometer calibration
-#define GRID_VOLTAGE_THRESHOLD 150  // 150V AC
+// Keep this many samples and take their average
+#define DC_AC_SAMPLE_COUNT 10
+#define DC_AC_SAMPLE_DELAY_MS (1000 / DC_AC_SAMPLE_COUNT)
 
-ZMPT101B gridSensor(PIN_AC_VOLT, 50);
+#define AC_PULSE_WIDTH_THRESHOLD_MS 5
+
+void _gridISR();
+
+class Grid {
+  volatile uint8_t records[DC_AC_SAMPLE_COUNT];  // Pulse-width per half-cycle readings
+  volatile unsigned long then;
+
+public:
+  Grid() {
+    attachInterrupt(digitalPinToInterrupt(PIN_AC_SENSOR), _gridISR, CHANGE);
+  }
+
+  // Calculate pulse-width (high-time) per half-cycle here.
+  void isr() {
+    static uint8_t pos = 0;
+    static bool waitingForHigh = true;
+
+    unsigned long now = millis();
+    long diff = now - then;
+
+    // ISR is called 100 times a second (50 LOW + 50 HIGH). Limit readings to 10/sec.
+    if (waitingForHigh && diff < DC_AC_SAMPLE_DELAY_MS) {
+      return;
+    }
+
+    // Pin is low near peaks, pulled high near zero-crossings.
+    if (digitalRead(PIN_AC_SENSOR) == LOW) {
+      then = now;
+      waitingForHigh = false;
+      return;
+    } else if (waitingForHigh) {
+      return;
+    }
+
+    // A half-cycle pulse-width cannot be longer than 10ms (with 50Hz frequency).
+    records[pos] = diff > 0 && diff <= 10 ? diff : 0;
+
+    then = now;
+    waitingForHigh = true;
+
+    pos++;
+
+    if (pos == DC_AC_SAMPLE_COUNT) {
+      pos = 0;
+    }
+  }
+
+  bool isPresent() {
+    if (then == 0) {
+      return false;
+    }
+
+    // If 2 consecutive readings have been skipped -> no grid.
+    if (millis() - then >= 2 * DC_AC_SAMPLE_DELAY_MS) {
+      for (uint8_t i = 0; i < DC_AC_SAMPLE_COUNT; i++) {
+        records[i] = 0;
+      }
+      then = 0;
+      return false;
+    }
+
+    uint8_t time = 0;
+
+    for (uint8_t i = 0; i < DC_AC_SAMPLE_COUNT; i++) {
+      time += records[i];
+    }
+
+    time /= DC_AC_SAMPLE_COUNT;
+
+    // Half-cycle pulse-width should be long enough to
+    // indicate >~200V RMS voltages. Calibrate with pot.
+    return time >= AC_PULSE_WIDTH_THRESHOLD_MS;
+  }
+} grid;
+
+void _gridISR() {
+  grid.isr();
+}
 
 ////////////////////////////////////////////////////////////////////
 
@@ -96,8 +187,6 @@ bool ledOn = true;
 Screen screenNum = SCR_BTRY_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
-
-#define DC_SAMPLE_COUNT 10  // Keep this many samples and take their average
 
 // Voltage readings
 #define CALIB_BAT_SOL_0A 0
@@ -459,8 +548,8 @@ public:
 class DcSource {
   ADS1115_WE &sensor;
 
-  float voltRecords[DC_SAMPLE_COUNT];     // Voltage readings from divider
-  float currentRecords[DC_SAMPLE_COUNT];  // Voltage readings from shunt
+  float voltRecords[DC_AC_SAMPLE_COUNT];     // Voltage readings from divider
+  float currentRecords[DC_AC_SAMPLE_COUNT];  // Voltage readings from shunt
   uint8_t pos = 0;
 
   float getResult(ADS1115_RANGE range, ADS1115_MUX mux) {
@@ -484,11 +573,6 @@ public:
 
     delay(100);
 
-    for (uint8_t i = 0; i < DC_SAMPLE_COUNT; i++) {
-      readSensor();
-      delay(1000 / DC_SAMPLE_COUNT);
-    }
-
     return true;
   }
 
@@ -498,7 +582,7 @@ public:
 
     pos++;
 
-    if (pos == DC_SAMPLE_COUNT) {
+    if (pos == DC_AC_SAMPLE_COUNT) {
       pos = 0;
     }
   }
@@ -511,13 +595,13 @@ protected:
     volts = 0;
     current = 0;
 
-    for (uint8_t i = 0; i < DC_SAMPLE_COUNT; i++) {
+    for (uint8_t i = 0; i < DC_AC_SAMPLE_COUNT; i++) {
       volts += voltRecords[i];
       current += currentRecords[i];
     }
 
-    volts /= DC_SAMPLE_COUNT;
-    current /= DC_SAMPLE_COUNT;
+    volts /= DC_AC_SAMPLE_COUNT;
+    current /= DC_AC_SAMPLE_COUNT;
 
     if (&sensor == &batterySensor) {
       volts = lerp(CALIB_BAT_SOL_0V, CALIB_BAT_16V, 0, 16, volts);
@@ -856,7 +940,7 @@ bool shouldSwitchToInverterNoGrid() {
 void handleInverterGridSwitching() {
   handleSwitchToInverterSched();
 
-  hasGrid = gridSensor.getRmsVoltage() > GRID_VOLTAGE_THRESHOLD;
+  hasGrid = grid.isPresent();
   isSunTime = checkSunTime();
 
   if (hasGrid) {
@@ -1456,7 +1540,7 @@ void setup() {
   while (!Serial)
     ;
 
-  pinMode(PIN_FAN, OUTPUT);
+  pinMode(PIN_AC_SENSOR, INPUT_PULLUP);
   pinMode(PIN_IR_SENSOR, INPUT);
   pinMode(PIN_AC_RELAY, OUTPUT);
   pinMode(PIN_INV_RELAY, OUTPUT);
@@ -1464,6 +1548,7 @@ void setup() {
   pinMode(PIN_BUTTON_DOWN, INPUT_PULLUP);
   pinMode(PIN_BUTTON_MENU, INPUT_PULLUP);
   pinMode(PIN_BUTTON_UP, INPUT_PULLUP);
+  pinMode(PIN_FAN, OUTPUT);
 
   attachInterrupt(
     digitalPinToInterrupt(PIN_IR_SENSOR), []() {
@@ -1483,7 +1568,11 @@ void setup() {
   battery.initSensor(F("Battery"));
   solar.initSensor(F("Solar"));
 
-  gridSensor.setSensitivity(AC_SENSOR_SENSITIVITY);
+  for (uint8_t i = 0; i < DC_AC_SAMPLE_COUNT; i++) {
+    battery.readSensor();
+    solar.readSensor();
+    delay(DC_AC_SAMPLE_DELAY_MS);
+  }
 
   led.Begin();
 
@@ -1493,7 +1582,7 @@ void setup() {
 }
 
 void loop() {
-  delay(100);
+  delay(DC_AC_SAMPLE_DELAY_MS);
 
   static Ts tsTwoHzTimer;
 
@@ -1506,7 +1595,7 @@ void loop() {
 
   checkButtonPressed();
 
-  // Take 10 samples per second
+  // Take ~10 samples per second
   battery.readSensor();
   solar.readSensor();
 
