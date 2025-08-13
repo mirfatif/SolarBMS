@@ -354,8 +354,7 @@
       </ul>
     </li>
     <li><strong>5V 0.5W Fan</strong> <sup><a href="#28">[28]</a></sup> – used for cooling</li>
-    <li><strong>MP2307 Buck Converter</strong> <sup><a href="#21">[21]</a></sup> – converts 12V to 9V for Arduino Nano.</li>
-    <li><strong>LM2596 Buck Converter</strong> <sup><a href="#14">[14]</a></sup> – converts 12V to 5V for other modules.</li>
+    <li>2 x <strong>MP1584 Buck Converter</strong> <sup><a href="#40">[40]</a></sup> – converts 12V to 9V and 5V for Arduino Nano and other modules respectively.</li>
   </ul>
 
   <h3>Minor Parts</h3>
@@ -526,10 +525,10 @@
     <li><strong>Veroboard Dotted</strong> (145mm x 65mm) – circuit designing.</li>
     <li><strong>2.54mm Pitch Male Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
     <li><strong>2.54mm Pitch Female Header</strong> – soldered with the veroboard to connect the sensor modules.</li>
+    <li>2 x <strong>2.54mm Pitch Jumper</strong> – buck converters output cut-off for voltage adjustment.</li>
     <li><strong>Plastic Enclosure Box</strong> (160mm x 96mm x 50mm) – enclose the circuit.</li>
     <li>4 x <strong>Plastic PCB Circuit Board Spacer</strong> – between veroboard and the box bottom.</li>
-    <li><strong>2-Core Cable</strong> – for 12V power supply, relay (inverter) and FL-2C Shunt Resistor connections.</li>
-    <li><strong>3-Core Cable</strong> – for AC connections.</li>
+    <li><strong>2-Core Cable</strong>, <strong>3-Core Cable</strong> – for 12V power supply, relay (inverter) and FL-2C Shunt Resistor connections, AC connections.</li>
   </ul>
 
   <h2>BoM</h2>
@@ -548,8 +547,8 @@
     <li>3 x Push Buttons <sup><a href="#13">[13]</a></sup></li>
     <li>1 x IR Proximity (Obstacle Avoidance) Sensor <sup><a href="#22">[22]</a></sup></li>
     <li>1 x 5V 0.5W Fan <sup><a href="#28">[28]</a></sup></li>
-    <li>1 x MP2307 Buck Converter <sup><a href="#21">[21]</a></sup></li>
-    <li>1 x LM2596 Buck Converter <sup><a href="#14">[14]</a></sup></li>
+    <li>2 x MP1584 Buck Converter <sup><a href="#40">[40]</a></sup></li>
+    <li>2 x 2.54mm Pitch Jumper <sup><a href="#41">[41]</a></sup></li>
     <li>3 x 3-Pin T-Block Connector</li>
     <li>2 x 2-Pin T-Block Connector</li>
     <li>1 x Barrier T-Block Screw Connector</li>
@@ -875,7 +874,7 @@
     </li>
   </ul>
 
-  <h3>12. MP2307 Buck Converter</h3>
+  <h3>12. MP1584 Buck Converter (9V)</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
@@ -885,18 +884,18 @@
     </li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → Arduino Nano <code>VIN</code></li>
+        <li><code>OUT+</code> → Jumper → Arduino Nano <code>VIN</code></li>
         <li><code>OUT-</code> → Arduino Nano <code>GND</code></li>
       </ul>
     </li>
   </ul>
 
-  <h3>13. LM2596 Buck Converter</h3>
+  <h3>13. MP1584 Buck Converter (5V)</h3>
   <ul>
-    <li><strong>Input:</strong> Same as MP2307.</li>
+    <li><strong>Input:</strong> Same as 9V converter.</li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → All 5V modules and other circuit components</li>
+        <li><code>OUT+</code> → Jumper → All 5V modules and other circuit components</li>
         <li><code>OUT-</code> → GND rail</li>
       </ul>
     </li>
@@ -916,12 +915,12 @@
         </li>
         <li>Connections:
           <ul>
-            <li>Powers MP2307 (converted to 9V for Arduino).
+            <li>Powers MP1584 (converted to 9V for Arduino).
               <ul>
                 <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe.</li>
               </ul>
             </li>
-            <li>Powers LM2596 (converted to 5V for modules).
+            <li>Powers MP1584 (converted to 5V for modules).
               <ul>
                 <li>For accurate ADC readings, make sure that the output voltages match the Nano's on-board AMS1117 regulator output.</li>
               </ul>
@@ -1197,6 +1196,8 @@
     <li id="37"><a href="https://www.daraz.pk/products/i260624136-s1478880694.html">https://www.daraz.pk/products/i260624136-s1478880694.html</a></li>
     <li id="38"><a href="https://digilog.pk/products/ads1115">https://digilog.pk/products/ads1115</a></li>
     <li id="39"><a href="https://github.com/wollewald/ADS1115_WE">https://github.com/wollewald/ADS1115_WE</a></li>
+    <li id="40"><a href="https://digilog.pk/products/mini-mp1584en-dc-dc-buck-adjustable-step-down-module-4-5v-28v-input-0-8v-20v-output">https://digilog.pk/products/mini-mp1584en-dc-dc-buck-adjustable-step-down-module-4-5v-28v-input-0-8v-20v-output</a></li>
+    <li id="41"><a href="https://digilog.pk/products/mini-jumpers-hard-drive-jumper-in-pakistan">https://digilog.pk/products/mini-jumpers-hard-drive-jumper-in-pakistan</a></li>
   </ol>
 
 </body>
