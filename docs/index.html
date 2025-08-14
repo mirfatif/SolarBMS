@@ -297,6 +297,7 @@
 
     <li><strong>H11AA1 Optocoupler</strong> <sup><a href="#15">[15]</a></sup> – detects grid presence.
       <ul>
+        <li>Has two anti-parallel IR LEDs, so it produces a conduction pulse on both half cycles of the mains. 50Hz mains → 2 pulses per 20ms → 100 pulses (100 rises and 100 falls) per second i.e. 100Hz.</li>
         <li>Input LED:
           <ul>
             <li>Forward voltage drop: 1.2-1.5V</li>
@@ -317,6 +318,11 @@
         <li>Output current (I<sub>C</sub>): ≤1mA (safe limit)</li>
         <li>Alternatives:
           <ul>
+            <li>PC814
+              <ul>
+                <li>Even a uni-directional optocoupler like PC817 should also work with pulse-width detection frequency limited to 50Hz.</li>
+              </ul>
+            </li>
             <li>220V AC to 5V DC Converter</li>
             <li>AC 220V Optocoupler Isolation Module</li>
             <li>ZMPT101B AC Single Phase Voltage Sensor Module <sup><a href="#6">[6]</a></sup></li>
@@ -836,8 +842,8 @@
       <ul>
         <li>Connections:
           <ul>
-            <li>Pin 4 (collector) → Arduino Nano D2 (digital input with internal pull-up enabled)</li>
-            <li>Pin 5 (emitter) → GND rail</li>
+            <li>Pin 4 (emitter) → GND rail</li>
+            <li>Pin 5 (collector) → Arduino Nano D2 (digital input with internal pull-up enabled)</li>
             <li>Pin 6 (base) → Unconnected (transistor is driven by the LEDs)</li>
           </ul>
         </li>

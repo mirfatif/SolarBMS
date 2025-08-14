@@ -64,7 +64,8 @@ public:
     unsigned long now = millis();
     long diff = now - then;
 
-    // ISR is called 100 times a second (50 LOW + 50 HIGH). Limit readings to 10/sec.
+    // With H11AA1 (2 anti-parallel input IR LEDs), ISR is called 200
+    // times a second (100 LOW + 100 HIGH). Limit readings to 10/sec.
     if (waitingForHigh && diff < DC_AC_SAMPLE_DELAY_MS) {
       return;
     }
