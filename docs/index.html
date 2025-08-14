@@ -489,6 +489,63 @@
         <li>100µF 25V Electrolytic (low-ESR polymer/aluminum)</li>
       </ul>
     </li>
+    <li><strong>TL431 Regulator</strong> <sup><a href="#32">[32]</a></sup> – cuts-off whole circuit supply if battery drops below 7V.
+      <ul>
+        <li>Reference:
+          <ul>
+            <li>Voltage: 2.5V ±1%</li>
+            <li>Bias current: 50-100µA (needs current limiter for <1mA) </li>
+          </ul>
+        </li>
+        <li>Output (cathode-anode):
+          <ul>
+            <li>Current: 100mA
+              <ul>
+                <li>1mA is always required</li>
+              </ul>
+            </li>
+            <li>Voltage: 2.5-37V
+              <ul>
+                <li>Drop: 1.8-2.5V
+                  <ul>
+                    <li>When active, cathode pulls down to 1.8-2.5V, not 0V</li>
+                    <li>Depends on the current (0.2Ω internal resistance)</li>
+                  </ul>
+                </li>
+                <li>Output: 0.5~34V</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li>Max power loss: 700 mW (TO-92 package)</li>
+        <li>Configurations:
+          <ul>
+            <li>Series-regulator (like LM7805, variable-zener) topology:
+              <ul>
+                <li>Add 2 resistors from REF → anode (R1) and cathode → REF (R2)</li>
+                <li>Vout = 2.5 x ​(1 + R2 / R1​)</li>
+              </ul>
+            </li>
+            <li>Low-side switch (cut-off / UVLO):
+              <ul>
+                <li>Design a divider from power supply accordingly</li>
+                <li>Cut-off is not very sharp due to linear region. Need to add hysteresis (positive feedback resistor).</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><strong>SI2301 P-MOS</strong> – provides feedback to TL431 (for hysteresis) and drives MP1584 buck converters.</li>
+    <li><strong>Resistors:</strong>
+      <ul>
+        <li>1 x 100kΩ</li>
+        <li>1 x 22kΩ</li>
+        <li>1 x 10kΩ</li>
+        <li>1 x 6.8kΩ</li>
+        <li>1 x 2.2kΩ</li>
+      </ul>
+    </li>
   </ul>
 
   <b>Others:</b>
@@ -547,6 +604,7 @@
     <li>1 x IR Proximity (Obstacle Avoidance) Sensor <sup><a href="#22">[22]</a></sup></li>
     <li>1 x 12V 1.8W Fan <sup><a href="#42">[42]</a></sup></li>
     <li>2 x MP1584 Buck Converter <sup><a href="#40">[40]</a></sup></li>
+    <li>1 x TL431 Regulator <sup><a href="#32">[32]</a></sup></li>
     <li>2 x 2.54mm Pitch Jumper <sup><a href="#41">[41]</a></sup></li>
     <li>2 x 3-Pin T-Block Connector</li>
     <li>4 x 2-Pin T-Block Connector</li>
@@ -562,11 +620,16 @@
     <li>1 x 3-Core Cable</li>
     <li>3 x 2N3904 NPN BJT</li>
     <li>1 x 2N2222A NPN BJT</li>
+    <li>1 x SI2301 P-MOS</li>
     <li>8 x 33Ω Resistor</li>
     <li>1 x 220Ω Resistor</li>
     <li>4 x 470Ω Resistor</li>
     <li>1 x 820Ω Resistor</li>
-    <li>2 x 100kΩ Resistor</li>
+    <li>1 x 2.2kΩ Resistor</li>
+    <li>1 x 6.8kΩ Resistor</li>
+    <li>1 x 10kΩ Resistor</li>
+    <li>1 x 22kΩ Resistor</li>
+    <li>3 x 100kΩ Resistor</li>
     <li>2 x 220kΩ Resistor</li>
     <li>1 x 10kΩ Multi-turn Potentiometer</li>
     <li>4 x 10nF 50V Ceramic</li>
@@ -687,7 +750,7 @@
       <ul>
         <li><strong>Voltage Divider:</strong>
           <ul>
-            <li>BAT_F+ → 100kΩ → Junction → 820Ω → GND rail</li>
+            <li>BAT_12V+ → 100kΩ → Junction → 820Ω → GND rail</li>
           </ul>
         </li>
         <li><strong>HCPL-7840 (U3):</strong>
@@ -739,7 +802,7 @@
       <ul>
         <li><strong>10kΩ Potentiometer:</strong>
           <ul>
-            <li>Terminal 1 → 220kΩ → 220V_LF</li>
+            <li>Terminal 1 → 220kΩ → 220V_L</li>
             <li>Terminal 2 → 220kΩ → 220V Neutral</li>
           </ul>
         </li>
@@ -790,7 +853,7 @@
     </li>
     <li><strong>AC Load:</strong>
       <ul>
-        <li>Relay <code>COM</code> → 220V_LF</li>
+        <li>Relay <code>COM</code> → 220V_L</li>
         <li>Relay <code>NO</code> → Changeover coil (Live side)</li>
         <li>Changeover coil Neutral → 220V Neutral</li>
       </ul>
@@ -884,7 +947,7 @@
   <ul>
     <li><strong>Input:</strong>
       <ul>
-        <li><code>IN+</code> → BAT_F+</li>
+        <li><code>IN+</code> → BAT_12V+</li>
         <li><code>IN-</code> → GND rail</li>
       </ul>
     </li>
@@ -916,27 +979,88 @@
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
-        <li>Fuse + HF Noise Filter:
-          <ul>
-            <li>Battery 12V+ → Fuse → 100µH inductor → BAT_F+ (battery through fuse & filter)</li>
-            <li>BAT_F+ → 100µF 25V electrolytic → GND rail (shunt's battery-side terminal)</li>
-            <li>BAT_F+ → 10µF 50V ceramic → GND rail</li>
-            <li>BAT_F+ → 0.1µF 50V ceramic → GND rail</li>
-          </ul>
-        </li>
         <li>Connections:
           <ul>
-            <li>Powers MP1584 (12V).
+            <li>Powers MP1584 (12V)
               <ul>
-                <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe. So we feed it through <code>VIN</code>.</li>
+                <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe. So we feed it through <code>VIN</code> (requires 6V+).</li>
               </ul>
             </li>
-            <li>Powers MP1584 (5V).
+            <li>Powers MP1584 (5V)
               <ul>
                 <li>For accurate ADC readings, make sure that the output voltages match the Nano's on-board AMS1117 regulator output.</li>
               </ul>
             </li>
             <li>Also connected to inverter and solar charge controller (-ve side through shunt resistor).</li>
+          </ul>
+        </li>
+        <li>Fuse + HF Noise Filter:
+          <ul>
+            <li>Battery 12V+ → Fuse → 100µH inductor → BAT+</li>
+            <li>BAT+ → 100µF 25V electrolytic → GND rail (shunt's battery-side terminal)</li>
+            <li>BAT+ → 10µF 50V ceramic → GND rail</li>
+            <li>BAT+ → 0.1µF 50V ceramic → GND rail</li>
+          </ul>
+        </li>
+        <li>UVLO:
+          <ul>
+            <li><strong>Voltage Divider:</strong>
+              <ul>
+                <li>BAT+ → 22kΩ → Junction → 10kΩ → GND rail
+                  <ul>
+                    <li>Drops 8V to ~2.5V for TL431 reference.</li>
+                    <li>Current: <math>7~16V ÷ (22kΩ + 10kΩ) = 220~500µA</math></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><strong>TL431:</strong>
+              <ul>
+                <li><code>REF</code> →
+                  <ul>
+                    <li>Divider junction</li>
+                    <li>SI2301 feedback</li>
+                  </ul>
+                </li>
+                <li>Anode → GND rail</li>
+                <li>Cathode →
+                  <ul>
+                    <li>6.8kΩ → BAT+ (for minimum 1mV load)
+                      <ul>
+                        <li><math>(7V - 2.5V) ÷ 6.8kΩ = 0.66mA</math></li>
+                      </ul>
+                    </li>
+                    <li>SI2301 signal</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><strong>SI2301:</strong>
+              <ul>
+                <li>Source → BAT+</li>
+                <li>Gate → 2.2kΩ → TL431 cathode (≥2mA current)
+                  <ul>
+                    <li><math>(7V - 2.5V - 0.7V) ÷ 2.2kΩ = ~1.7mA</math></li>
+                  </ul>
+                </li>
+                <li>Drain →
+                  <ul>
+                    <li>BAT_12V</li>
+                    <li>100kΩ → TL431 <code>REF</code></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li>Hysteresis: ~1V:
+              <ul>
+                <li>Turn-on: <math>2.5V × (22kΩ + 10kΩ) / 10kΩ = 8V</math></li>
+                <li>Turn-off: <math>2.5V × (18kΩ + 10kΩ) / 10kΩ = 7V</math>
+                  <ul>
+                    <li><math>22kΩ || 100kΩ = 18kΩ</math></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
@@ -945,7 +1069,7 @@
       <ul>
         <li>Connections:
           <ul>
-            <li>220V Live → Fuse → 220V_LF (220V live through fuse)</li>
+            <li>220V Live → Fuse → 220V_L</li>
           </ul>
         </li>
         <li>Feeds:
