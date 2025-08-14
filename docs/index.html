@@ -371,7 +371,7 @@
     <li><strong>Capacitors:</strong>
       <ul>
         <li>2 x 10nF 50V Ceramic</li>
-        <li>2 x 0.1µF 50V Ceramic</li>
+        <li>4 x 0.1µF 50V Ceramic</li>
         <li>2 x 10µF 25V Electrolytic</li>
       </ul>
     </li>
@@ -379,7 +379,7 @@
       <ul>
         <li>Inductance: 100µH</li>
         <li>Current: ≥1.5A</li>
-        <li>DCR: ~0.1 Ω</li>
+        <li>DCR: ~0.1Ω</li>
         <li>SRF: >10MHz</li>
       </ul>
     </li>
@@ -397,21 +397,21 @@
     <li><strong>Capacitors:</strong>
       <ul>
         <li>2 x 10nF 50V Ceramic</li>
-        <li>2 x 0.1µF 50V Ceramic</li>
+        <li>4 x 0.1µF 50V Ceramic</li>
       </ul>
     </li>
   </ul>
 
   <b>For H11AA1 Optocoupler:</b>
   <ul>
-    <li>2 x <strong>220kΩ resistor</strong> (with live and neutral) – 230V (RMS, 325V peak) AC input current limiting.
+    <li>2 x <strong>220kΩ Resistor</strong> (with live and neutral) – 230V (RMS, 325V peak) AC input current limiting.
       <ul>
         <li>Forward current (max): <math>(325V - 1.2V) / 440kΩ = ~0.74mA</math></li>
         <li>Power rating: <math>(230V)</math><sup>2</sup><math> / 440kΩ = 120mW</math> (60mW per resistor)</li>
       </ul>
     </li>
     <li><strong>10kΩ Multi-turn Potentiometer</strong> – for pulse-width calibration.</li>
-    <li><strong>100nF 50V Ceramic Capacitor</strong> – filter glitches.</li>
+    <li><strong>0.1µF 50V Ceramic Capacitor</strong> – filter glitches.</li>
   </ul>
 
   <b>For Buzzer:</b>
@@ -432,12 +432,13 @@
         </li>
       </ul>
     </li>
-    <li><strong>470Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
+    <li><strong>470Ω Resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
       <ul>
         <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
+        <li>1kΩ seems to work.</li>
       </ul>
     </li>
-    <li><strong>1N4007 diode</strong> – for flyback protection with the buzzer.</li>
+    <li><strong>1N4007 Diode</strong> – for flyback protection with the buzzer.</li>
     <li><strong>22µF 25V Electrolytic Capacitor</strong>
       <ul>
         <li>Better insert an <strong>RC filter</strong> (b/w Arduino and transistor, or b/w transistor and buzzer) to flatten / smooth out the averaged output of PWM.</li>
@@ -448,35 +449,37 @@
   <b>For Relay (AC):</b>
   <ul>
     <li><strong>2N3904 NPN BJT</strong> – drives the relay.</li>
-    <li><strong>470Ω resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
+    <li><strong>470Ω Resistor</strong> – between the transistor (2N3904) base and Arduino pin to protect high current draw.
       <ul>
         <li>For 100mA current draw from the transistor (5V - 0.7V / 10mA)</li>
+        <li>1kΩ seems to work.</li>
       </ul>
     </li>
-    <li><strong>1N4007 diode</strong> – for flyback protection at the relay coil.</li>
+    <li><strong>1N4007 Diode</strong> – for flyback protection at the relay coil.</li>
   </ul>
 
-  <b>For Relay (inverter):</b>
+  <b>For Relay (Inverter):</b>
   <ul>
     <li>Same parts as for AC relay</li>
-    <li><strong>47µF 16V capacitor</strong> – for stabilizing voltage at the relay coil.
+    <li><strong>47µF 16V Electrolytic Capacitor</strong> – for stabilizing voltage at the relay coil.
       <ul>
         <li>Purpose is to act as a local energy reservoir, supplying extra current to avoid the voltage dip during the initial surge when the relay coil is energized. But size it wisely (or add a small resistor in series) to avoid high inrush current to the capacitor itself when the transistor turns on (though BJTs can tolerate short over-current spikes).</li>
       </ul>
     </li>
-    <li>2 x <strong>1N5822 Schottky diode</strong> – for diode ORing. Power sources isolation is required because inverter relay is triggered from 2 sources in parallel: Arduino and a power adapter. Latter is used to bypass the protection system.</li>
+    <li>2 x <strong>1N5822 Schottky Diode</strong> – for diode ORing. Power sources isolation is required because inverter relay is triggered from 2 sources in parallel: Arduino and a power adapter. Latter is used to bypass the protection system.</li>
   </ul>
 
   <b>For Fan:</b>
   <ul>
-    <li><strong>2N2222A transistor</strong> – drives the fan.</li>
-    <li><strong>220Ω-330Ω resistor</strong> – between the transistor (2N2222A) base and Arduino pin to protect high current draw.
+    <li><strong>2N2222A NPN BJT</strong> – drives the fan.</li>
+    <li><strong>220Ω Resistor</strong> – between the transistor (2N2222A) base and Arduino pin to protect high current draw.
       <ul>
-        <li>For 130~200mA current draw from the transistor (5V - 0.7V / 13~20mA)</li>
+        <li>For 190mA current draw from the transistor (5V - 0.9V / 19mA)</li>
         <li>Fan current draw is less than 150mA.</li>
+        <li>330Ω seems to work.</li>
       </ul>
     </li>
-    <li><strong>1N4007 diode</strong> – for flyback protection.</li>
+    <li><strong>1N4007 Diode</strong> – for flyback protection.</li>
   </ul>
 
   <b>For Battery Power Supply (LC Filter):</b>
@@ -550,7 +553,7 @@
 
   <b>Others:</b>
   <ul>
-    <li>2 x <strong>0.1µF 50V Ceramic</strong> – for MP1584 buck converters output.</li>
+    <li>2 x <strong>0.1µF 50V Ceramic Capacitor</strong> – for MP1584 buck converters output.</li>
     <li>2 x <strong>3-Pin T-Block Connector</strong> – for:
       <ul>
         <li>AC mains connections. And output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
@@ -621,27 +624,40 @@
     <li>3 x 2N3904 NPN BJT</li>
     <li>1 x 2N2222A NPN BJT</li>
     <li>1 x SI2301 P-MOS</li>
-    <li>8 x 33Ω Resistor</li>
-    <li>1 x 220Ω Resistor</li>
-    <li>4 x 470Ω Resistor</li>
-    <li>1 x 820Ω Resistor</li>
-    <li>1 x 2.2kΩ Resistor</li>
-    <li>1 x 6.8kΩ Resistor</li>
-    <li>1 x 10kΩ Resistor</li>
-    <li>1 x 22kΩ Resistor</li>
-    <li>3 x 100kΩ Resistor</li>
-    <li>2 x 220kΩ Resistor</li>
-    <li>1 x 10kΩ Multi-turn Potentiometer</li>
-    <li>4 x 10nF 50V Ceramic</li>
-    <li>8 x 0.1µF 50V Ceramic</li>
-    <li>1 x 10µF 50V Ceramic</li>
-    <li>2 x 10µF 25V Electrolytic</li>
-    <li>1 x 22µF 25V Electrolytic</li>
-    <li>1 x 47µF 16V Electrolytic</li>
-    <li>1 x 100µF 25V Electrolytic</li>
-    <li>4 x 1N4007 Diode</li>
-    <li>2 x 1N5822 Diode</li>
     <li>2 x 100µH Inductor (DIP)</li>
+    <li>4 x 1N4007 Diode</li>
+    <li>2 x 1N5822 Schottky Diode</li>
+    <li>1 x 10kΩ Multi-turn Potentiometer</li>
+    <li>Resistors (0.25W):
+      <ul>
+        <li>8 x 33Ω</li>
+        <li>1 x 330Ω</li>
+        <li>1 x 470Ω</li>
+        <li>1 x 820Ω</li>
+        <li>3 x 1kΩ</li>
+        <li>1 x 2.2kΩ</li>
+        <li>1 x 6.8kΩ</li>
+        <li>1 x 10kΩ</li>
+        <li>1 x 22kΩ</li>
+        <li>3 x 100kΩ</li>
+        <li>2 x 220kΩ</li>
+      </ul>
+    </li>
+    <li>Ceramic Capacitors (50V):
+      <ul>
+        <li>4 x 10nF</li>
+        <li>12 x 0.1µF</li>
+        <li>1 x 10µF</li>
+      </ul>
+    </li>
+    <li>Electrolytic Capacitors:
+      <ul>
+        <li>2 x 10µF 25V</li>
+        <li>1 x 22µF 25V</li>
+        <li>1 x 47µF 16V</li>
+        <li>1 x 100µF 25V</li>
+      </ul>
+    </li>
   </ul>
 
   <h2>Connections</h2>
@@ -660,8 +676,8 @@
         </li>
         <li>Filters (for stabilizing):
           <ul>
-            <li><code>V<sub>IN</sub></code> → 10µF Electrolytic → <code>GND</code></li>
-            <li><code>+V<sub>O</sub></code> → 10µF Electrolytic → <code>0V</code></li>
+            <li><code>V<sub>IN</sub></code> → 10µF electrolytic → <code>GND</code></li>
+            <li><code>+V<sub>O</sub></code> → 10µF electrolytic → <code>0V</code></li>
           </ul>
         </li>
       </ul>
@@ -679,8 +695,8 @@
               <ul>
                 <li><code>V<sub>DD1</sub></code> → 5V_ISO rail</li>
                 <li><code>GND1</code> → GND_ISO rail</li>
-                <li><code>V<sub>IN+</sub></code> → 33 Ω → Voltage divider junction</li>
-                <li><code>V<sub>IN-</sub></code> → 33 Ω → GND_ISO rail</li>
+                <li><code>V<sub>IN+</sub></code> → 33Ω → Voltage divider junction</li>
+                <li><code>V<sub>IN-</sub></code> → 33Ω → GND_ISO rail</li>
               </ul>
             </li>
             <li>Output:
@@ -697,6 +713,8 @@
                     <li>Works in combination with 33Ω in-series with <code>V<sub>IN+</sub></code> and <code>V<sub>IN-</sub></code>.</li>
                   </ul>
                 </li>
+                <li><code>V<sub>DD1</sub></code> → 0.1µF ceramic → <code>GND1</code></li>
+                <li><code>V<sub>DD2</sub></code> → 0.1µF ceramic → <code>GND2</code></li>
               </ul>
             </li>
           </ul>
@@ -823,7 +841,7 @@
             <li>Pin 6 (base) → Unconnected (transistor is driven by the LEDs)</li>
           </ul>
         </li>
-        <li>Filter: Pin 4 → 100nF ceramic → Pin 5</li>
+        <li>Filter: Pin 4 → 0.1µF ceramic → Pin 5</li>
       </ul>
     </li>
   </ul>
@@ -865,7 +883,7 @@
     <li>Same transistor and protection connections as AC relay, except that use Arduino Nano D5 for control signal.</li>
     <li><strong>Filter:</strong>
       <ul>
-        <li>Relay coil+ → 47µF Electrolytic → Relay coil-</li>
+        <li>Relay coil+ → 47µF electrolytic → Relay coil-</li>
       </ul>
     </li>
     <li><strong>Power ORing:</strong>
@@ -904,7 +922,7 @@
     </li>
     <li><strong>Filter:</strong>
       <ul>
-        <li>Buzzer+ → 22µF Electrolytic → Buzzer-</li>
+        <li>Buzzer+ → 22µF electrolytic → Buzzer-</li>
       </ul>
     </li>
   </ul>
@@ -959,7 +977,7 @@
     </li>
     <li><strong>Filter:</strong>
       <ul>
-        <li><code>OUT+</code> → 0.1µF Ceramic → <code>OUT-</code></li>
+        <li><code>OUT+</code> → 0.1µF ceramic → <code>OUT-</code></li>
       </ul>
     </li>
   </ul>
@@ -997,9 +1015,9 @@
         <li>Fuse + HF Noise Filter:
           <ul>
             <li>Battery 12V+ → Fuse → 100µH inductor → BAT+</li>
-            <li>BAT+ → 100µF 25V electrolytic → GND rail (shunt's battery-side terminal)</li>
-            <li>BAT+ → 10µF 50V ceramic → GND rail</li>
-            <li>BAT+ → 0.1µF 50V ceramic → GND rail</li>
+            <li>BAT+ → 100µF electrolytic → GND rail (shunt's battery-side terminal)</li>
+            <li>BAT+ → 10µF ceramic → GND rail</li>
+            <li>BAT+ → 0.1µF ceramic → GND rail</li>
           </ul>
         </li>
         <li>UVLO:
