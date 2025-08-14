@@ -493,15 +493,17 @@
 
   <b>Others:</b>
   <ul>
-    <li>3 x <strong>3-Pin T-Block Connector</strong> – AC mains connections:
+    <li>2 x <strong>0.1µF 50V Ceramic</strong> – for MP1584 buck converters output.</li>
+    <li>2 x <strong>3-Pin T-Block Connector</strong> – for:
       <ul>
-        <li>220V grid supply. And output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
-        <li>FL-2C Shunt Resistor terminals & battery 12V+ supply</li>
+        <li>AC mains connections. And output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
         <li>FL-2C Shunt Resistor terminals & PV+ supply</li>
       </ul>
     </li>
-    <li>2 x <strong>2-Pin T-Block Connector</strong> – for:
+    <li>4 x <strong>2-Pin T-Block Connector</strong> – for:
       <ul>
+        <li>FL-2C Shunt Resistor terminals</li>
+        <li>Battery 12V supply</li>
         <li>Relay (inverter)</li>
         <li>Buzzer</li>
       </ul>
@@ -546,8 +548,8 @@
     <li>1 x 12V 1.8W Fan <sup><a href="#42">[42]</a></sup></li>
     <li>2 x MP1584 Buck Converter <sup><a href="#40">[40]</a></sup></li>
     <li>2 x 2.54mm Pitch Jumper <sup><a href="#41">[41]</a></sup></li>
-    <li>3 x 3-Pin T-Block Connector</li>
-    <li>2 x 2-Pin T-Block Connector</li>
+    <li>2 x 3-Pin T-Block Connector</li>
+    <li>4 x 2-Pin T-Block Connector</li>
     <li>1 x Barrier T-Block Screw Connector</li>
     <li>2 x 1A Fuse + Fuse Holder</li>
     <li>1 x DC Power Jack (male + female)</li>
@@ -568,7 +570,7 @@
     <li>2 x 220kΩ Resistor</li>
     <li>1 x 10kΩ Multi-turn Potentiometer</li>
     <li>4 x 10nF 50V Ceramic</li>
-    <li>6 x 0.1µF 50V Ceramic</li>
+    <li>8 x 0.1µF 50V Ceramic</li>
     <li>1 x 10µF 50V Ceramic</li>
     <li>2 x 10µF 25V Electrolytic</li>
     <li>1 x 22µF 25V Electrolytic</li>
@@ -892,11 +894,16 @@
         <li><code>OUT-</code> → GND rail</li>
       </ul>
     </li>
+    <li><strong>Filter:</strong>
+      <ul>
+        <li><code>OUT+</code> → 0.1µF Ceramic → <code>OUT-</code></li>
+      </ul>
+    </li>
   </ul>
 
   <h3>13. MP1584 Buck Converter (5V)</h3>
   <ul>
-    <li><strong>Input:</strong> Same as 12V converter.</li>
+    <li>Input and filter same as 12V converter.</li>
     <li><strong>Output:</strong>
       <ul>
         <li><code>OUT+</code> → Jumper → 5V rail → All 5V modules and other circuit components</li>
