@@ -462,6 +462,8 @@
       </ul>
     </li>
     <li><strong>1N4007 Diode</strong> – for flyback protection at the relay coil.</li>
+    <li><strong>3mm Green LED</strong> – mains indicator.</li>
+    <li><strong>330Ω Resistor</strong> – LED current limiter: <math>(5V - 2V) ÷ 330Ω = 9mA</math></li>
   </ul>
 
   <b>For Relay (Inverter):</b>
@@ -532,7 +534,7 @@
             <li>Series-regulator (like LM7805, variable-zener) topology:
               <ul>
                 <li>Add 2 resistors from REF → anode (R1) and cathode → REF (R2)</li>
-                <li>Vout = 2.5 x ​(1 + R2 / R1​)</li>
+                <li>Vout = 2.5 x (1 + R2 / R1)</li>
               </ul>
             </li>
             <li>Low-side switch (cut-off / UVLO):
@@ -633,11 +635,12 @@
     <li>2 x 100µH Inductor (DIP)</li>
     <li>4 x 1N4007 Diode</li>
     <li>2 x 1N5822 Schottky Diode</li>
+    <li>1 x 3mm Green LED</li>
     <li>1 x 10kΩ Multi-turn Potentiometer</li>
     <li>Resistors (0.25W):
       <ul>
         <li>8 x 33Ω</li>
-        <li>1 x 330Ω</li>
+        <li>2 x 330Ω</li>
         <li>1 x 470Ω</li>
         <li>1 x 820Ω</li>
         <li>3 x 1kΩ</li>
@@ -862,12 +865,24 @@
 
   <h3>5. Relay (AC Changeover)</h3>
   <ul>
-    <li><strong>Driver Circuit:</strong>
+    <li><strong>2N3904 Driver:</strong>
       <ul>
-        <li>2N3904 Base → 1kΩ resistor → Arduino Nano D4</li>
-        <li>2N3904 Emitter → GND rail</li>
-        <li>2N3904 Collector → Relay coil-</li>
-        <li>Relay coil+ → 5V rail</li>
+        <li>Base → 1kΩ resistor → Arduino Nano D4</li>
+        <li>Emitter → GND rail</li>
+        <li>Collector → Relay & LED</li>
+      </ul>
+    </li>
+    <li><strong>Relay:</strong>
+      <ul>
+        <li>Coil+ → 5V rail</li>
+        <li>Coil- → 2N3904 Collector</li>
+        <li><strong>AC Load:</strong>
+          <ul>
+            <li><code>COM</code> → 220V_L</li>
+            <li><code>NO</code> → Changeover coil (Live)</li>
+            <li>Changeover coil (Neutral) → 220V Neutral</li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
@@ -875,11 +890,10 @@
         <li>Relay coil+ → [Cathode] 1N4007 [Anode] → Relay coil- (reverse polarity)</li>
       </ul>
     </li>
-    <li><strong>AC Load:</strong>
+    <li><strong>LED:</strong>
       <ul>
-        <li>Relay <code>COM</code> → 220V_L</li>
-        <li>Relay <code>NO</code> → Changeover coil (Live side)</li>
-        <li>Changeover coil Neutral → 220V Neutral</li>
+        <li>Anode → 330Ω → 5V rail</li>
+        <li>Cathode → 2N3904 Collector</li>
       </ul>
     </li>
   </ul>
