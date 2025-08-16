@@ -1018,10 +1018,19 @@
             <li>Also connected to inverter and solar charge controller (-ve side through shunt resistor).</li>
           </ul>
         </li>
+        <li>Ground:
+          <ul>
+            <li>Battery 12V- (shunt's load-side terminal) → GND rail
+              <ul>
+                <li>Shunt should account for Arduino circuit current when drawn from the battery.</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
         <li>Fuse + HF Noise Filter:
           <ul>
             <li>Battery 12V+ → Fuse → 100µH inductor → BAT+</li>
-            <li>BAT+ → 100µF electrolytic → GND rail (shunt's battery-side terminal)</li>
+            <li>BAT+ → 100µF electrolytic → GND rail</li>
             <li>BAT+ → 10µF ceramic → GND rail</li>
             <li>BAT+ → 0.1µF ceramic → GND rail</li>
           </ul>
@@ -1214,21 +1223,14 @@
     </li>
   </ul>
 
-  <h2 style="page-break-before: always;">Schematics (TODO: update)</h2>
+  <h2 style="page-break-before: always;">Schematics</h2>
 
-  <p>Boxes show external components.</p>
+  <p>Solid boxes show external components. Dotted boxes show units.</p>
 
   <h3>Arduino Circuit:</h3>
   <div class="image-container">
     <a href="arduino_circuit.svg">
       <img src="arduino_circuit.svg" width="1000">
-    </a>
-  </div>
-
-  <h3>PV-Side Circuit:</h3>
-  <div class="image-container">
-    <a href="pv_circuit.svg">
-      <img src="pv_circuit.svg" width="1000">
     </a>
   </div>
 
