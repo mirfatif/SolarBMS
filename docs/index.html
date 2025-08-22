@@ -359,7 +359,7 @@
         <li>Wave hand to turn on the display, or rotate between informatory screens.</li>
       </ul>
     </li>
-    <li><strong>12V 1.8W Fan</strong> <sup><a href="#42">[42]</a></sup> – used for cooling</li>
+    <li><strong>12V 1W Fan</strong> <sup><a href="#42">[42]</a></sup> – used for cooling</li>
     <li>2 x <strong>MP1584 Buck Converter</strong> <sup><a href="#40">[40]</a></sup> – convert battery's 11~15V to 12V and 5V.</li>
   </ul>
 
@@ -480,11 +480,10 @@
   <b>For Fan:</b>
   <ul>
     <li><strong>2N2222A NPN BJT</strong> – drives the fan.</li>
-    <li><strong>220Ω Resistor</strong> – between the transistor (2N2222A) base and Arduino pin to protect high current draw.
+    <li><strong>330Ω Resistor</strong> – between the transistor (2N2222A) base and Arduino pin to protect high current draw.
       <ul>
-        <li>For 190mA current draw from the transistor (5V - 0.9V / 19mA)</li>
-        <li>Fan current draw is less than 150mA.</li>
-        <li>330Ω seems to work.</li>
+        <li>For 120mA current draw from the transistor (5V - 0.9V / 12mA)</li>
+        <li>Fan current draw is ~50mA.</li>
       </ul>
     </li>
     <li><strong>1N4007 Diode</strong> – for flyback protection.</li>
@@ -613,7 +612,7 @@
     <li>1 x 5-12V Active Buzzer <sup><a href="#12">[12]</a></sup></li>
     <li>3 x Push Buttons <sup><a href="#13">[13]</a></sup></li>
     <li>1 x IR Proximity (Obstacle Avoidance) Sensor <sup><a href="#22">[22]</a></sup></li>
-    <li>1 x 12V 1.8W Fan <sup><a href="#42">[42]</a></sup></li>
+    <li>1 x 12V 1W Fan <sup><a href="#42">[42]</a></sup></li>
     <li>2 x MP1584 Buck Converter <sup><a href="#40">[40]</a></sup></li>
     <li>1 x TL431 Regulator <sup><a href="#32">[32]</a></sup></li>
     <li>2 x 2.54mm Pitch Jumper <sup><a href="#41">[41]</a></sup></li>
@@ -1189,7 +1188,7 @@
     </tr>
     <tr>
       <td>2N2222A - drives a 12V fan</td>
-      <td>150 @ 12V</td>
+      <td>50-100 @ 12V</td>
       <td>D14</td>
       <td>Output</td>
       <td>10</td>
@@ -1220,7 +1219,7 @@
   <p>Total:</p>
   <ul>
     <li><b>5V MP1584</b>: 235~295mA</li>
-    <li><b>12V MP1584</b>: 40mA + 150mA + 43~58mA = 233~248mA
+    <li><b>12V MP1584</b>: 40mA + 50-100mA + 43~58mA = 135~200mA
       <ul>
         <li><b>Nano</b>: 43~58mA
           <ul>
