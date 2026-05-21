@@ -45,15 +45,15 @@ bool buzzerOn = false;
 
 #define AC_PULSE_WIDTH_THRESHOLD_MS 5
 
-void _gridISR();
-
 class Grid {
   volatile uint8_t records[DC_AC_SAMPLE_COUNT];  // Pulse-width per half-cycle readings
   volatile unsigned long then;
 
+  static void _isr();
+
 public:
   Grid() {
-    attachInterrupt(digitalPinToInterrupt(PIN_AC_SENSOR), _gridISR, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(PIN_AC_SENSOR), _isr, CHANGE);
   }
 
   // Calculate pulse-width (high-time) per half-cycle here.
@@ -120,7 +120,7 @@ public:
   }
 } grid;
 
-void _gridISR() {
+void Grid::_isr() {
   grid.isr();
 }
 
@@ -177,6 +177,19 @@ enum Screen {
   // Even more settings
   SCR_LED_BRIGHTNESS,
   SCR_BUZZER_LEVEL,
+
+  // Voltage / current calibration
+  SCR_SHOW_VOLT_CURR_CALIB,
+  SCR_BTRY_VOLT_OFFSET,
+  SCR_BTRY_VOLT_FACTOR,
+  SCR_BTRY_CURR_OFFSET,
+  SCR_BTRY_CURR_FACTOR,
+  SCR_PV_VOLT_OFFSET,
+  SCR_PV_VOLT_FACTOR,
+  SCR_PV_CURR_OFFSET,
+  SCR_PV_CURR_FACTOR,
+
+  // Done
   SCR_SAVE
 };
 
@@ -239,6 +252,14 @@ enum EEPROM_Addr {
   EE_SOLAR_MIN_CURRENT,
   EE_LED_BRIGHT_LEVEL,
   EE_BUZZER_LEVEL,
+  EE_BTRY_VOLT_OFFSET,
+  EE_BTRY_VOLT_FACTOR,
+  EE_BTRY_CURR_OFFSET,
+  EE_BTRY_CURR_FACTOR,
+  EE_PV_VOLT_OFFSET,
+  EE_PV_VOLT_FACTOR,
+  EE_PV_CURR_OFFSET,
+  EE_PV_CURR_FACTOR,
   EE_CRC
 };
 
@@ -267,6 +288,15 @@ public:
   uint8_t solarMinCurrent = 15;                    // 25. Ampere (1-30, step: 1)
   uint8_t ledBrightLevel = 1;                      // 26. Level (1-10, step: 1)
   uint8_t buzzerLevel = 1;                         // 27. Level (1-10, step: 1)
+  bool showVoltsCurrentCalibScreens = false;       // 28. Selection (1: true, 0: false)
+  int8_t batteryVoltsOffset = 0;                   // 29. 0.0V (-100 - +100, step: 1)
+  uint8_t batteryVoltsFactor = 100;                // 30. 1.00 (50-200, step: 1)
+  int8_t batteryCurrentOffset = 0;                 // 31. 0.0A (-100 - +100, step: 1)
+  uint8_t batteryCurrentFactor = 100;              // 32. 1.00 (50-200, step: 1)
+  int8_t solarVoltsOffset = 0;                     // 33. 0.0V (-100 - +100, step: 1)
+  uint8_t solarVoltsFactor = 100;                  // 34. 1.00 (50-200, step: 1)
+  int8_t solarCurrentOffset = 0;                   // 35. 0.0A (-100 - +100, step: 1)
+  uint8_t solarCurrentFactor = 100;                // 36. 1.00 (50-200, step: 1)
 
   bool load() {
     batteryFullChargeVolts = EEPROM.read(EE_BATTERY_FULL_CHARGE_V);
@@ -292,6 +322,14 @@ public:
     solarMinCurrent = EEPROM.read(EE_SOLAR_MIN_CURRENT);
     ledBrightLevel = EEPROM.read(EE_LED_BRIGHT_LEVEL);
     buzzerLevel = EEPROM.read(EE_BUZZER_LEVEL);
+    batteryVoltsOffset = EEPROM.read(EE_BTRY_VOLT_OFFSET);
+    batteryVoltsFactor = EEPROM.read(EE_BTRY_VOLT_FACTOR);
+    batteryCurrentOffset = EEPROM.read(EE_BTRY_CURR_OFFSET);
+    batteryCurrentFactor = EEPROM.read(EE_BTRY_CURR_FACTOR);
+    solarVoltsOffset = EEPROM.read(EE_PV_VOLT_OFFSET);
+    solarVoltsFactor = EEPROM.read(EE_PV_VOLT_FACTOR);
+    solarCurrentOffset = EEPROM.read(EE_PV_CURR_OFFSET);
+    solarCurrentFactor = EEPROM.read(EE_PV_CURR_FACTOR);
 
     return EEPROM.read(EE_CRC) == computeCRC();
   }
@@ -320,6 +358,14 @@ public:
     EEPROM.update(EE_SOLAR_MIN_CURRENT, solarMinCurrent);
     EEPROM.update(EE_LED_BRIGHT_LEVEL, ledBrightLevel);
     EEPROM.update(EE_BUZZER_LEVEL, buzzerLevel);
+    EEPROM.update(EE_BTRY_VOLT_OFFSET, batteryVoltsOffset);
+    EEPROM.update(EE_BTRY_VOLT_FACTOR, batteryVoltsFactor);
+    EEPROM.update(EE_BTRY_CURR_OFFSET, batteryCurrentOffset);
+    EEPROM.update(EE_BTRY_CURR_FACTOR, batteryCurrentFactor);
+    EEPROM.update(EE_PV_VOLT_OFFSET, solarVoltsOffset);
+    EEPROM.update(EE_PV_VOLT_FACTOR, solarVoltsFactor);
+    EEPROM.update(EE_PV_CURR_OFFSET, solarCurrentOffset);
+    EEPROM.update(EE_PV_CURR_FACTOR, solarCurrentFactor);
 
     EEPROM.update(EE_CRC, computeCRC());
   }
@@ -363,6 +409,14 @@ private:
     computeCRC8(crc, solarMinCurrent);
     computeCRC8(crc, ledBrightLevel);
     computeCRC8(crc, buzzerLevel);
+    computeCRC8(crc, batteryVoltsOffset);
+    computeCRC8(crc, batteryVoltsFactor);
+    computeCRC8(crc, batteryCurrentOffset);
+    computeCRC8(crc, batteryCurrentFactor);
+    computeCRC8(crc, solarVoltsOffset);
+    computeCRC8(crc, solarVoltsFactor);
+    computeCRC8(crc, solarCurrentOffset);
+    computeCRC8(crc, solarCurrentFactor);
 
     return crc;
   }
@@ -604,12 +658,21 @@ protected:
     volts /= DC_AC_SAMPLE_COUNT;
     current /= DC_AC_SAMPLE_COUNT;
 
+    current = lerp(CALIB_BAT_SOL_0A, CALIB_BAT_SOL_60A, 0, 60, current);
+
     if (&sensor == &batterySensor) {
       volts = lerp(CALIB_BAT_SOL_0V, CALIB_BAT_16V, 0, 16, volts);
+      volts += 0.1f * prefs.batteryVoltsOffset;
+      volts *= 0.01f * prefs.batteryVoltsFactor;
+      current += 0.1f * prefs.batteryCurrentOffset;
+      current *= 0.01f * prefs.batteryCurrentFactor;
     } else {
       volts = lerp(CALIB_BAT_SOL_0V, CALIB_SOL_25V, 0, 25, volts);
+      volts += 0.1f * prefs.solarVoltsOffset;
+      volts *= 0.01f * prefs.solarVoltsFactor;
+      current += 0.1f * prefs.solarCurrentOffset;
+      current *= 0.01f * prefs.solarCurrentFactor;
     }
-    current = lerp(CALIB_BAT_SOL_0A, CALIB_BAT_SOL_60A, 0, 60, current);
   }
 };
 
@@ -1224,6 +1287,28 @@ void handleTimePrefButtonPress(uint8_t &h, uint8_t &m, uint8_t minH, uint8_t max
   }
 }
 
+void handleCalibOffsetPrefButtonPress(int8_t &pref) {
+  const int8_t max = 100;
+  const int8_t min = -100;
+  const int8_t step = 1;
+
+  if (upButtonPressed) {
+    if (pref < max) {
+      pref += step;
+    } else {
+      pref = min;
+    }
+  } else if (pref > min) {
+    pref -= step;
+  } else {
+    pref = max;
+  }
+}
+
+void handleCalibFactorPrefButtonPress(uint8_t &pref) {
+  handleMinMaxPrefButtonPress(pref, 50, 200);
+}
+
 void handleButtonsPressed() {
   if (!anyButtonPressed()) {
     return;
@@ -1255,6 +1340,8 @@ void handleButtonsPressed() {
       }
     } else if (!chPrefs.checkSunTime && screenNum >= SCR_CLOCK && screenNum <= SCR_SOLAR_OFF_TIME) {
       screenNum = SCR_SOLAR_MIN_CURRENT;
+    } else if (!chPrefs.showVoltsCurrentCalibScreens && screenNum >= SCR_BTRY_VOLT_OFFSET && screenNum <= SCR_PV_CURR_FACTOR) {
+      screenNum = SCR_SAVE;
     }
     return;
   }
@@ -1342,6 +1429,33 @@ void handleButtonsPressed() {
       break;
     case SCR_BUZZER_LEVEL:
       handleMinMaxPrefButtonPress(chPrefs.buzzerLevel, 1, 10);
+      break;
+    case SCR_SHOW_VOLT_CURR_CALIB:
+      chPrefs.showVoltsCurrentCalibScreens = !chPrefs.showVoltsCurrentCalibScreens;
+      break;
+    case SCR_BTRY_VOLT_OFFSET:
+      handleCalibOffsetPrefButtonPress(chPrefs.batteryVoltsOffset);
+      break;
+    case SCR_BTRY_VOLT_FACTOR:
+      handleCalibFactorPrefButtonPress(chPrefs.batteryVoltsFactor);
+      break;
+    case SCR_BTRY_CURR_OFFSET:
+      handleCalibOffsetPrefButtonPress(chPrefs.batteryCurrentOffset);
+      break;
+    case SCR_BTRY_CURR_FACTOR:
+      handleCalibFactorPrefButtonPress(chPrefs.batteryCurrentFactor);
+      break;
+    case SCR_PV_VOLT_OFFSET:
+      handleCalibOffsetPrefButtonPress(chPrefs.solarVoltsOffset);
+      break;
+    case SCR_PV_VOLT_FACTOR:
+      handleCalibFactorPrefButtonPress(chPrefs.solarVoltsFactor);
+      break;
+    case SCR_PV_CURR_OFFSET:
+      handleCalibOffsetPrefButtonPress(chPrefs.solarCurrentOffset);
+      break;
+    case SCR_PV_CURR_FACTOR:
+      handleCalibFactorPrefButtonPress(chPrefs.solarCurrentFactor);
       break;
     case SCR_SAVE:
       if (chPrefs.batteryDischargedVoltsLow < chPrefs.batteryFullChargeVolts
@@ -1505,6 +1619,33 @@ void updateDisplayMsg() {
       break;
     case SCR_BUZZER_LEVEL:
       itoa(chPrefs.buzzerLevel, rightStr, 10);
+      break;
+    case SCR_SHOW_VOLT_CURR_CALIB:
+      itoa(chPrefs.showVoltsCurrentCalibScreens ? 1 : 0, rightStr, 10);
+      break;
+    case SCR_BTRY_VOLT_OFFSET:
+      dtostrf(0.1f * chPrefs.batteryVoltsOffset, 0, 1, rightStr);
+      break;
+    case SCR_BTRY_VOLT_FACTOR:
+      dtostrf(0.01f * chPrefs.batteryVoltsFactor, 0, 2, rightStr);
+      break;
+    case SCR_BTRY_CURR_OFFSET:
+      dtostrf(0.1f * chPrefs.batteryCurrentOffset, 0, 1, rightStr);
+      break;
+    case SCR_BTRY_CURR_FACTOR:
+      dtostrf(0.01f * chPrefs.batteryCurrentFactor, 0, 2, rightStr);
+      break;
+    case SCR_PV_VOLT_OFFSET:
+      dtostrf(0.1f * chPrefs.solarVoltsOffset, 0, 1, rightStr);
+      break;
+    case SCR_PV_VOLT_FACTOR:
+      dtostrf(0.01f * chPrefs.solarVoltsFactor, 0, 2, rightStr);
+      break;
+    case SCR_PV_CURR_OFFSET:
+      dtostrf(0.1f * chPrefs.solarCurrentOffset, 0, 1, rightStr);
+      break;
+    case SCR_PV_CURR_FACTOR:
+      dtostrf(0.01f * chPrefs.solarCurrentFactor, 0, 2, rightStr);
       break;
     case SCR_SAVE:
       strcpy_P(rightStr, PSTR("SAUE"));  // SAVE
