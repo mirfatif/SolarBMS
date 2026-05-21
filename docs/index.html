@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Solar and Battery Management System Using Arduino Nano</title>
+  <title>Solar and Battery Management System using Arduino Nano</title>
 
   <style>
     body {
@@ -59,18 +59,77 @@
       margin: 0;
       margin-top: 3%;
     }
+
+    red-code {
+      color: red;
+      font-family: monospace;
+    }
+
+    .five-col-list {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem 1.5rem;
+      list-style-position: inside;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .three-col-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem 1.5rem;
+      list-style-position: inside;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .heading-link {
+      display: inline-block;
+      margin-bottom: 0;
+    }
+
+    .heading-link::after {
+      content: " 🔗";
+      font-size: medium;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .heading-link:hover::after {
+      opacity: 1;
+    }
   </style>
 </head>
 
 <body>
-  <h1>Solar and Battery Management System Using Arduino Nano</h1>
+  <h1>Solar and Battery Management System using Arduino Nano</h1>
 
-  <h2>Project Objective</h2>
+  <h2>Index</h2>
+  <ul>
+    <li><a href="#objective">Project Objective</a></li>
+    <li><a href="#overview">System Overview</a></li>
+    <li><a href="#operational-logic">Operational Logic</a></li>
+    <li><a href="#battery-protection-rules">Battery Protection Rules</a></li>
+    <li><a href="#alarms">Alarms</a></li>
+    <li><a href="#on-screen-warnings">On-Screen Warnings</a></li>
+    <li><a href="#display-and-settings">Display + Settings</a></li>
+    <li><a href="#flowchart">Flowchart</a></li>
+    <li><a href="#hardware-components">Hardware Components</a></li>
+    <li><a href="#bom">BoM</a></li>
+    <li><a href="#connections">Connections</a></li>
+    <li><a href="#schematics">Schematics</a></li>
+    <li><a href="#pcb">PCB</a></li>
+    <li><a href="#load-calculation">Load Calculation</a></li>
+    <li><a href="#code">Code</a></li>
+    <li><a href="#links">Links</a></li>
+  </ul>
+
+  <h2 id="objective" class="heading-link">Project Objective</h2>
   <p>
     This project aims to develop a solar and battery power management system using an Arduino Nano. The system prioritizes solar energy during daytime (in SUB mode) to power an inverter and charge a battery, while intelligently switching to utility power (WAPDA) when necessary. The primary objective is to ensure continuous power availability while protecting the battery from over-(dis)charge (quantity) and high (dis)charge (rate) conditions.
   </p>
 
-  <h2>System Overview</h2>
+  <h2 id="overview" class="heading-link">System Overview</h2>
   <ul>
     <li><strong>Primary Power Source:</strong> 4 x 300W (V<sub>oc</sub> = 24V, I<sub>sc</sub> = 15A) PV solar array via a PWM charge controller.</li>
     <li><strong>Backup Power Source:</strong> 220V 50Hz utility grid (WAPDA).</li>
@@ -78,7 +137,7 @@
     <li><strong>Load:</strong> 600W inverter powering light AC appliances (mainly fans & lights).</li>
   </ul>
 
-  <h2>Operational Logic</h2>
+  <h2 id="operational-logic" class="heading-link">Operational Logic</h2>
   <ul>
     <li>During daytime:
       <ul>
@@ -103,32 +162,32 @@
     <li>If USB mode is selected (instead of SUB), grid is always given priority. This can be useful in winters when not much power is needed during daytime. So inverter runs only during power outages.</li>
   </ul>
 
-  <p>Also see <a href="#flowchart">flowchart</a>.</p>
+  <p>Also see the <a href="#flowchart">flowchart</a>.</p>
 
-  <h2>Battery Protection Rules</h2>
+  <h2 id="battery-protection-rules" class="heading-link">Battery Protection Rules</h2>
   <ul>
     <li>
       <b>Over-discharge / high-discharge protection</b>
       <ul>
-        <li>Inverter is turned off if battery voltage drops below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a>, even if there is no grid. A 2 minutes window is given if voltages remain above <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a>.</li>
-        <li>Discharging current is also limited to <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. A 10 seconds window is given if discharge rate is below <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</li>
+        <li>Inverter is turned off if battery voltage drops below <a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a>, even if there is no grid. A 2 minutes window is given if voltages remain above <a class="no-color" href="#pref-btry-volt-crit"><code>BV<sub>crit</sub></code></a>.</li>
+        <li>Discharging current is also limited to <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a>. A 10 seconds window is given if discharge rate is below <a class="no-color" href="#pref-btry-curr-crit"><code>BI<sub>crit</sub></code></a> (e.g. for torque load, or to allow PWM controller to draw more power from PV array).</li>
       </ul>
     </li>
     <li>
       <b>Over-charge / high-charge protection</b>
       <ul>
-        <li>Start beeping if battery is overcharged i.e. charged above <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a> or at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>. We cannot control the PWM controller with Arduino. But we can cry.</li>
+        <li>Start beeping if battery is overcharged i.e. charged above <a class="no-color" href="#pref-btry-volt-full"><code>BV<sub>full</sub></code></a> or at a rate higher than <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a>. We cannot control the PWM controller with Arduino. But we can cry.</li>
       </ul>
     </li>
   </ul>
 
-  <h2>Alarms</h2>
+  <h2 id="alarms" class="heading-link">Alarms</h2>
   <p>Raise alarm (start beeping) if any of the following is true:</p>
   <ul>
-    <li>Battery is above <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
-    <li>Battery is below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
-    <li>Battery is being charged at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
-    <li>Battery is being discharged at a rate higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
+    <li>Battery is above <a class="no-color" href="#pref-btry-volt-full"><code>BV<sub>full</sub></code></a></li>
+    <li>Battery is below <a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a></li>
+    <li>Battery is being charged at a rate higher than <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a></li>
+    <li>Battery is being discharged at a rate higher than <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a></li>
     <li>During daytime, if sunlight is sufficient, and:
       <ul>
         <li>Battery is being discharged (at any rate; we should be using solar)</li>
@@ -142,11 +201,11 @@
   </ul>
   <p>Before raising alarms, give a 5-30 seconds window for temporary spikes / dips in battery voltage / current.</p>
 
-  <h2>On-Screen Warnings</h2>
+  <h2 id="on-screen-warnings" class="heading-link">On-Screen Warnings</h2>
   <p>Inverter turned off (and switched to grid) due to:</p>
   <ul>
-    <li><strong>E 1</strong>: Battery low – voltage below <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
-    <li><strong>E 2</strong>: Battery overloaded – high current (> <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a>) drained</li>
+    <li><strong>E 1</strong>: Battery low – voltage below <a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a></li>
+    <li><strong>E 2</strong>: Battery overloaded – high current (> <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a>) drained</li>
     <li><strong>E 3</strong>: Load higher than the solar power (during daytime) – due to morning / evening, clouds etc.
       <ul>
         <li>It's a silent alert.</li>
@@ -155,24 +214,24 @@
     <li><strong>E 4</strong>: Load higher than the solar power (during daytime) – your fault.</li>
   </ul>
 
-  <h2>Display + Settings</h2>
+  <h2 id="display-and-settings" class="heading-link">Display + Settings</h2>
   <ul>
     <li>Use MENU button to jump to the next screen and UP/DOWN buttons to change the configurable values.</li>
     <li>First 5 screens are informatory. On these screens, UP/DOWN buttons turn off the display.</li>
     <li>Display also turns off if no activity is detected for 5 minutes. Press any button or wave hand (to trigger the infrared proximity sensor) to turn the display back on.</li>
-    <li>When display is on, waving hand before IR sensor rotates the display between informatory screens.</li>
+    <li>When display is on, waving hand before the IR sensor rotates the display between informatory screens. Waving hand on the last info-screen turns off the display.</li>
     <li>On SAVE screen (the last one), UP/DOWN buttons save the changed settings, if any. Then it jumps to the first screen. If it doesn't, there is a problem with the set values such as:
       <ul>
-        <li><a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_full"><code>BV<sub>full</sub></code></a></li>
-        <li><a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> higher than <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a></li>
-        <li><a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> higher than <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a></li>
-        <li><a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> higher than <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a></li>
+        <li><a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a> higher than <a class="no-color" href="#pref-btry-volt-full"><code>BV<sub>full</sub></code></a></li>
+        <li><a class="no-color" href="#pref-btry-volt-crit"><code>BV<sub>crit</sub></code></a> higher than <a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a></li>
+        <li><a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a> higher than <a class="no-color" href="#pref-btry-curr-crit"><code>BI<sub>crit</sub></code></a></li>
+        <li><a class="no-color" href="#pref-btry-curr-low"><code>BI<sub>low</sub></code></a> higher than <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a></li>
         <li><code>BI<sub>crit-high</sub></code> window higher than <code>BI<sub>high-low</sub></code> window</li>
         <li><code>BI<sub>high-low</sub></code> window higher than <code>BI<sub>below-low</sub></code> window</li>
       </ul>
     </li>
     <li>Display jumps back to the first screen after 30 seconds of inactivity (except first 4 informatory screens).</li>
-    <li>When you select <a class="no-color" href="#pref_pri_solar"><u>SUB mode</u></a> or opt to not <a class="no-color" href="#pref_check_sun_time"><u>check sun time</u></a>, unused setting screens are jumped automatically.</li>
+    <li>When you select <a class="no-color" href="#pref-pri-solar"><u>SUB mode</u></a> or opt to not <a class="no-color" href="#pref-check-sun-time"><u>check sun time</u></a>, unused setting screens are jumped automatically.</li>
   </ul>
 
   <b>Screens:</b>
@@ -182,22 +241,22 @@
     <li><code>INFO |</code> PV array voltage (left, Volts) and current (right, Ampere)</li>
     <li><code>INFO |</code> PV array voltage (left, Volts) and power (product of voltage and current) (right, Watt)</li>
     <li><code>INFO |</code> Clock (left, 24h format) and temperature (right, °C)</li>
-    <li id="pref_btry_volt_full"><code>BV<sub>full</sub> |</code> Battery full charge voltage (Volts, range: 12.0-16.0, default: 14.4)</li>
-    <li id="pref_btry_volt_low"><code>BV<sub>low</sub> |</code> Battery discharged voltage low threshold (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
-    <li id="pref_btry_volt_crit"><code>BV<sub>crit</sub> |</code> Battery discharged voltage critical threshold (Volts, range: 9.0-12.0, default: 11.0)</li>
-    <li id="pref_btry_curr_crit"><code>BI<sub>crit</sub> |</code> Battery discharge current critical threshold (Ampere, range: 20-60, default: 50)</li>
-    <li id="pref_btry_curr_high"><code>BI<sub>high</sub> |</code> Battery discharge current high threshold (Ampere, range: 10-30, default: 20 (@ C10))</li>
-    <li id="pref_btry_curr_low"><code>BI<sub>low</sub> |</code> Battery discharge current low threshold (Ampere, range: 1-15, default: 5)</li>
-    <li id="pref_pri_solar">Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
+    <li id="pref-btry-volt-full"><code>BV<sub>full</sub> |</code> Battery full charge voltage (Volts, range: 12.0-16.0, default: 14.4)</li>
+    <li id="pref-btry-volt-low"><code>BV<sub>low</sub> |</code> Battery discharged voltage low threshold (Volts, range: 10.0-13.0, default: 12.0 (≈ 50% DoD))</li>
+    <li id="pref-btry-volt-crit"><code>BV<sub>crit</sub> |</code> Battery discharged voltage critical threshold (Volts, range: 9.0-12.0, default: 11.0)</li>
+    <li id="pref-btry-curr-crit"><code>BI<sub>crit</sub> |</code> Battery discharge current critical threshold (Ampere, range: 20-60, default: 50)</li>
+    <li id="pref-btry-curr-high"><code>BI<sub>high</sub> |</code> Battery discharge current high threshold (Ampere, range: 10-30, default: 20 (@ C10))</li>
+    <li id="pref-btry-curr-low"><code>BI<sub>low</sub> |</code> Battery discharge current low threshold (Ampere, range: 1-15, default: 5)</li>
+    <li id="pref-pri-solar">Prioritize solar or grid (Selection, options: SUB / USB, default: SUB)</li>
     <li>Delay before switching AC load to inverter after starting inverter (Seconds, range: 0-10, default: 5)</li>
-    <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> (Minutes, range: 1-10, default: 5)</li>
+    <li>Delay before switching AC load back to inverter after inverter turned off due to battery overloaded (high current drained) or voltage dropped, now no grid and battery is above <a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a> (Minutes, range: 1-10, default: 5)</li>
     <li><code>SOLAR |</code> Delay before switching AC load back to inverter (daytime) after inverter was turned off due to sunlight not sufficient, now let's retry (Minutes, range: 15-60, default: 15)</li>
     <li><code>SOLAR |</code> Delay before switching AC load back to inverter (daytime) after inverter was turned off for any other reason (Minutes, range: 1-10, default: 5)</li>
-    <li>Window before switching AC load to grid if battery voltages are between <a class="no-color" href="#pref_btry_volt_low"><code>BV<sub>low</sub></code></a> and <a class="no-color" href="#pref_btry_volt_crit"><code>BV<sub>crit</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
-    <li>Window before switching AC load to grid if battery discharge current is between <a class="no-color" href="#pref_btry_curr_crit"><code>BI<sub>crit</sub></code></a> and <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> (Seconds, range: 5-60, default: 10)</li>
-    <li><code>SOLAR |</code> Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref_btry_curr_high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
-    <li><code>SOLAR |</code> Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref_btry_curr_low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
-    <li id="pref_check_sun_time"><code>SOLAR |</code> Check sun time (Selection, options: 1 (true) / 0 (false), default: 1)</li>
+    <li>Window before switching AC load to grid if battery voltages are between <a class="no-color" href="#pref-btry-volt-low"><code>BV<sub>low</sub></code></a> and <a class="no-color" href="#pref-btry-volt-crit"><code>BV<sub>crit</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
+    <li>Window before switching AC load to grid if battery discharge current is between <a class="no-color" href="#pref-btry-curr-crit"><code>BI<sub>crit</sub></code></a> and <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a> (Seconds, range: 5-60, default: 10)</li>
+    <li><code>SOLAR |</code> Window before switching AC load to grid (daytime) if battery discharge current is between <a class="no-color" href="#pref-btry-curr-high"><code>BI<sub>high</sub></code></a> and <a class="no-color" href="#pref-btry-curr-low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-10, default: 2)</li>
+    <li><code>SOLAR |</code> Window before switching AC load to grid (daytime) if battery discharge current is below <a class="no-color" href="#pref-btry-curr-low"><code>BI<sub>low</sub></code></a> (Minutes, range: 1-15, default: 5)</li>
+    <li id="pref-check-sun-time"><code>SOLAR |</code> Check sun time (Selection, options: 1 (true) / 0 (false), default: 1)</li>
     <li><code>SOLAR |</code> Clock time (24h format)</li>
     <li><code>SOLAR |</code> Solar on time (24h format, range: 05:00-10:00, default: 07:00)</li>
     <li><code>SOLAR |</code> Solar off time (24h format, range: 14:00-19:00, default: 17:00)</li>
@@ -207,7 +266,15 @@
     <li>Save</li>
   </ol>
 
-  <h2>Hardware Components</h2>
+  <h2 style="page-break-before: always;" id="flowchart" class="heading-link">Flowchart</h2>
+  <p>Actual checks and details are a bit complex but a simplified version is:</p>
+  <div class="image-container">
+    <a href="flowchart.png">
+      <img src="flowchart.png" width="600">
+    </a>
+  </div>
+
+  <h2 id="hardware-components" class="heading-link" style="page-break-before: always;">Hardware Components</h2>
   <ul>
     <li><strong>Arduino Nano</strong> <sup><a href="#1">[1]</a></sup> – main controller for sensor reading and decision-making.</li>
 
@@ -347,7 +414,7 @@
         <li>Max current: 40mA (at 12V)</li>
       </ul>
     </li>
-    <li>3 x <strong>Push Buttons</strong> (momentary) <sup><a href="#13">[13]</a></sup>:
+    <li id="push-buttons">3 x <strong>Push Buttons</strong> (momentary) <sup><a href="#13">[13]</a></sup>:
       <ul>
         <li>Left (DOWN): Decrease a configurable value (setting).</li>
         <li>Center (MENU): Switch between screens and turn off the display.</li>
@@ -462,7 +529,7 @@
       </ul>
     </li>
     <li><strong>1N4007 Diode</strong> – for flyback protection at the relay coil.</li>
-    <li><strong>3mm Green LED</strong> – mains indicator.</li>
+    <li><strong>3mm Green LED</strong> – invertor-on (mains-off) indicator.</li>
     <li><strong>330Ω Resistor</strong> – LED current limiter: <math>(5V - 2V) ÷ 330Ω = 9mA</math></li>
   </ul>
 
@@ -563,16 +630,16 @@
     <li>2 x <strong>0.1µF 50V Ceramic Capacitor</strong> – for MP1584 buck converters output.</li>
     <li>2 x <strong>3-Pin T-Block Connector</strong> – for:
       <ul>
-        <li>AC mains connections. And output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
-        <li>FL-2C Shunt Resistor terminals & PV+ supply</li>
+        <li id="connector-ac">AC mains connections. And output of relay to switch AC load between grid and inverter output. It controls a high-power 220V-driven changeover relay. Latter can also be triggered from AC mains to bypass the protection system.</li>
+        <li id="connector-pv">FL-2C Shunt Resistor terminals & PV+ supply</li>
       </ul>
     </li>
     <li>4 x <strong>2-Pin T-Block Connector</strong> – for:
       <ul>
-        <li>FL-2C Shunt Resistor terminals</li>
-        <li>Battery 12V supply</li>
-        <li>Relay (inverter)</li>
-        <li>Buzzer</li>
+        <li id="connector-shunt-battery">FL-2C Shunt Resistor terminals (battery)</li>
+        <li id="connector-battery">Battery 12V supply</li>
+        <li id="connector-relay-inv">Relay (inverter)</li>
+        <li id="connector-buzzer">Buzzer</li>
       </ul>
     </li>
     <li><strong>Barrier T-Block Screw Connector</strong> – for external connections.</li>
@@ -598,7 +665,7 @@
     <li><strong>2-Core Cable</strong>, <strong>3-Core Cable</strong> – for 12V power supply, relay (inverter) and FL-2C Shunt Resistor connections, AC connections.</li>
   </ul>
 
-  <h2>BoM</h2>
+  <h2 id="bom" class="heading-link" style="page-break-before: always;">BoM</h2>
   <ul>
     <li>1 x Arduino Nano <sup><a href="#1">[1]</a></sup></li>
     <li>4 x HCPL-7840 Isolation Amplifier <sup><a href="#23">[23]</a></sup></li>
@@ -668,18 +735,18 @@
     </li>
   </ul>
 
-  <h2>Connections</h2>
+  <h2 id="connections" class="heading-link" style="page-break-before: always;">Connections</h2>
 
-  <h3>1. FL-2C Shunt + HCPL-7840 + B0505S (PV Array)</h3>
+  <h3 id="iv-sensor-pv">1. FL-2C Shunt + HCPL-7840 + B0505S (PV Array)</h3>
   <ul>
-    <li><strong>B0505S:</strong>
+    <li id="b0505s"><strong>B0505S:</strong>
       <ul>
         <li>Connections:
           <ul>
-            <li><code>GND</code> → GND rail</li>
-            <li><code>V<sub>IN</sub></code> → 5V rail</li>
-            <li><code>0V</code> → GND_ISO rail → PV- (shunt's PV-side terminal)</li>
-            <li><code>+V<sub>O</sub></code> → 5V_ISO rail</li>
+            <li><code>GND</code> → <red-code>GND</red-code> rail</li>
+            <li><code>V<sub>IN</sub></code> → <red-code>5V</red-code> rail</li>
+            <li><code>0V</code> → <red-code>GND_ISO</red-code> rail → <red-code>PV-</red-code></li>
+            <li><code>+V<sub>O</sub></code> → <red-code>5V_ISO</red-code> rail</li>
           </ul>
         </li>
         <li>Filters (for stabilizing):
@@ -692,26 +759,26 @@
     </li>
     <li>Voltage Sensing:
       <ul>
-        <li><strong>Voltage Divider:</strong>
+        <li id="voltage-divider-pv"><strong>Voltage Divider:</strong>
           <ul>
-            <li>PV+ → 100µH → 100kΩ → Junction → 470Ω → GND_ISO rail</li>
+            <li><red-code>PV+</red-code> → 100µH inductor → 100kΩ → Junction (<red-code>VD1</red-code>) → 470Ω → <red-code>GND_ISO</red-code> rail</li>
           </ul>
         </li>
         <li><strong>HCPL-7840 (U1):</strong>
           <ul>
             <li>Input:
               <ul>
-                <li><code>V<sub>DD1</sub></code> → 5V_ISO rail</li>
-                <li><code>GND1</code> → GND_ISO rail</li>
-                <li><code>V<sub>IN+</sub></code> → 33Ω → Voltage divider junction</li>
-                <li><code>V<sub>IN-</sub></code> → 33Ω → GND_ISO rail</li>
+                <li><code>V<sub>DD1</sub></code> → <red-code>5V_ISO</red-code> rail</li>
+                <li><code>GND1</code> → <red-code>GND_ISO</red-code> rail</li>
+                <li><code>V<sub>IN+</sub></code> → 33Ω → Voltage divider junction (<red-code>VD1</red-code>)</li>
+                <li><code>V<sub>IN-</sub></code> → 33Ω → <red-code>GND_ISO</red-code> rail</li>
               </ul>
             </li>
             <li>Output:
               <ul>
-                <li><code>V<sub>DD2</sub></code> → Arduino-side 5V rail</li>
-                <li><code>GND2</code> → Arduino-side GND rail</li>
-                <li><code>V<sub>OUT+</sub></code>, <code>V<sub>OUT-</sub></code> → ADS1115 analog input pins</li>
+                <li><code>V<sub>DD2</sub></code> → Arduino-side <red-code>5V</red-code> rail</li>
+                <li><code>GND2</code> → Arduino-side <red-code>GND</red-code> rail</li>
+                <li><code>V<sub>OUT+</sub></code> and <code>V<sub>OUT-</sub></code> → ADS1115 analog input pins (<red-code>ADS1_A0</red-code> and <red-code>ADS1_A1</red-code>)</li>
               </ul>
             </li>
             <li>Filter:
@@ -737,14 +804,20 @@
     </li>
     <li>Current Sensing:
       <ul>
-        <li><strong>Shunt Resistor:</strong> Place in series with the charge controller negative input.
+        <li><strong>Shunt Resistor:</strong>
           <ul>
+            <li>Place in series with the charge controller negative input:
+              <ul>
+                <li><red-code>PV-</red-code> → Shunt → <red-code>SHT</red-code></li>
+              </ul>
+            </li>
             <li>Due to common-mode range limit of HCPL-7840, we cannot sense high-side.</li>
           </ul>
         </li>
         <li><strong>HCPL-7840 (U2):</strong>
           <ul>
-            <li><code>V<sub>IN+</sub></code> is connected to shunt controller-side, <code>V<sub>IN-</sub></code> to PV-side. Use same resistors.</li>
+            <li><code>V<sub>IN+</sub></code> is connected to shunt controller-side (<red-code>SHT</red-code>), <code>V<sub>IN-</sub></code> to PV-side (<red-code>PV-</red-code> / <red-code>GND_ISO</red-code>). Use same resistors.</li>
+            <li><code>V<sub>OUT+</sub></code> and <code>V<sub>OUT-</sub></code> is connected to other pair of ADS1115 analog input pins (<red-code>ADS1_A2</red-code> and <red-code>ADS1_A3</red-code>)</li>
           </ul>
         </li>
         <li>Remaining details are same as that of voltage sensor.</li>
@@ -756,32 +829,32 @@
         </li>
       </ul>
     </li>
-    <li><strong>ADS1115 ADC:</strong>
+    <li id="ads1115-pv"><strong>ADS1115 ADC:</strong>
       <ul>
-        <li><code>VDD</code> → 5V rail</li>
-        <li><code>GND</code> → GND rail</li>
-        <li><code>SCL</code> → Arduino Nano A5 (SCL)</li>
-        <li><code>SDA</code> → Arduino Nano A4 (SDA)</li>
-        <li><code>A0</code> → U1 <code>V<sub>OUT+</sub></code></li>
-        <li><code>A1</code> → U1 <code>V<sub>OUT-</sub></code></li>
-        <li><code>A2</code> → U2 <code>V<sub>OUT+</sub></code></li>
-        <li><code>A3</code> → U2 <code>V<sub>OUT-</sub></code></li>
+        <li><code>VDD</code> → <red-code>5V</red-code> rail</li>
+        <li><code>GND</code> → <red-code>GND</red-code> rail</li>
+        <li><code>SCL</code> → Arduino Nano A5 (<red-code>SCL</red-code>)</li>
+        <li><code>SDA</code> → Arduino Nano A4 (<red-code>SDA</red-code>)</li>
+        <li><code>A0</code> → U1 <code>V<sub>OUT+</sub></code> (<red-code>ADS1_A0</red-code>)</li>
+        <li><code>A1</code> → U1 <code>V<sub>OUT-</sub></code> (<red-code>ADS1_A1</red-code>)</li>
+        <li><code>A2</code> → U2 <code>V<sub>OUT+</sub></code> (<red-code>ADS1_A2</red-code>)</li>
+        <li><code>A3</code> → U2 <code>V<sub>OUT-</sub></code> (<red-code>ADS1_A3</red-code>)</li>
       </ul>
     </li>
   </ul>
 
-  <h3>2. FL-2C Shunt + HCPL-7840 (Battery)</h3>
+  <h3 id="iv-sensor-battery">2. FL-2C Shunt + HCPL-7840 (Battery)</h3>
   <ul>
     <li>Voltage Sensing:
       <ul>
-        <li><strong>Voltage Divider:</strong>
+        <li id="voltage-divider-battery"><strong>Voltage Divider:</strong>
           <ul>
-            <li>BAT_12V+ → 100kΩ → Junction → 820Ω → GND rail</li>
+            <li>Battery supply 12V+ (<red-code>BSP1</red-code>) → 100kΩ → Junction (<red-code>VD2</red-code>) → 820Ω → <red-code>GND</red-code> rail</li>
           </ul>
         </li>
         <li><strong>HCPL-7840 (U3):</strong>
           <ul>
-            <li>Power both sides of HCPL-7840 from Arduino 5V rail and GND rail.</li>
+            <li>Power both sides of HCPL-7840 from Arduino <red-code>5V</red-code> rail and <red-code>GND</red-code> rail.</li>
           </ul>
         </li>
         <li>Calibration:
@@ -794,10 +867,19 @@
     </li>
     <li>Current Sensing:
       <ul>
-        <li><strong>Shunt Resistor:</strong> Place in series with the battery negative terminal.</li>
+        <li><strong>Shunt Resistor:</strong>
+          <ul>
+            <li>Place in series with the battery negative terminal:
+              <ul>
+                <li><red-code>BAT-</red-code> → Shunt → <red-code>GND</red-code> rail</li>
+              </ul>
+            </li>
+            <li>Shunt should account for Arduino circuit current when drawn from the battery.</li>
+          </ul>
+        </li>
         <li><strong>HCPL-7840 (U4):</strong>
           <ul>
-            <li><code>V<sub>IN+</sub></code> is connected to shunt battery-side, <code>V<sub>IN-</sub></code> to load-side. Use same resistors.
+            <li><code>V<sub>IN+</sub></code> is connected to shunt battery-side (<red-code>BAT-</red-code>), <code>V<sub>IN-</sub></code> to load-side (<red-code>GND</red-code>). Use same resistors.
               <ul>
                 <li>We get positive readings when battery is charging.</li>
               </ul>
@@ -806,30 +888,34 @@
         </li>
       </ul>
     </li>
-    <li><strong>ADS1115 ADC:</strong>
+    <li id="ads1115-battery"><strong>ADS1115 ADC:</strong>
       <ul>
         <li>Connections:
           <ul>
-            <li><code>A0</code> → U3 <code>V<sub>OUT+</sub></code></li>
-            <li><code>A1</code> → U3 <code>V<sub>OUT-</sub></code></li>
-            <li><code>A2</code> → U4 <code>V<sub>OUT+</sub></code></li>
-            <li><code>A3</code> → U4 <code>V<sub>OUT-</sub></code></li>
+            <li><code>A0</code> → U3 <code>V<sub>OUT+</sub></code> (<red-code>ADS2_A0</red-code>)</li>
+            <li><code>A1</code> → U3 <code>V<sub>OUT-</sub></code> (<red-code>ADS2_A1</red-code>)</li>
+            <li><code>A2</code> → U4 <code>V<sub>OUT+</sub></code> (<red-code>ADS2_A2</red-code>)</li>
+            <li><code>A3</code> → U4 <code>V<sub>OUT-</sub></code> (<red-code>ADS2_A3</red-code>)</li>
           </ul>
         </li>
         <li>To change the I<sup>2</sup>C address from default (0x48) to 0x49, solder the <code>ADDR</code> pin to <code>VDD</code>.</li>
       </ul>
     </li>
-    <li>Remaining details are same as that of PV sensor.</li>
+    <li>Remaining details are same as that of PV sensor.
+      <ul>
+        <li>Replace <red-code>ADS1_A[N]</red-code> connections with <red-code>ADS2_A[N]</red-code>, and junction <red-code>VD1</red-code> with <red-code>VD2</red-code>.</li>
+      </ul>
+    </li>
   </ul>
 
   <h3>3. H11AA1 Optocoupler – AC Detection</h3>
   <ul>
     <li><strong>AC Side:</strong>
       <ul>
-        <li><strong>10kΩ Potentiometer:</strong>
+        <li id="ac-detection-pot"><strong>10kΩ Potentiometer:</strong>
           <ul>
-            <li>Terminal 1 → 220kΩ → 220V_L</li>
-            <li>Terminal 2 → 220kΩ → 220V Neutral</li>
+            <li id="ac-detection-pot-res-live">Terminal 1 → 220kΩ → Live (<red-code>220V_L</red-code>)</li>
+            <li id="ac-detection-pot-res-neutral">Terminal 2 → 220kΩ → Neutral (<red-code>MAIN_N</red-code>)</li>
           </ul>
         </li>
         <li>Connections:
@@ -840,12 +926,12 @@
         </li>
       </ul>
     </li>
-    <li><strong>DC Side:</strong>
+    <li id="ac-detection-opt"><strong>DC Side:</strong>
       <ul>
         <li>Connections:
           <ul>
-            <li>Pin 4 (emitter) → GND rail</li>
-            <li>Pin 5 (collector) → Arduino Nano D2 (digital input with internal pull-up enabled)</li>
+            <li>Pin 4 (emitter) → <red-code>GND</red-code> rail</li>
+            <li>Pin 5 (collector) → Arduino Nano <red-code>D2</red-code> (digital input with internal pull-up enabled)</li>
             <li>Pin 6 (base) → Unconnected (transistor is driven by the LEDs)</li>
           </ul>
         </li>
@@ -854,31 +940,31 @@
     </li>
   </ul>
 
-  <h3>4. DS3231 RTC Module</h3>
+  <h3 id="ds3231">4. DS3231 RTC Module</h3>
   <ul>
-    <li><code>VCC</code> → 5V rail</li>
-    <li><code>GND</code> → GND rail</li>
-    <li><code>SDA</code> → Arduino Nano A4 (shared with INA219)</li>
-    <li><code>SCL</code> → Arduino Nano A5 (shared with INA219)</li>
+    <li><code>VCC</code> → <red-code>5V</red-code> rail</li>
+    <li><code>GND</code> → <red-code>GND</red-code> rail</li>
+    <li><code>SDA</code> → Arduino Nano A4 (<red-code>SDA</red-code>)</li>
+    <li><code>SCL</code> → Arduino Nano A5 (<red-code>SCL</red-code>)</li>
   </ul>
 
-  <h3>5. Relay (AC Changeover)</h3>
+  <h3 id="relay-ac">5. Relay (AC Changeover)</h3>
   <ul>
     <li><strong>2N3904 Driver:</strong>
       <ul>
-        <li>Base → 1kΩ resistor → Arduino Nano D4</li>
-        <li>Emitter → GND rail</li>
-        <li>Collector → Relay & LED</li>
+        <li>Base → 1kΩ resistor → Arduino Nano <red-code>D4</red-code></li>
+        <li>Emitter → <red-code>GND</red-code> rail</li>
+        <li>Collector → Relay & LED (<red-code>AC_RC-</red-code>)</li>
       </ul>
     </li>
     <li><strong>Relay:</strong>
       <ul>
-        <li>Coil+ → 5V rail</li>
-        <li>Coil- → 2N3904 Collector</li>
+        <li>Coil+ → <red-code>5V</red-code> rail</li>
+        <li>Coil- → 2N3904 Collector (<red-code>AC_RC-</red-code>)</li>
         <li><strong>AC Load:</strong>
           <ul>
-            <li><code>COM</code> → 220V_L</li>
-            <li><code>NO</code> → Changeover coil (Live)</li>
+            <li><code>COM</code> → <red-code>220V_L</red-code></li>
+            <li><code>NO</code> → Changeover coil (Live) (<red-code>AC_REL</red-code>)</li>
             <li>Changeover coil (Neutral) → 220V Neutral</li>
           </ul>
         </li>
@@ -889,17 +975,17 @@
         <li>Relay coil+ → [Cathode] 1N4007 [Anode] → Relay coil- (reverse polarity)</li>
       </ul>
     </li>
-    <li><strong>LED:</strong>
+    <li id="led-invertor-on"><strong>LED:</strong>
       <ul>
-        <li>Anode → 330Ω → 5V rail</li>
-        <li>Cathode → 2N3904 Collector</li>
+        <li>Anode → 330Ω → <red-code>5V</red-code> rail</li>
+        <li>Cathode → 2N3904 Collector (<red-code>AC_RC-</red-code>)</li>
       </ul>
     </li>
   </ul>
 
-  <h3>6. Relay (Inverter)</h3>
+  <h3 id="relay-invertor">6. Relay (Inverter)</h3>
   <ul>
-    <li>Same transistor and protection connections as AC relay, except that use Arduino Nano D5 for control signal.</li>
+    <li>Same transistor and protection connections as AC relay, except that use Arduino Nano <red-code>D5</red-code> for control signal.</li>
     <li><strong>Filter:</strong>
       <ul>
         <li>Relay coil+ → 47µF electrolytic → Relay coil-</li>
@@ -907,7 +993,7 @@
     </li>
     <li><strong>Power ORing:</strong>
       <ul>
-        <li>Relay coil+ → [Anode] 1N5822 [Cathode] → Arduino circuit 5V rail</li>
+        <li>Relay coil+ → [Anode] 1N5822 [Cathode] → Arduino circuit <red-code>5V</red-code> rail</li>
         <li>Relay coil+ → [Anode] 1N5822 [Cathode] → External 5V+ adapter</li>
       </ul>
     </li>
@@ -915,23 +1001,23 @@
     <li>Relay coil- → External 5V- adapter</li>
   </ul>
 
-  <h3>7. MAX7219 8-Digit Display</h3>
+  <h3 id="display">7. MAX7219 8-Digit Display</h3>
   <ul>
-    <li><code>VCC</code> → 5V rail</li>
-    <li><code>GND</code> → GND rail</li>
-    <li><code>DIN</code> → Arduino Nano D12 (MISO/CIPO)</li>
-    <li><code>CS</code> → Arduino Nano D11 (MOSI/COPI)</li>
-    <li><code>CLK</code> → Arduino Nano D10 (SS/CS)</li>
+    <li><code>VCC</code> → <red-code>5V</red-code> rail</li>
+    <li><code>GND</code> → <red-code>GND</red-code> rail</li>
+    <li><code>DIN</code> → Arduino Nano <red-code>D12</red-code> (MISO/CIPO)</li>
+    <li><code>CS</code> → Arduino Nano <red-code>D11</red-code> (MOSI/COPI)</li>
+    <li><code>CLK</code> → Arduino Nano <red-code>D10</red-code> (SS/CS)</li>
   </ul>
 
-  <h3>8. 5–12V Active Buzzer</h3>
+  <h3 id="buzzer">8. 5–12V Active Buzzer</h3>
   <ul>
     <li><strong>Driver Circuit:</strong>
       <ul>
-        <li>2N3904 Base → 1kΩ resistor → Arduino Nano D6 (PWM frequency: ~976 Hz)</li>
-        <li>2N3904 Emitter → GND rail</li>
+        <li>2N3904 Base → 1kΩ resistor → Arduino Nano <red-code>D6</red-code> (PWM frequency: ~976 Hz)</li>
+        <li>2N3904 Emitter → <red-code>GND</red-code> rail</li>
         <li>2N3904 Collector → Buzzer-</li>
-        <li>Buzzer+ → 12V rail</li>
+        <li>Buzzer+ → <red-code>12V</red-code> rail</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
@@ -950,27 +1036,27 @@
   <ul>
     <li><strong>Each Button:</strong>
       <ul>
-        <li>One terminal → GND rail</li>
-        <li>Other terminal → Arduino Nano D7, D8, D9 (digital inputs with internal pull-up enabled).</li>
+        <li>One terminal → <red-code>GND</red-code> rail</li>
+        <li>Other terminal → Arduino Nano <red-code>D7</red-code>, <red-code>D8</red-code>, <red-code>D9</red-code> (digital inputs with internal pull-up enabled).</li>
       </ul>
     </li>
   </ul>
 
-  <h3>10. IR Proximity Sensor</h3>
+  <h3 id="ir-sensor">10. IR Proximity Sensor</h3>
   <ul>
-    <li><code>VCC</code> → 5V rail</li>
-    <li><code>GND</code> → GND rail</li>
-    <li><code>OUT</code> → Arduino Nano D3</li>
+    <li><code>VCC</code> → <red-code>5V</red-code> rail</li>
+    <li><code>GND</code> → <red-code>GND</red-code> rail</li>
+    <li><code>OUT</code> → Arduino Nano <red-code>D3</red-code></li>
   </ul>
 
-  <h3>11. Fan</h3>
+  <h3 id="fan">11. Fan</h3>
   <ul>
     <li><strong>Driver Circuit:</strong>
       <ul>
-        <li>2N2222A Base → 330Ω resistor → Arduino Nano D14</li>
-        <li>2N2222A Emitter → GND rail</li>
+        <li>2N2222A Base → 330Ω resistor → Arduino Nano <red-code>D14</red-code></li>
+        <li>2N2222A Emitter → <red-code>GND</red-code> rail</li>
         <li>2N2222A Collector → Fan-</li>
-        <li>Fan+ → 12V rail</li>
+        <li>Fan+ → <red-code>12V</red-code> rail</li>
       </ul>
     </li>
     <li><strong>Protection:</strong>
@@ -980,18 +1066,18 @@
     </li>
   </ul>
 
-  <h3>12. MP1584 Buck Converter (12V)</h3>
+  <h3 id="buck-12v">12. MP1584 Buck Converter (12V)</h3>
   <ul>
     <li><strong>Input:</strong>
       <ul>
-        <li><code>IN+</code> → BAT_12V+</li>
-        <li><code>IN-</code> → GND rail</li>
+        <li><code>IN+</code> → Battery supply 12V+ (<red-code>BSP2</red-code>)</li>
+        <li><code>IN-</code> → <red-code>GND</red-code> rail</li>
       </ul>
     </li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → Jumper → 12V rail → Arduino Nano <code>VIN</code></li>
-        <li><code>OUT-</code> → GND rail</li>
+        <li><code>OUT+</code> → Jumper → <red-code>12V</red-code> rail → Arduino Nano <code>VIN</code></li>
+        <li><code>OUT-</code> → <red-code>GND</red-code> rail</li>
       </ul>
     </li>
     <li><strong>Filter:</strong>
@@ -1001,13 +1087,13 @@
     </li>
   </ul>
 
-  <h3>13. MP1584 Buck Converter (5V)</h3>
+  <h3 id="buck-5v">13. MP1584 Buck Converter (5V)</h3>
   <ul>
     <li>Input and filter same as 12V converter.</li>
     <li><strong>Output:</strong>
       <ul>
-        <li><code>OUT+</code> → Jumper → 5V rail → All 5V modules and other circuit components</li>
-        <li><code>OUT-</code> → GND rail</li>
+        <li><code>OUT+</code> → Jumper → <red-code>5V</red-code> rail → All 5V modules and other circuit components</li>
+        <li><code>OUT-</code> → <red-code>GND</red-code> rail</li>
       </ul>
     </li>
   </ul>
@@ -1016,43 +1102,62 @@
   <ul>
     <li><strong>12V Battery:</strong>
       <ul>
+        <li>12V Supply Types:
+          <ul>
+            <li>Raw battery supply (<red-code>BAT+</red-code>)</li>
+            <li>Filtered battery supply (<red-code>BSP1</red-code>)</li>
+            <li>Regulated battery supply (<red-code>BSP2</red-code>)</li>
+            <li>Maintained 12V supply (<red-code>12V</red-code> rail)</li>
+          </ul>
+        </li>
         <li>Connections:
           <ul>
-            <li>Powers MP1584 (12V)
+            <li><red-code>BAT+</red-code> →
               <ul>
-                <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe. So we feed it through <code>VIN</code> (requires 6V+).</li>
+                <li>Fuse + inductor to produce filtered supply (<red-code>BSP1</red-code>)</li>
+                <li>Load (inverter and solar charge controller). -ve side of the load is connected to <red-code>GND</red-code> rail (battery -ve side through shunt).</li>
               </ul>
             </li>
-            <li>Powers MP1584 (5V)
+            <li><red-code>BSP1</red-code> →
               <ul>
-                <li>For accurate ADC readings, make sure that the output voltages match the Nano's on-board AMS1117 regulator output.</li>
+                <li>TL431 + SI2301 to produce regulated supply (<red-code>BSP2</red-code>)</li>
+                <li>Battery voltage sensing divider</li>
               </ul>
             </li>
-            <li>Also connected to inverter and solar charge controller (-ve side through shunt resistor).</li>
+            <li><red-code>BSP2</red-code> →
+              <ul>
+                <li>MP1584 to produce <red-code>12V</red-code> rail
+                  <ul>
+                    <li>Arduino 5V pin is very sensitive for input. Connecting with PC is unsafe. So we feed it through <code>VIN</code> (requires 6V+).</li>
+                  </ul>
+                </li>
+                <li>MP1584 to produce <red-code>5V</red-code> rail
+                  <ul>
+                    <li>For accurate ADC readings, make sure that the output voltages match the Nano's on-board AMS1117 regulator output.</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
           </ul>
         </li>
-        <li>Ground:
+        <li>Ground (<red-code>BAT-</red-code>) feeds the shunt to produce <red-code>GND</red-code> rail.</li>
+        <li id="battery-filter">Fuse + HF Noise Filter:
           <ul>
-            <li>Battery 12V- (shunt's load-side terminal) → GND rail
+            <li><red-code>BAT+</red-code> → Fuse → 100µH inductor → <red-code>BSP1</red-code></li>
+            <li>Filters (between <red-code>BSP1</red-code> and <red-code>GND</red-code> rail):
               <ul>
-                <li>Shunt should account for Arduino circuit current when drawn from the battery.</li>
+                <li>100µF electrolytic</li>
+                <li>10µF ceramic</li>
+                <li>0.1µF ceramic</li>
               </ul>
             </li>
-          </ul>
-        </li>
-        <li>Fuse + HF Noise Filter:
-          <ul>
-            <li>Battery 12V+ → Fuse → 100µH inductor → BAT+</li>
-            <li>BAT+ → 100µF electrolytic → GND rail</li>
-            <li>BAT+ → 10µF ceramic → GND rail</li>
-            <li>BAT+ → 0.1µF ceramic → GND rail</li>
           </ul>
         </li>
         <li>UVLO:
           <ul>
-            <li><strong>Voltage Divider:</strong>
+            <li id="uvlo-voltage-divider"><strong>Voltage Divider:</strong>
               <ul>
-                <li>BAT+ → 22kΩ → Junction → 10kΩ → GND rail
+                <li><red-code>BSP1</red-code> → 22kΩ → Junction (<red-code>TL_REF</red-code>) → 10kΩ → <red-code>GND</red-code> rail
                   <ul>
                     <li>Drops 8V to ~2.5V for TL431 reference.</li>
                     <li>Current: <math>7~16V ÷ (22kΩ + 10kΩ) = 220~500µA</math></li>
@@ -1060,18 +1165,18 @@
                 </li>
               </ul>
             </li>
-            <li><strong>TL431:</strong>
+            <li id="uvlo-tl431"><strong>TL431:</strong>
               <ul>
                 <li><code>REF</code> →
                   <ul>
-                    <li>Divider junction</li>
+                    <li>Divider junction (<red-code>TL_REF</red-code>)</li>
                     <li>SI2301 feedback</li>
                   </ul>
                 </li>
-                <li>Anode → GND rail</li>
+                <li>Anode → <red-code>GND</red-code> rail</li>
                 <li>Cathode →
                   <ul>
-                    <li>6.8kΩ → BAT+ (for minimum 1mV load)
+                    <li>6.8kΩ → <red-code>BSP1</red-code> (for minimum 1mV load)
                       <ul>
                         <li><math>(7V - 2.5V) ÷ 6.8kΩ = 0.66mA</math></li>
                       </ul>
@@ -1081,9 +1186,9 @@
                 </li>
               </ul>
             </li>
-            <li><strong>SI2301:</strong>
+            <li id="uvlo-si2301"><strong>SI2301:</strong>
               <ul>
-                <li>Source → BAT+</li>
+                <li>Source → <red-code>BSP1</red-code></li>
                 <li>Gate → 2.2kΩ → TL431 cathode (≥2mA current)
                   <ul>
                     <li><math>(7V - 2.5V - 0.7V) ÷ 2.2kΩ = ~1.7mA</math></li>
@@ -1091,8 +1196,8 @@
                 </li>
                 <li>Drain →
                   <ul>
-                    <li>BAT_12V</li>
-                    <li>100kΩ → TL431 <code>REF</code></li>
+                    <li><red-code>BSP2</red-code></li>
+                    <li>100kΩ → TL431 <code>REF</code> (feedback)</li>
                   </ul>
                 </li>
               </ul>
@@ -1115,7 +1220,7 @@
       <ul>
         <li>Connections:
           <ul>
-            <li>220V Live → Fuse → 220V_L</li>
+            <li id="fuse-ac"><red-code>MAIN_L</red-code> (Live) → Fuse → <red-code>220V_L</red-code></li>
           </ul>
         </li>
         <li>Feeds:
@@ -1128,7 +1233,389 @@
     </li>
   </ul>
 
-  <h2>Load Calculation</h2>
+  <h2 id="schematics" class="heading-link" style="page-break-before: always;">Schematics</h2>
+
+  <p>Solid boxes show external components. Dotted boxes show units.</p>
+
+  <h3>Arduino Circuit:</h3>
+  <div class="image-container">
+    <a href="arduino_circuit.png">
+      <img src="arduino_circuit.png" width="1000">
+    </a>
+  </div>
+
+  <h3 style="page-break-before: always;">Solar and AC (Grid + Inverter) Circuit:</h3>
+  <p>This circuit works independent of Arduino control. But Arduino control depends on this circuit.</p>
+  <ul>
+    <li>Problem: Inverter is part of a UPS i.e. inverter + charger. But we usually charge the battery only on solar power. And UPS starts charging the battery if utility grid is present.
+      <ul>
+        <li>Solution: Use an <b>220V AC changeover relay</b> to move the mains ↔ inverter switching out of the inverter. Relay is active when on mains, connecting house supply to the mains. When inactive, it connects the supply to the inverter output.</li>
+      </ul>
+    </li>
+    <li>Problem: Since the UPS no more gets the grid supply, it's always running (with its fan) taking ~20W from battery. We need to manually switch it on and off.
+      <ul>
+        <li>Solution: Put a <b>5V relay</b> inside the inverter, in- series with the manual switch. Relay is powered using an adapter which is powered by the mains grid. So as long as utility grid is present, relay is active and keeps the inverter turned off.</li>
+      </ul>
+    </li>
+    <li>Problem: Switching to the mains from the inverter is quick. But switching to inverter takes 2-3 seconds because inverter needs time to start.
+      <ul>
+        <li>Relay actuate time should not be more than a hundred milliseconds. Even better alternative: use an Automatic Transfer Switch instead of a relay.</li>
+        <li>Solution: None so far. Probably there is a way (electronically) inside the inverter circuit to:
+          <ul>
+            <li>Put the inverter on standby instead of completely turning off.</li>
+            <li>Disable the battery charging while still feeding grid supply.</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <b>Switches:</b>
+  <ul>
+    <li><b>SW1:</b>
+      <ul>
+        <li>OFF: On inverter</li>
+        <li>ON:
+          <ul>
+            <li>Grid not available: On inverter</li>
+            <li>Grid available:
+              <ul>
+                <li>On grid</li>
+                <li><b>SW2:</b>
+                  <ul>
+                    <li>ON: Inverter off</li>
+                    <li>OFF:
+                      <ul>
+                        <li>Inverter on</li>
+                        <li><b>SW3:</b>
+                          <ul>
+                            <li>ON: UPS (charger) gets grid supply</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="image-container">
+    <a href="changeover_circuit.png">
+      <img src="changeover_circuit.png" width="700">
+    </a>
+  </div>
+
+  <h2 id="pcb" class="heading-link" style="page-break-before: always;">PCB</h2>
+
+  <h3 id="iv-module">Isolated Current / Voltage Sensor Module:</h3>
+  <div class="image-container">
+    <a href="current_voltage_module.jpg">
+      <img src="current_voltage_module.jpg" width="1000">
+    </a>
+  </div>
+  <p>2 x HCPL-7840 + filters / protectors. Details for <a href="#iv-sensor-pv">PV</a> and for <a href="#iv-sensor-battery">battery</a>.</p>
+  <p>Pin config for PV / battery:</p>
+  <ol class="five-col-list">
+    <li><red-code>SHT</red-code> / <red-code>BAT-</red-code></li>
+    <li><red-code>GND_ISO</red-code> / <red-code>GND</red-code></li>
+    <li><red-code>5V_ISO</red-code> / <red-code>5V</red-code></li>
+    <li><red-code>ADS1_A3</red-code> / <red-code>ADS2_A3</red-code></li>
+    <li><red-code>ADS1_A2</red-code> / <red-code>ADS2_A2</red-code></li>
+    <li><red-code>GND_ISO</red-code> / <red-code>GND</red-code></li>
+    <li><red-code>VD1</red-code> / <red-code>VD2</red-code></li>
+    <li><red-code>ADS1_A1</red-code> / <red-code>ADS2_A1</red-code></li>
+    <li><red-code>ADS1_A0</red-code> / <red-code>ADS2_A0</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+  </ol>
+  <p>Or (swapping input / outputs of identical halves):</p>
+  <ol class="five-col-list">
+    <li><red-code>VD1</red-code> / <red-code>VD2</red-code></li>
+    <li>Same</li>
+    <li>Same</li>
+    <li><red-code>ADS1_A1</red-code> / <red-code>ADS2_A1</red-code></li>
+    <li><red-code>ADS1_A0</red-code> / <red-code>ADS2_A0</red-code></li>
+    <li>Same</li>
+    <li><red-code>SHT</red-code> / <red-code>BAT-</red-code></li>
+    <li><red-code>ADS1_A3</red-code> / <red-code>ADS2_A3</red-code></li>
+    <li><red-code>ADS1_A2</red-code> / <red-code>ADS2_A2</red-code></li>
+    <li>Same</li>
+    <li>Same</li>
+  </ol>
+
+  <h3>Front:</h3>
+  <div class="image-container">
+    <a href="circuit_front.jpg">
+      <img src="circuit_front.jpg" width="1000">
+    </a>
+  </div>
+  <ol class="five-col-list">
+    <li><a href="#relay-ac">Relay</a></li>
+    <li><a href="#connector-ac">Connector</a></li>
+    <li><a href="#fuse-ac">Fuse</a></li>
+    <li><a href="#led-invertor-on">LED</a></li>
+    <li><a href="#led-invertor-on">330Ω</a></li>
+    <li><a href="#ac-detection-pot-res-neutral">220kΩ</a></li>
+    <li><a href="#ac-detection-pot">10kΩ Potentiometer</a></li>
+    <li><a href="#ac-detection-pot-res-live">220kΩ</a></li>
+    <li><a href="#ac-detection-opt">H11AA1</a></li>
+    <li><a href="#ac-detection-opt">0.1µF</a></li>
+    <li><a href="#display">MAX7219</a></li>
+    <li><a href="#buck-12v">Jumper</a></li>
+    <li><a href="#buck-12v">0.1µF</a></li>
+    <li><a href="#buck-12v">MP2307</a></li>
+    <li>Arduino Nano</li>
+    <li><a href="#push-buttons">Push Button</a></li>
+    <li><a href="#push-buttons">Push Button</a></li>
+    <li><a href="#push-buttons">Push Button</a></li>
+    <li><a href="#connector-relay-inv">Connector</a></li>
+    <li><a href="#connector-shunt-battery">Connector</a></li>
+    <li><a href="#connector-battery">Connector</a></li>
+    <li><a href="#connector-pv">Connector</a></li>
+    <li><a href="#relay-invertor">2N3904</a></li>
+    <li><a href="#relay-ac">2N3904</a></li>
+    <li><a href="#relay-invertor">1kΩ</a></li>
+    <li><a href="#relay-ac">1kΩ</a></li>
+    <li><a href="#iv-module">IV Module (Battery)</a></li>
+    <li><a href="#iv-module">IV Module (PV)</a></li>
+    <li><a href="#voltage-divider-battery">100kΩ</a></li>
+    <li><a href="#voltage-divider-battery">820Ω</a></li>
+    <li><a href="#ads1115-battery">ADS1115</a></li>
+    <li><a href="#ads1115-pv">ADS1115</a></li>
+    <li><a href="#ir-sensor">IR Proximity Sensor</a></li>
+    <li><a href="#battery-filter">100µH</a></li>
+    <li><a href="#voltage-divider-pv">100µH</a></li>
+    <li><a href="#battery-filter">Fuse</a></li>
+    <li><a href="#battery-filter">0.1µF</a></li>
+    <li><a href="#battery-filter">100µF</a></li>
+    <li><a href="#battery-filter">0.01µF</a></li>
+    <li><a href="#voltage-divider-pv">100kΩ</a></li>
+    <li><a href="#voltage-divider-pv">470Ω</a></li>
+    <li><a href="#uvlo-si2301">2.2kΩ</a></li>
+    <li><a href="#uvlo-tl431">6.8kΩ</a></li>
+    <li><a href="#uvlo-voltage-divider">10kΩ</a></li>
+    <li><a href="#uvlo-voltage-divider">22kΩ</a></li>
+    <li><a href="#uvlo-si2301">100kΩ</a></li>
+    <li><a href="#uvlo-tl431">TL431</a></li>
+    <li><a href="#b0505s">10µF</a></li>
+    <li><a href="#b0505s">10µF</a></li>
+    <li><a href="#b0505s">B0505S</a></li>
+    <li><a href="#buck-5v">MP1584</a></li>
+    <li><a href="#buck-5v">Jumper</a></li>
+    <li><a href="#buck-5v">0.1µF</a></li>
+    <li><a href="#fan">2N2222A</a></li>
+    <li><a href="#fan">330Ω</a></li>
+    <li><a href="#fan">Connector</a></li>
+    <li><a href="#ds3231">DS3231</a></li>
+    <li><a href="#buzzer">22µF</a></li>
+    <li><a href="#buzzer">1kΩ</a></li>
+    <li><a href="#buzzer">2N3904</a></li>
+    <li><a href="#connector-buzzer">Connector</a></li>
+  </ol>
+
+  <p />
+
+  <ol type="A" class="five-col-list">
+    <li><red-code>AC_REL</red-code></li>
+    <li><red-code>MAIN_N</red-code></li>
+    <li><red-code>MAIN_L</red-code></li>
+    <li><red-code>GND</red-code> - Relay (Inverter)</li>
+    <li><red-code>5V</red-code> - Relay (Inverter)</li>
+    <li><red-code>BAT-</red-code> - Shunt (Battery) Battery-Side</li>
+    <li><red-code>GND</red-code> - Shunt (Battery) Load-Side</li>
+    <li><red-code>GND</red-code> - Shunt (Battery) Load-Side</li>
+    <li><red-code>BAT+</red-code></li>
+    <li><red-code>PV-</red-code> - Shunt (PV) PV-Side</li>
+    <li><red-code>SHT</red-code> - Shunt (PV) Load-Side</li>
+    <li><red-code>PV+</red-code></li>
+    <li><red-code>12V</red-code> - Buzzer</li>
+    <li><red-code>GND</red-code> - Buzzer</li>
+  </ol>
+
+  <h3>Back:</h3>
+  <div class="image-container">
+    <a href="circuit_back.jpg">
+      <img src="circuit_back.jpg" width="1000">
+    </a>
+  </div>
+  <ol class="five-col-list">
+    <li><a href="#uvlo-si2301">SI2301</a></li>
+    <li><a href="#fan">1N4007</a></li>
+    <li><a href="#buzzer">1N4007</a></li>
+    <li><a href="#relay-ac">1N4007</a></li>
+    <li><red-code>PV-</red-code> source</li>
+    <li><red-code>SHT</red-code> source</li>
+    <li><red-code>PV+</red-code> source</li>
+    <li><red-code>PV+</red-code></li>
+    <li><red-code>BSP1</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>TL_REF</red-code></li>
+    <li><red-code>TL_REF</red-code></li>
+    <li><red-code>BSP2</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V_ISO</red-code> source</li>
+    <li><red-code>GND_ISO</red-code> source / <red-code>PV-</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V</red-code> source</li>
+    <li><red-code>D14</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>12V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>SDA</red-code></li>
+    <li><red-code>SCL</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>D6</red-code></li>
+    <li><red-code>12V</red-code></li>
+    <li><red-code>BAT+</red-code></li>
+    <li><red-code>GND</red-code> source (<red-code>BAT-</red-code> via shunt)</li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>BAT-</red-code></li>
+    <li><red-code>SHT</red-code></li>
+    <li><red-code>GND_ISO</red-code></li>
+    <li><red-code>5V_ISO</red-code></li>
+    <li><red-code>ADS1_A3</red-code></li>
+    <li><red-code>ADS1_A2</red-code></li>
+    <li><red-code>GND_ISO</red-code></li>
+    <li><red-code>VD1</red-code></li>
+    <li><red-code>ADS1_A1</red-code></li>
+    <li><red-code>ADS1_A0</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>BAT-</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>ADS2_A3</red-code></li>
+    <li><red-code>ADS2_A2</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>VD2</red-code></li>
+    <li><red-code>ADS2_A1</red-code></li>
+    <li><red-code>ADS2_A0</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>GND_ISO</red-code></li>
+    <li><red-code>BSP1</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>SCL</red-code></li>
+    <li><red-code>SDA</red-code></li>
+    <li><red-code>ADS1_A0</red-code> source</li>
+    <li><red-code>ADS1_A1</red-code> source</li>
+    <li><red-code>ADS1_A2</red-code> source</li>
+    <li><red-code>ADS1_A3</red-code> source</li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>SCL</red-code></li>
+    <li><red-code>SDA</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>ADS2_A0</red-code> source</li>
+    <li><red-code>ADS2_A1</red-code> source</li>
+    <li><red-code>ADS2_A2</red-code> source</li>
+    <li><red-code>ADS2_A3</red-code> source</li>
+    <li><red-code>D3</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>D5</red-code></li>
+    <li><red-code>D4</red-code></li>
+    <li><red-code>AC_RC-</red-code></li>
+    <li><red-code>AC_RC-</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>AC_RC-</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>AC_REL</red-code></li>
+    <li><red-code>AC_REL</red-code></li>
+    <li><red-code>MAIN_N</red-code></li>
+    <li><red-code>MAIN_L</red-code></li>
+    <li><red-code>220V_L</red-code></li>
+    <li><red-code>220V_L</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>D2</red-code></li>
+    <li><red-code>12V</red-code> source</li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>BSP2</red-code></li>
+    <li><red-code>D2</red-code> source</li>
+    <li><red-code>D3</red-code> source</li>
+    <li><red-code>D4</red-code> source</li>
+    <li><red-code>D5</red-code> source</li>
+    <li><red-code>D6</red-code> source</li>
+    <li><red-code>D7</red-code> source</li>
+    <li><red-code>D8</red-code> source</li>
+    <li><red-code>D9</red-code> source</li>
+    <li><red-code>D10</red-code> source</li>
+    <li><red-code>D11</red-code> source</li>
+    <li><red-code>D12</red-code> source</li>
+    <li><red-code>SCL</red-code> source</li>
+    <li><red-code>SDA</red-code> source</li>
+    <li><red-code>D14</red-code> source</li>
+    <li><red-code>D10</red-code></li>
+    <li><red-code>D11</red-code></li>
+    <li><red-code>D12</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>5V</red-code></li>
+    <li><red-code>D7</red-code></li>
+    <li><red-code>D8</red-code></li>
+    <li><red-code>D9</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>GND</red-code></li>
+    <li><red-code>GND</red-code></li>
+  </ol>
+
+  <h4>Joints:</h4>
+  <ul class="three-col-list">
+    <li><red-code>GND</red-code>: 23 (10, 14, 18, 21, 23, 27, 31, 32, 44, 46, 50, 55, 58, 60, 68, 77, 80, 94, 97, 116, 121, 122, 123)</li>
+    <li><red-code>5V</red-code>: 14 (17, 19, 24, 43, 47, 54, 59, 67, 71, 78, 79, 85, 87, 117)</li>
+    <li><red-code>12V</red-code>: 3 (22, 29, 96)</li>
+
+    <li><red-code>BAT-</red-code>: 2 (33, 45)</li>
+    <li><red-code>BSP1</red-code>: 2 (9, 57)</li>
+    <li><red-code>BSP2</red-code>: 2 (13, 98)</li>
+
+    <li><red-code>GND_ISO</red-code> / <red-code>PV-</red-code>: 5 (5, 16, 35, 39, 56)</li>
+    <li><red-code>5V_ISO</red-code>: 2 (15, 36)</li>
+    <li><red-code>PV+</red-code>: 2 (7, 8)</li>
+    <li><red-code>SHT</red-code>: 2 (6, 34)</li>
+
+    <li><red-code>220V_L</red-code>: 2 (92, 93)</li>
+    <li><red-code>AC_REL</red-code>: 2 (88, 89)</li>
+    <li><red-code>AC_RC-</red-code>: 3 (83, 84, 86)</li>
+
+    <li><red-code>D2</red-code>: 2 (95, 99)</li>
+    <li><red-code>D3</red-code>: 2 (76, 100)</li>
+    <li><red-code>D4</red-code>: 2 (82, 101)</li>
+    <li><red-code>D5</red-code>: 2 (81, 102)</li>
+    <li><red-code>D6</red-code>: 2 (28, 103)</li>
+    <li><red-code>D7</red-code>: 2 (104, 118)</li>
+    <li><red-code>D8</red-code>: 2 (105, 119)</li>
+    <li><red-code>D9</red-code>: 2 (106, 120)</li>
+    <li><red-code>D10</red-code>: 2 (107, 113)</li>
+    <li><red-code>D11</red-code>: 2 (108, 114)</li>
+    <li><red-code>D12</red-code>: 2 (109, 115)</li>
+    <li><red-code>D14</red-code>: 2 (20, 112)</li>
+
+    <li><red-code>SCL</red-code>: 4 (26, 61, 69, 110)</li>
+    <li><red-code>SDA</red-code>: 4 (25, 62, 70, 111)</li>
+
+    <li><red-code>ADS1_A0</red-code>: 2 (42, 63)</li>
+    <li><red-code>ADS1_A1</red-code>: 2 (41, 64)</li>
+    <li><red-code>ADS1_A2</red-code>: 2 (38, 65)</li>
+    <li><red-code>ADS1_A3</red-code>: 2 (37, 66)</li>
+    <li><red-code>ADS2_A0</red-code>: 2 (53, 72)</li>
+    <li><red-code>ADS2_A1</red-code>: 2 (52, 73)</li>
+    <li><red-code>ADS2_A2</red-code>: 2 (49, 74)</li>
+    <li><red-code>ADS2_A3</red-code>: 2 (48, 75)</li>
+  </ul>
+
+  <h2 id="load-calculation" class="heading-link" style="page-break-before: always;">Load Calculation</h2>
+  <p />
   <table>
     <tr style="background: grey; color: white;">
       <th>Components</th>
@@ -1236,93 +1723,8 @@
     </li>
   </ul>
 
-  <h2 style="page-break-before: always;">Schematics</h2>
-
-  <p>Solid boxes show external components. Dotted boxes show units.</p>
-
-  <h3>Arduino Circuit:</h3>
-  <div class="image-container">
-    <a href="arduino_circuit.svg">
-      <img src="arduino_circuit.svg" width="1000">
-    </a>
-  </div>
-
-  <h3 style="page-break-before: always;">Solar and AC (Grid + Inverter) Circuit:</h3>
-  <p>This circuit works independent of Arduino control. But Arduino control depends on this circuit.</p>
-  <ul>
-    <li>Problem: Inverter is part of a UPS i.e. inverter + charger. But we usually charge the battery only on solar power. And UPS starts charging the battery if utility grid is present.
-      <ul>
-        <li>Solution: Use an <b>220V AC changeover relay</b> to move the mains ↔ inverter switching out of the inverter. Relay is active when on mains, connecting house supply to the mains. When inactive, it connects the supply to the inverter output.</li>
-      </ul>
-    </li>
-    <li>Problem: Since the UPS no more gets the grid supply, it's always running (with its fan) taking ~20W from battery. We need to manually switch it on and off.
-      <ul>
-        <li>Solution: Put a <b>5V relay</b> inside the inverter, in- series with the manual switch. Relay is powered using an adapter which is powered by the mains grid. So as long as utility grid is present, relay is active and keeps the inverter turned off.</li>
-      </ul>
-    </li>
-    <li>Problem: Switching to the mains from the inverter is quick. But switching to inverter takes 2-3 seconds because inverter needs time to start.
-      <ul>
-        <li>Relay actuate time should not be more than a hundred milliseconds. Even better alternative: use an Automatic Transfer Switch instead of a relay.</li>
-        <li>Solution: None so far. Probably there is a way (electronically) inside the inverter circuit to:
-          <ul>
-            <li>Put the inverter on standby instead of completely turning off.</li>
-            <li>Disable the battery charging while still feeding grid supply.</li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-
-  <b>Switches:</b>
-  <ul>
-    <li><b>SW1:</b>
-      <ul>
-        <li>OFF: On inverter</li>
-        <li>ON:
-          <ul>
-            <li>Grid not available: On inverter</li>
-            <li>Grid available:
-              <ul>
-                <li>On grid</li>
-                <li><b>SW2:</b>
-                  <ul>
-                    <li>ON: Inverter off</li>
-                    <li>OFF:
-                      <ul>
-                        <li>Inverter on</li>
-                        <li><b>SW3:</b>
-                          <ul>
-                            <li>ON: UPS (charger) gets grid supply</li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
-
-  <div class="image-container">
-    <a href="changeover_circuit.svg">
-      <img src="changeover_circuit.svg" width="700">
-    </a>
-  </div>
-
-  <h2 id="flowchart">Flowchart:</h2>
-  <p>Actual checks and details are a bit complex but a simplified version is:</p>
-  <div class="image-container">
-    <a href="flowchart.svg">
-      <img src="flowchart.svg" width="600">
-    </a>
-  </div>
-
-  <h2 style="page-break-before: always;">Code:</h2>
-  <a href="https://github.com/mirfatif/SolarBMS/blob/master/SolarBMS.ino">https://github.com/mirfatif/SolarBMS/blob/master/SolarBMS.ino</a>
+  <h2 id="code" class="heading-link" style="page-break-before: always;">Code</h2>
+  <p><a href="https://github.com/mirfatif/SolarBMS/blob/master/SolarBMS.ino">https://github.com/mirfatif/SolarBMS/blob/master/SolarBMS.ino</a></p>
   <h3>Libraries:</h3>
   <ul>
     <li>DS3231 <sup><a href="#16">[16]</a></sup></li>
@@ -1331,14 +1733,14 @@
     <li>TimerOne_V2 <sup><a href="#20">[20]</a></sup></li>
   </ul>
 
-  <h2>Finally:</h2>
+  <h2>Finally</h2>
   <div class="image-container">
     <a href="image.jpg">
       <img src="image.jpg" width="500">
     </a>
   </div>
 
-  <h2>Links</h2>
+  <h2 id="links" class="heading-link" style="page-break-before: always;">Links</h2>
   <ol>
     <li id="1"><a href="https://digilog.pk/products/arduino-nano-v3-with-usb-cable-in-pakistan">https://digilog.pk/products/arduino-nano-v3-with-usb-cable-in-pakistan</a></li>
     <li id="2"><a href="https://digilog.pk/products/ina219-bi-direction-dc-current-power-supply-sensor-module-gy-219-module-in-pakistan">https://digilog.pk/products/ina219-bi-direction-dc-current-power-supply-sensor-module-gy-219-module-in-pakistan</a></li>
@@ -1384,6 +1786,21 @@
     <li id="42"><a href="https://digilog.pk/products/40mm-x-40mm-x-10mm-4010-12v-0-15a-dc-brushless-ball-bearing-cooling-fan-2pin">https://digilog.pk/products/40mm-x-40mm-x-10mm-4010-12v-0-15a-dc-brushless-ball-bearing-cooling-fan-2pin</a></li>
   </ol>
 
+  <script>
+    document.addEventListener('click', e => {
+      const el = e.target.closest('.heading-link');
+      if (!el || !el.id) {
+        return;
+      }
+
+      const rect = el.getBoundingClientRect();
+
+      const newHash = '#' + el.id;
+      if (e.clientX > rect.right - 30 && location.hash != newHash) {
+        history.pushState(null, '', newHash);
+      }
+    });
+  </script>
 </body>
 
 </html>

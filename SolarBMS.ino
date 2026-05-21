@@ -199,8 +199,8 @@ Screen screenNum = SCR_BTRY_VOLT_CURR;
 #define SOLAR_SENSOR_ADDR 0x49
 
 // I2C pins A4 (SDA) and A5 (SCL), address 0x48 and 0x49
-ADS1115_WE batterySensor = ADS1115_WE(0x48);
-ADS1115_WE solarSensor = ADS1115_WE(SOLAR_SENSOR_ADDR);
+ADS1115_WE solarSensor = ADS1115_WE(0x48);
+ADS1115_WE batterySensor = ADS1115_WE(SOLAR_SENSOR_ADDR);
 
 ////////////////////////////////////////////////////////////////////
 
@@ -535,7 +535,7 @@ public:
 class Timestamps {
 public:
   Ts humanActivity, buttonPressed, switchedToGrid, switchedToInverter, screenChanged;
-  OngoingEventTs invertedStarted;
+  OngoingEventTs inverterStarted;
 
   Timestamps() {
     humanActivity.set();
@@ -751,7 +751,7 @@ void switchToInverter() {
     return;
   }
 
-  ts.invertedStarted.updateTs(false);
+  ts.inverterStarted.updateTs(false);
 
   Serial.println(F("Switching to inverter..."));
 
@@ -761,17 +761,17 @@ void switchToInverter() {
 
 // Let the inverter start before switching off grid.
 void handleSwitchToInverterSched() {
-  if (isOnInverter() || !ts.invertedStarted.isOngoing()) {
+  if (isOnInverter() || !ts.inverterStarted.isOngoing()) {
     return;
   }
 
-  if (!hasGrid || ts.invertedStarted.isOlderThanSec(prefs.delayToInvAfterInvStart)) {
+  if (!hasGrid || ts.inverterStarted.isOlderThanSec(prefs.delayToInvAfterInvStart)) {
     switchToInverter();
   }
 }
 
 void startInverter() {
-  if (isOnInverter() || ts.invertedStarted.isOngoing()) {
+  if (isOnInverter() || ts.inverterStarted.isOngoing()) {
     return;
   }
 
@@ -781,7 +781,7 @@ void startInverter() {
   digitalWrite(PIN_INV_RELAY, LOW);
 
   if (hasGrid && prefs.delayToInvAfterInvStart != 0) {
-    ts.invertedStarted.updateTs(true);
+    ts.inverterStarted.updateTs(true);
   } else {
     switchToInverter();
   }
@@ -790,8 +790,8 @@ void startInverter() {
 void switchToGrid(InverterHaltReason reason);
 
 void switchToGrid(InverterHaltReason reason) {
-  if (ts.invertedStarted.isOngoing()) {
-    ts.invertedStarted.updateTs(false);
+  if (ts.inverterStarted.isOngoing()) {
+    ts.inverterStarted.updateTs(false);
   }
 
   if (isOnGrid()) {
@@ -1165,10 +1165,10 @@ void handleDisplayOnOff() {
     ts.humanActivity.set();
   }
 
-  if (ledOn && ts.humanActivity.isOlderThanMin(5) && !buzzerOn && inverterHaltReason == INV_NO_REASON) {
-    shutdownDisplay();
-  } else {
+  if (buzzerOn || inverterHaltReason != INV_NO_REASON) {
     startDisplay();
+  } else if (ledOn && ts.humanActivity.isOlderThanMin(5)) {
+    shutdownDisplay();
   }
 }
 
@@ -1360,9 +1360,11 @@ void handleButtonsPressed() {
 ////////////////////////////////////////////////////////////////////
 
 void handleHandWaved() {
-  if (handWaved && !anyButtonPressed()) {
+  if (ledOn && handWaved && !anyButtonPressed()) {
     if (screenNum == SCR_CLK_TEMP) {
       screenNum = SCR_BTRY_VOLT_CURR;
+      shutdownDisplay();
+      handWaved = false;
     } else if (screenNum < SCR_CLK_TEMP) {
       jumpToNextScreen();
     }
