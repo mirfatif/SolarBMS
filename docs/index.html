@@ -121,6 +121,8 @@
     <li><a href="#pcb">PCB</a></li>
     <li><a href="#load-calculation">Load Calculation</a></li>
     <li><a href="#code">Code</a></li>
+    <li><a href="#pic">Finally</a></li>
+    <li><a href="#todo">Improvement Plan</a></li>
     <li><a href="#links">Links</a></li>
   </ul>
 
@@ -1742,12 +1744,45 @@
     <li>TimerOne_V2 <sup><a href="#20">[20]</a></sup></li>
   </ul>
 
-  <h2>Finally</h2>
+  <h2 id="pic" class="heading-link">Finally</h2>
   <div class="image-container">
     <a href="image.jpg">
       <img src="image.jpg" width="800">
     </a>
   </div>
+
+  <h2 id="todo" class="heading-link">Improvement Plan</h2>
+  <ul>
+    <li>Replace Arduino Nano with WiFi-enabled ESP32:
+      <ul>
+        <li>Serve readings, logs, stats, and configurations over HTTP.</li>
+        <li>Run WiFi in AP-mode if station-mode network name / password is not configured, or if configured AP is not available.</li>
+        <li>Turn off WiFi after 5 minutes of inactivity.</li>
+      </ul>
+    </li>
+    <li>Replace 3 buttons and IR sensor with a single (capacitive touch) button only to:
+      <ul>
+        <li>Rotate between informatory screens. <del>Or remove display module too?</del></li>
+        <li>Turn WiFi on/off.</li>
+      </ul>
+    </li>
+    <li>Remove RTC module:
+      <ul>
+        <li>Sync time from internet after every reboot.</li>
+        <li>For temperature sensing use the small DS18B20 <del>or LM35</del>.</li>
+      </ul>
+    </li>
+    <li>Remove unnecessary isolation for battery voltage/current sensing.
+      <ul>
+        <li>For better accuracy, revert to INA219 (or ADS1115 ?) + ADuM1250 + B0505S for PV sensing. Use INA219 directly for battery sensing.</li>
+      </ul>
+    </li>
+    <li>Convert AC sensor and UVLO circuit to detachable modules.</li>
+    <li><s>Convert battery power connector + battery shunt connector (2+2) to a single 3-pin T-block connector like PV connector.</s></li>
+    <li>Replace voltage-divider resistors with potentiometers.</li>
+    <li>More stabilized analog values of voltage/current sensors. But how?</li>
+    <li><s>Custom PCB?</s></li>
+  </ul>
 
   <h2 id="links" class="heading-link" style="page-break-before: always;">Links</h2>
   <ol>
