@@ -31,6 +31,135 @@ enum Pin {
 
 ////////////////////////////////////////////////////////////////////
 
+#define A_DAY_CENTIS (24L * 60 * 60 * 100)
+
+volatile uint32_t centi_sec;
+
+// Don't do addition here so that ticks are no skipped, though we can tolerate a few.
+void timer1_ISR() {
+  centi_sec++;
+}
+
+// We can use 8-byte number to avoid the problem of millis() wrapping every ~49 days.
+// But to preserve RAM, we use 4-byte number to save centi-seconds instead of milli-seconds.
+// In this way we can save timestamps up to ~497 days.
+// We don't have true epoch time. A workaround: set timestamps to a day back so that unset
+// timestamps (0), when compared, are evaluated to being older than given few minutes, hours etc.
+uint32_t centis() {
+  uint32_t cs;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    cs = centi_sec;
+  }
+  return cs + A_DAY_CENTIS;
+}
+
+class Ts {
+private:
+  uint32_t ts;
+
+public:
+  Ts(uint32_t cs = 0)
+    : ts(cs) {}
+
+  uint32_t get() {
+    return ts;
+  }
+
+  void set(uint32_t cs = centis()) {
+    ts = cs;
+  }
+
+  bool isSet() {
+    return ts != 0;
+  }
+
+  bool isOlderThanCentis(uint32_t cs) {
+    return centis() - ts > cs;
+  }
+
+  bool isOlderThanSec(uint16_t seconds) {
+    return isOlderThanCentis((uint32_t)seconds * 100);
+  }
+
+  bool isOlderThanMin(uint8_t minutes) {
+    return isOlderThanSec((uint16_t)minutes * 60);
+  }
+
+  bool isOlderThanTs(Ts other) {
+    return other.get() > ts;
+  }
+};
+
+// We want to remember if a battery event (low voltage, high voltage, high discharge current, high charge current)
+// occurs repeatedly within a given window. If it happens, we'll consider the time spent in the event before it recently stopped.
+// For instance, if battery discharges for a minute, then stops discharging for 2 seconds, then again starts discharging, we will
+// consider the first minute too, not just the 2 seconds.
+class OngoingEventTs {
+  Ts startedAt, stoppedAt;
+
+public:
+  bool isOngoing() {
+    return stoppedAt.isOlderThanTs(startedAt);
+  }
+
+  bool isOlderThanSec(uint16_t seconds) {
+    return startedAt.isOlderThanSec(seconds);
+  }
+
+  bool isOlderThanMin(uint8_t minutes) {
+    return startedAt.isOlderThanMin(minutes);
+  }
+
+  bool isOngoingAndOlderThanSec(uint16_t seconds) {
+    return isOngoing() && isOlderThanSec(seconds);
+  }
+
+  bool isOngoingAndOlderThanMin(uint8_t minutes) {
+    return isOngoing() && isOlderThanMin(minutes);
+  }
+
+  // Give timeout 0 to ignore repeated occurrences within a given window
+  void updateTsSec(bool isActive, uint16_t timeoutSec) {
+    if (isOngoing()) {
+      if (!isActive) {
+        stoppedAt.set();
+      }
+    } else if (isActive) {
+      if (!stoppedAt.isOlderThanSec(timeoutSec)) {
+        startedAt.set(centis() - (stoppedAt.get() - startedAt.get()));
+        stoppedAt.set(0);
+      } else {
+        startedAt.set();
+      }
+    }
+  }
+
+  void updateTsMin(bool isActive, uint8_t timeoutMin) {
+    updateTsSec(isActive, (uint16_t)timeoutMin * 60);
+  }
+
+  void updateTs(bool isActive) {
+    updateTsSec(isActive, 0);
+  }
+};
+
+class Timestamps {
+public:
+  Ts humanActivity, buttonPressed, switchedToGrid, switchedToInverter, screenChanged, dispalyOn;
+  OngoingEventTs inverterStarted;
+
+  Timestamps() {
+    humanActivity.set();
+    dispalyOn.set();
+
+    // Initially we are on inverter
+    switchedToGrid.set(0);
+    switchedToInverter.set(1);
+  }
+} ts;
+
+////////////////////////////////////////////////////////////////////
+
 // Buzzer calibration
 #define CALIB_BUZZER_PWM_1 1
 #define CALIB_BUZZER_PWM_10 40  // 13.3% (255 * 13.3 / 100) PWM gives 7.3V (out of 12V); sound distorts above this level
@@ -64,7 +193,10 @@ public:
     unsigned long now = millis();
     long diff = now - then;
 
-    // With H11AA1 (2 anti-parallel input IR LEDs), ISR is called 200
+    // WAPDA frequency is 50 Hz i.e. 50 crests and 50 troughs in every second.
+    // Near the peaks of crests and troughs, pin is pulled high. So in every
+    // cycle, pin is pulled high twice, and low twice.
+    // Result with H11AA1 (2 anti-parallel input IR LEDs): ISR is called 200
     // times a second (100 LOW + 100 HIGH). Limit readings to 10/sec.
     if (waitingForHigh && diff < DC_AC_SAMPLE_DELAY_MS) {
       return;
@@ -114,9 +246,25 @@ public:
 
     time /= DC_AC_SAMPLE_COUNT;
 
+    static Ts ts;
+    static bool wasPresent = false;
+
     // Half-cycle pulse-width should be long enough to
     // indicate >~200V RMS voltages. Calibrate with pot.
-    return time >= AC_PULSE_WIDTH_THRESHOLD_MS;
+    // Add 500ms hysteresis to compensate bad readings.
+    if ((time >= AC_PULSE_WIDTH_THRESHOLD_MS) != wasPresent) {
+      if (!ts.isSet()) {
+        ts.set();
+      }
+      if (ts.isOlderThanCentis(50)) {
+        wasPresent = !wasPresent;
+        ts.set(0);
+      }
+    } else {
+      ts.set(0);
+    }
+
+    return wasPresent;
   }
 } grid;
 
@@ -197,7 +345,6 @@ enum Screen {
 // not hardware-SPI on D11 (COPI), D12 (CIPO), D13 (SCK).
 // CIPO is not required as no data is returned.
 MAX7219 led;
-bool ledOn = true;
 Screen screenNum = SCR_BTRY_VOLT_CURR;
 
 ////////////////////////////////////////////////////////////////////
@@ -478,128 +625,6 @@ void discardChangedPrefs() {
 
 ////////////////////////////////////////////////////////////////////
 
-#define A_DAY_CENTIS (24L * 60 * 60 * 100)
-
-volatile uint32_t centi_sec;
-
-// Don't do addition here so that ticks are no skipped, though we can tolerate a few.
-void timer1_ISR() {
-  centi_sec++;
-}
-
-// We can use 8-byte number to avoid the problem of millis() wrapping every ~49 days.
-// But to preserve RAM, we use 4-byte number to save centi-seconds instead of milli-seconds.
-// In this way we can save timestamps up to ~497 days.
-// We don't have true epoch time. A workaround: set timestamps to a day back so that unset
-// timestamps (0), when compared, are evaluated to being older than given few minutes, hours etc.
-uint32_t centis() {
-  uint32_t cs;
-  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    cs = centi_sec;
-  }
-  return cs + A_DAY_CENTIS;
-}
-
-class Ts {
-private:
-  uint32_t ts;
-
-public:
-  Ts(uint32_t cs = 0)
-    : ts(cs) {}
-
-  uint32_t get() {
-    return ts;
-  }
-
-  void set(uint32_t cs = centis()) {
-    ts = cs;
-  }
-
-  bool isOlderThanCentis(uint32_t cs) {
-    return centis() - ts > cs;
-  }
-
-  bool isOlderThanSec(uint16_t seconds) {
-    return isOlderThanCentis((uint32_t)seconds * 100);
-  }
-
-  bool isOlderThanMin(uint8_t minutes) {
-    return isOlderThanSec((uint16_t)minutes * 60);
-  }
-
-  bool isOlderThanTs(Ts other) {
-    return other.get() > ts;
-  }
-};
-
-// We want to remember if a battery event (low voltage, high voltage, high discharge current, high charge current)
-// occurs repeatedly within a given window. If it happens, we'll consider the time spent in the event before it recently stopped.
-// For instance, if battery discharges for a minute, then stops discharging for 2 seconds, then again starts discharging, we will
-// consider the first minute too, not just the 2 seconds.
-class OngoingEventTs {
-  Ts startedAt, stoppedAt;
-
-public:
-  bool isOngoing() {
-    return stoppedAt.isOlderThanTs(startedAt);
-  }
-
-  bool isOlderThanSec(uint16_t seconds) {
-    return startedAt.isOlderThanSec(seconds);
-  }
-
-  bool isOlderThanMin(uint8_t minutes) {
-    return startedAt.isOlderThanMin(minutes);
-  }
-
-  bool isOngoingAndOlderThanSec(uint16_t seconds) {
-    return isOngoing() && isOlderThanSec(seconds);
-  }
-
-  bool isOngoingAndOlderThanMin(uint8_t minutes) {
-    return isOngoing() && isOlderThanMin(minutes);
-  }
-
-  // Give timeout 0 to ignore repeated occurrences within a given window
-  void updateTsSec(bool isActive, uint16_t timeoutSec) {
-    if (isOngoing()) {
-      if (!isActive) {
-        stoppedAt.set();
-      }
-    } else if (isActive) {
-      if (!stoppedAt.isOlderThanSec(timeoutSec)) {
-        startedAt.set(centis() - (stoppedAt.get() - startedAt.get()));
-        stoppedAt.set(0);
-      } else {
-        startedAt.set();
-      }
-    }
-  }
-
-  void updateTsMin(bool isActive, uint8_t timeoutMin) {
-    updateTsSec(isActive, (uint16_t)timeoutMin * 60);
-  }
-
-  void updateTs(bool isActive) {
-    updateTsSec(isActive, 0);
-  }
-};
-
-class Timestamps {
-public:
-  Ts humanActivity, buttonPressed, switchedToGrid, switchedToInverter, screenChanged;
-  OngoingEventTs inverterStarted;
-
-  Timestamps() {
-    humanActivity.set();
-    switchedToGrid.set(0);
-    switchedToInverter.set(1);
-  }
-} ts;
-
-////////////////////////////////////////////////////////////////////
-
 class DcSource {
   ADS1115_WE &sensor;
 
@@ -693,12 +718,14 @@ public:
   public:
     Ts voltageOrCurrentBelowSafe;
     OngoingEventTs dischargeCurrentCritOrVeryCrit, dischargeCurrentHighOrAbove, dischargeCurrentLow;
-    OngoingEventTs voltageOkOrHigh, voltageLowOrCriticallyLow, voltageHigh, chargeCurrentHigh;
+    OngoingEventTs voltageOkOrHigh, voltageLowOrCriticallyLow, voltageHigh, voltageDroppedFromMax, chargeCurrentHigh;
   } ev;
 
   bool isVoltageCriticallyLow, isVoltageLow, isVoltageLowOrCriticallyLow, isVoltageBelowStable;
   bool isVoltageHigh, isVoltageVeryHigh, isChargingHigh, isChargingVeryHigh;
   bool isDischarging, isDischargingVeryCritically, isDischargingCritically, isDischargingHigh, isDischargingLow;
+
+  float maxVolts;
 
   void updateTs() {
     averageReadings();
@@ -731,6 +758,8 @@ public:
     isChargingHigh = current > prefs.batteryDischargeCurrentHigh;
     isChargingVeryHigh = current > prefs.batteryDischargeCurrentCrit;
 
+    maxVolts = max(maxVolts, volts);
+
     if (isVoltageLowOrCriticallyLow || isDischargingCritically || isDischargingVeryCritically) {
       ev.voltageOrCurrentBelowSafe.set();
     }
@@ -748,6 +777,10 @@ public:
 
     ev.voltageHigh.updateTsSec(isVoltageHigh, 10);
     ev.chargeCurrentHigh.updateTsSec(isChargingHigh, 10);
+
+    // Same as dischargeCurrentLow.
+    // Allow up to 0.5V drop (e.g. from 14.4V to 13.9V), but not below than 12.5V.
+    ev.voltageDroppedFromMax.updateTsSec(volts < max(maxVolts - 5, 12.5), 10);
   }
 } battery;
 
@@ -816,6 +849,8 @@ void switchToInverter() {
 
   ts.inverterStarted.updateTs(false);
 
+  battery.maxVolts = battery.volts;
+
   Serial.println(F("Switching to inverter..."));
 
   digitalWrite(PIN_AC_RELAY, LOW);
@@ -864,6 +899,7 @@ void switchToGrid(InverterHaltReason reason) {
   inverterHaltReason = reason;
 
   Serial.print(F("Switching to grid... "));
+
   if (inverterHaltReason != INV_NO_REASON) {
     Serial.println(inverterHaltReasonName());
   } else {
@@ -951,8 +987,14 @@ bool isDischargingLowOrHighSince(uint16_t highCurrentWindowSec,
     bool lowCurrentDrawWindowPassed = checkLowWindowWhenHigh
                                       && battery.ev.dischargeCurrentLow.isOlderThanSec(highCurrentWindowSec);
     return highCurrentDrawWindowPassed || lowCurrentDrawWindowPassed;
+  } else if (battery.ev.dischargeCurrentLow.isOngoingAndOlderThanSec(lowCurrentWindowSec)) {
+    return true;
+  } else if (isSunTime) {
+    // In case we get false negative about battery discharging slowly - due to minor sensor error - we also check that
+    // the battery, once charged to a certain voltage level, has not been discharged to a low voltage during daytime.
+    return battery.ev.voltageDroppedFromMax.isOngoingAndOlderThanSec(lowCurrentWindowSec);
   } else {
-    return battery.ev.dischargeCurrentLow.isOngoingAndOlderThanSec(lowCurrentWindowSec);
+    return false;
   }
 }
 
@@ -994,11 +1036,11 @@ bool shouldSwitchToInverterWithGrid() {
 }
 
 bool shouldSwitchToInverterNoGrid() {
-  if (!battery.isVoltageLowOrCriticallyLow) {
-    bool batteryRecentlyKilled = !battery.ev.voltageOrCurrentBelowSafe.isOlderThanMin(prefs.delayToInverterAfterBatteryKill);
-    return !batteryRecentlyKilled && batteryVoltageOkSinceLongEnough(1);
+  if (battery.isVoltageLowOrCriticallyLow) {
+    return false;
   }
-  return false;
+  bool batteryRecentlyKilled = !battery.ev.voltageOrCurrentBelowSafe.isOlderThanMin(prefs.delayToInverterAfterBatteryKill);
+  return !batteryRecentlyKilled && batteryVoltageOkSinceLongEnough(1);
 }
 
 void handleInverterGridSwitching() {
@@ -1033,40 +1075,48 @@ void handleInverterGridSwitching() {
 
 // Before raising alarms, give a few seconds window for temporary spikes / dips in battery voltage / current.
 void setBuzzerAndWarning() {
+  enum BuzzReason {
+    RZN_INV_HALTED = 1 << 0,
+    RZN_BTRY_LOW = 1 << 1,
+    RZN_BTRY_HIGH_DISCH = 1 << 2,
+    RZN_BTRY_HIGH_VOLT = 1 << 3,
+    RZN_BTRY_HIGH_CHRG = 1 << 4,
+    RZN_BTRY_DISCH_DAYTIME = 1 << 5
+  };
+
   uint8_t reasonTmp = 0;
 
   if (inverterHaltReason != INV_NO_REASON && inverterHaltReason != INV_LOW_SUNLIGHT) {
-    reasonTmp = (1 << 0);
+    reasonTmp = RZN_INV_HALTED;
   }
 
   if (battery.isVoltageCriticallyLow
       || (battery.isVoltageLow
           && solar.isPvCurrentEnough()
           && battery.ev.voltageLowOrCriticallyLow.isOlderThanSec(5))) {
-    reasonTmp |= (1 << 1);
+    reasonTmp |= RZN_BTRY_LOW;
   }
 
   if (battery.isDischargingVeryCritically
       || (battery.isDischargingCritically
           && solar.isPvCurrentEnough()
           && battery.ev.dischargeCurrentCritOrVeryCrit.isOlderThanSec(5))) {
-    reasonTmp |= (1 << 2);
+    reasonTmp |= RZN_BTRY_HIGH_DISCH;
   }
 
   if (battery.isVoltageVeryHigh || battery.ev.voltageHigh.isOngoingAndOlderThanSec(30)) {
-    reasonTmp |= (1 << 3);
+    reasonTmp |= RZN_BTRY_HIGH_VOLT;
   }
 
   if (battery.isChargingVeryHigh || battery.ev.chargeCurrentHigh.isOngoingAndOlderThanSec(5)) {
-    reasonTmp |= (1 << 4);
+    reasonTmp |= RZN_BTRY_HIGH_CHRG;
   }
 
-  if (hasGrid
-      && isOnInverter()
+  if (isOnInverter()
       && isSunTime
       && solar.isPvCurrentEnough()
       && shouldBeepDueToBatteryDischarging(5, 30)) {
-    reasonTmp |= (1 << 5);
+    reasonTmp |= RZN_BTRY_DISCH_DAYTIME;
   }
 
   static uint8_t reason = 0;
@@ -1092,28 +1142,28 @@ void setBuzzerAndWarning() {
       }
     };
 
-    for (int i = 0; i <= 6; i++) {
-      if ((reason & (1 << i)) == 0) {
+    for (int i = RZN_INV_HALTED; i <= RZN_BTRY_DISCH_DAYTIME; i *= 2) {
+      if ((reason & i) == 0) {
         continue;
       }
 
       switch (i) {
-        case 0:
+        case RZN_INV_HALTED:
           printReason(F("inverter halt b/c of "), inverterHaltReasonName());
           break;
-        case 1:
+        case RZN_BTRY_LOW:
           printReason(F("battery low"));
           break;
-        case 2:
+        case RZN_BTRY_HIGH_DISCH:
           printReason(F("battery high discharging rate"));
           break;
-        case 3:
+        case RZN_BTRY_HIGH_VOLT:
           printReason(F("battery high voltage"));
           break;
-        case 4:
+        case RZN_BTRY_HIGH_CHRG:
           printReason(F("battery high charging rate"));
           break;
-        case 5:
+        case RZN_BTRY_DISCH_DAYTIME:
           printReason(F("battery discharging during daytime"));
           break;
       }
@@ -1124,11 +1174,17 @@ void setBuzzerAndWarning() {
 
   buzzerOn = reason != 0;
 
-  blinkLeft = battery.isVoltageLowOrCriticallyLow || battery.isVoltageHigh;
-  blinkRight = battery.isDischargingCritically
-               || battery.isDischargingVeryCritically
-               || battery.isChargingHigh
-               || (hasGrid && isOnInverter() && battery.isDischarging);
+  if (inverterHaltReason == INV_NO_REASON) {
+    blinkLeft = battery.isVoltageLowOrCriticallyLow || battery.isVoltageHigh;
+    blinkRight = battery.isDischargingCritically
+                 || battery.isDischargingVeryCritically
+                 || battery.isChargingHigh
+                 || (hasGrid && isOnInverter() && battery.isDischarging)
+                 || (reason & RZN_BTRY_DISCH_DAYTIME) != 0;
+  } else {
+    blinkLeft = false;
+    blinkRight = false;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -1142,18 +1198,18 @@ void beep(uint8_t buzzerLevel = prefs.buzzerLevel) {
 }
 
 bool startDisplay() {
-  if (!ledOn) {
+  if (!ts.dispalyOn.isSet()) {
     led.MAX7219_ShutdownStop();
-    ledOn = true;
+    ts.dispalyOn.set();
     return true;
   }
   return false;
 }
 
 void shutdownDisplay() {
-  if (ledOn) {
+  if (ts.dispalyOn.isSet()) {
     led.MAX7219_ShutdownStart();
-    ledOn = false;
+    ts.dispalyOn.set(0);
   }
 }
 
@@ -1183,28 +1239,30 @@ void handle2HzTimer() {
 
   static uint8_t state = 1;
 
-  if (ledOn) {
-    if (!ts.screenChanged.isOlderThanSec(2) || screenNum > SCR_PV_VOLT_PWR) {
-      updateDisplay();
-    } else if (inverterHaltReason != INV_NO_REASON && state <= 2) {
-      led.Clear();
-      led.DisplayChar(7, 'E', 0);
-      led.DisplayChar(0, inverterHaltReason + '0', 0);
-    } else if (screenNum > SCR_BTRY_VOLT_PWR) {
-      updateDisplay();
-    } else if (blinkLeft && state == 1) {
-      updateDisplay(false, true);
-      state = 3;
-    } else if (blinkRight && state == 4) {
-      updateDisplay(true, false);
-      state = 2;
-    } else {
-      updateDisplay();
-    }
-    state++;
-    if (state > 4) {
-      state = 1;
-    }
+  if (!ts.dispalyOn.isSet()) {
+    return;
+  }
+
+  if (!ts.screenChanged.isOlderThanSec(2) || screenNum > SCR_PV_VOLT_PWR) {
+    updateDisplay();
+  } else if (inverterHaltReason != INV_NO_REASON && state <= 2) {
+    led.Clear();
+    led.DisplayChar(7, 'E', 0);
+    led.DisplayChar(0, inverterHaltReason + '0', 0);
+  } else if (screenNum > SCR_BTRY_VOLT_PWR) {
+    updateDisplay();
+  } else if (blinkLeft && state == 1) {
+    updateDisplay(false, true);
+    state = 3;
+  } else if (blinkRight && state == 4) {
+    updateDisplay(true, false);
+    state = 2;
+  } else {
+    updateDisplay();
+  }
+  state++;
+  if (state > 4) {
+    state = 1;
   }
 }
 
@@ -1222,17 +1280,21 @@ bool isButtonPressed(uint8_t pin) {
   return false;
 }
 
-void handleDisplayOnOff() {
-  if (handWaved) {
-    handWaved = !startDisplay();
+bool handleDisplayOnOff() {
+  bool waved = handWaved;
+
+  if (waved) {
+    waved = !startDisplay();
     ts.humanActivity.set();
   }
 
   if (buzzerOn || inverterHaltReason != INV_NO_REASON) {
     startDisplay();
-  } else if (ledOn && ts.humanActivity.isOlderThanMin(5)) {
+  } else if (ts.humanActivity.isOlderThanMin(5)) {
     shutdownDisplay();
   }
+
+  return waved;
 }
 
 void checkButtonPressed() {
@@ -1473,16 +1535,17 @@ void handleButtonsPressed() {
 
 ////////////////////////////////////////////////////////////////////
 
-void handleHandWaved() {
-  if (ledOn && handWaved && !anyButtonPressed()) {
+bool handleHandWaved() {
+  if (ts.dispalyOn.isSet() && handWaved && !anyButtonPressed()) {
     if (screenNum == SCR_CLK_TEMP) {
       screenNum = SCR_BTRY_VOLT_CURR;
       shutdownDisplay();
-      handWaved = false;
+      return false;
     } else if (screenNum < SCR_CLK_TEMP) {
       jumpToNextScreen();
     }
   }
+  return handWaved;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -1494,7 +1557,7 @@ void updateDisplayMsg() {
     discardChangedPrefs();
   }
 
-  if (!ledOn) {
+  if (!ts.dispalyOn.isSet()) {
     return;
   }
 
@@ -1503,7 +1566,7 @@ void updateDisplayMsg() {
   leftStr[strlen(leftStr)] = '.';
 
   auto notJustChangedScreen = []() -> bool {
-    return ts.screenChanged.isOlderThanSec(1);
+    return ts.screenChanged.isOlderThanSec(1) && ts.dispalyOn.isOlderThanSec(1);
   };
 
   auto formatVolts = [notJustChangedScreen](DcSource &src) {
@@ -1671,7 +1734,10 @@ void handleFan() {
     return;
   }
 
-  if (off.isOlderThanMin(10) || rtc.getTemperature() >= 40) {
+  if (rtc.getTemperature() >= 45
+      || (off.isOlderThanMin(5) && rtc.getTemperature() >= 40)
+      || (off.isOlderThanMin(15) && rtc.getTemperature() >= 35)
+      || (off.isOlderThanMin(30) && rtc.getTemperature() >= 30)) {
     digitalWrite(PIN_FAN, HIGH);
     on.set();
   }
@@ -1755,8 +1821,8 @@ void loop() {
   handleInverterGridSwitching();
   setBuzzerAndWarning();
   handleButtonsPressed();
-  handleHandWaved();
-  handleDisplayOnOff();
+  handWaved = handleHandWaved();
+  handWaved = handleDisplayOnOff();
   updateDisplayMsg();
   handleFan();
 
